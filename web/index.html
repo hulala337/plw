@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>鹈鹕工作台 V3.2 · TF7Z-XY</title>
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">🐦</div><div><strong>鹈鹕工作台</strong><span>Pelican Workbench</span><small class="brand-signature">TF7Z-XY</small></div></div>
+  <nav><button class="nav active" data-view="home"><span>⌂</span>今天</button><button class="nav" data-view="replay"><span>▶</span>一天回放</button><button class="nav" data-view="timeline"><span>◷</span>24 小时</button><button class="nav" data-view="stats"><span>▥</span>统计趋势</button><button class="nav" data-view="settings"><span>⚙</span>设置中心</button></nav>
+  <div class="side-pet"><div class="mini-pelican">🐦</div><div><b id="sideMood">准备开工</b><small id="sidePetText">今天也请多关照。</small></div></div>
+  <div class="side-foot"><div class="privacy-chip">🛡 本地 · 不保存内容</div><div class="ver">v3.2.0</div></div>
+</aside>
+<main>
+<header class="topbar"><div><span class="eyebrow">PELICAN WORKBENCH · V3</span><h1>让鹈鹕陪你把一天过得有迹可循。</h1><p>记录工作节奏，不读取工作内容。</p></div><div class="top-right"><div class="live"><i></i><span id="liveStatus">监听中</span></div><div class="clock"><b id="clock">--:--</b><span id="date">----</span><small id="weather">天气加载中…</small></div></div></header>
+
+<section id="view-home" class="view">
+  <section class="hero grid-hero">
+    <div class="office-scene" id="scene">
+      <div class="scene-sky"></div><div class="sun"></div><div class="moon"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="rain"></div>
+      <div class="window"><div class="city"></div><div class="window-light"></div></div>
+      <div class="shelf"><span>BOOKS</span><span>IDEAS</span><span>∞</span></div><div class="plant">🌿</div>
+      <div class="wall-note">GOOD<br><b>WORK</b><br>TODAY</div>
+      <div class="desk"><div class="desk-top"></div><div class="desk-front"></div></div>
+      <div class="monitor"><div class="monitor-screen"><i></i><i></i><i></i></div><div class="stand"></div></div>
+      <div class="keyboard"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="coffee"><div class="liquid" id="coffeeLiquid"></div><div class="cup"></div><div class="handle"></div><em></em><em></em></div>
+      <div class="board"><b>TO DO</b><span id="todoBoardCount">0</span><div id="boardTodos"></div><div class="done-head">DONE</div><div id="boardDone"></div></div>
+      <div class="pelican" id="pelican"><div class="p-shadow"></div><div class="p-body"></div><div class="p-neck"></div><div class="p-head"></div><div class="p-eye"></div><div class="p-beak"></div><div class="p-wing"></div><div class="p-foot"></div><div class="p-headset"></div></div>
+      <div class="scene-bubble" id="sceneBubble">🐦 准备好了吗？</div><div class="scene-caption"><b id="pelicanState">准备开工</b><span id="sceneHint">鹈鹕正在整理桌面。</span></div>
+    </div>
+    <div class="pet-panel"><div class="pet-head"><div><span class="eyebrow">DESK PET</span><h2>小鹈鹕</h2></div><span class="state-pill" id="petState">待命</span></div><div class="pet-card"><div class="big-pet" id="bigPet">🐦</div><div class="pet-speech" id="petSpeech">“今天准备做一件什么小事？”</div></div><div class="level-row"><span>Lv.<b id="level">1</b></span><div><div class="level-track"><i id="levelBar"></i></div><small id="lifetimeText">累计工作 0h</small></div><span>🔥<b id="streak">0</b>天</span></div><div class="unlocks" id="unlocks"></div><button class="pet-btn" id="replayBtn">▶ 看看今天发生了什么</button></div>
+  </section>
+
+  <section class="metrics panel"><div class="metric"><span>◷</span><small>今日工作</small><b id="active">0h 00m</b></div><div class="metric"><span>⌨</span><small>键盘</small><b id="keys">0</b><em>次</em></div><div class="metric"><span>A</span><small>输入</small><b id="chars">0</b><em>字</em></div><div class="metric"><span>◉</span><small>鼠标</small><b id="cursorDistance">0</b><em>px</em></div><div class="metric"><span>✦</span><small>操作</small><b id="ops">0</b><em>次</em></div><div class="metric"><span>◎</span><small>专注最长</small><b id="longest">0h 00m</b></div><div class="rhythm"><small>今日工作节奏</small><b id="rhythm">0</b><span>/100</span><div><i id="rhythmBar"></i></div></div></section>
+
+  <section class="dash-grid">
+    <div class="panel timeline-card"><div class="panel-head"><div><span class="eyebrow">24 HOURS</span><h2>今天的工作时间轴</h2><p>拖动时间点，看看鹈鹕那一刻在做什么。</p></div><div class="timeline-tools"><button id="nowBtn">现在</button><button id="zoomMinus">−</button><span id="zoomLabel">1×</span><button id="zoomPlus">＋</button></div></div><div class="timeline-shell" id="timelineShell"><div class="hours" id="hours"></div><div class="track" id="track"><div class="gridlines"></div><div id="segments"></div><div class="scrub" id="scrub"><span></span><b id="scrubLabel">现在</b></div></div></div><div class="legend" id="legend"></div></div>
+    <div class="panel focus-card"><div class="panel-head"><div><span class="eyebrow">FOCUS</span><h2>专注 Session</h2></div><span id="focusStatus" class="status">待命</span></div><div class="focus-orb"><div class="orb"></div><div><b id="focusLive">0h 00m</b><small id="focusHint">当前专注</small></div></div><div class="session-list" id="sessionList"></div><div class="rule-note">连续有行为 → 持续累计；短暂切换应用 → 继续；连续 2 分钟无输入 → 结束。</div></div>
+    <div class="panel todo-card"><div class="panel-head"><div><span class="eyebrow">PLAN → DONE</span><h2>今天想完成什么？</h2></div><span class="counter" id="todoCount">0/0</span></div><form id="todoForm"><input id="todoInput" maxlength="120" placeholder="写一件小事…"><button>＋</button></form><div class="todo-cols"><div><small>TODO</small><div id="todos"></div></div><div class="done-col"><small>DONE</small><div id="doneTodos"></div></div></div></div>
+    <div class="panel apps-card"><div class="panel-head"><div><span class="eyebrow">WHERE TIME WENT</span><h2>工作类型</h2></div><span class="privacy-mini">只保存分类</span></div><div id="apps"></div></div>
+  </section>
+</section>
+
+<section id="view-replay" class="view hidden"><div class="panel replay-card"><div class="replay-head"><div><span class="eyebrow">A DAY IN MOTION</span><h2>一天回放</h2><p>像看一部“工作电影”，但只播放行为分类。</p></div><button class="primary" id="startReplay">▶ 开始播放</button></div><div class="replay-stage"><div class="replay-scene" id="replayScene"><div class="replay-pelican">🐦</div><div class="replay-window"></div><div class="replay-desk"></div><div class="replay-info"><b id="replayTime">00:00</b><span id="replayCategory">等待播放…</span><small id="replayDesc">你的输入内容从不进入回放。</small></div></div></div><div class="replay-progress"><div class="replay-track"><i id="replayBar"></i></div><div id="replayMarks"></div></div></div></section>
+
+<section id="view-timeline" class="view hidden"><div class="panel detail-timeline"><div class="panel-head"><div><span class="eyebrow">WORK RHYTHM</span><h2>24 小时完整时间轴</h2></div><span class="date-chip" id="timelineDate">今天</span></div><div class="big-scroll"><div class="big-hours" id="bigHours"></div><div class="big-track" id="bigTrack"><div class="gridlines"></div><div id="bigSegments"></div><div class="scrub big" id="bigScrub"><span></span><b id="bigLabel">现在</b></div></div></div><div class="timeline-summary" id="timelineSummary"></div></div></section>
+
+<section id="view-stats" class="view hidden"><div class="stats-head"><div><span class="eyebrow">INSIGHTS</span><h2>今天 / 本周 / 本月</h2><p>看趋势，不把工作价值压缩成一个数字。</p></div><div class="tabs"><button class="active" data-range="today">今日</button><button data-range="week">本周</button><button data-range="month">本月</button></div></div><div class="report" id="reportGrid"></div><div class="stats-grid"><div class="panel"><div class="panel-head"><div><span class="eyebrow">TREND</span><h2>工作时长</h2></div></div><div class="trend" id="trendChart"></div></div><div class="panel export"><div><span class="eyebrow">YOUR DATA</span><h2>导出与隐私</h2></div><p>导出的内容只有统计数字、工作分类和 Session，不包含实际输入、窗口标题、URL 或文档正文。</p><div><a class="primary" id="csv" download>CSV</a><a class="ghost" id="xlsx" download>Excel</a></div></div></div></section>
+
+<section id="view-settings" class="view hidden"><div class="stats-head"><div><span class="eyebrow">SETTINGS CENTER</span><h2>设置中心</h2><p>让鹈鹕更像你喜欢的工作伙伴。</p></div></div><div class="settings-grid"><div class="panel setting"><b>开机启动</b><small>登录 Windows 后静默进入托盘。</small><label class="switch"><input type="checkbox" id="autostart"><i></i></label></div><div class="panel setting"><b>桌面宠物</b><small>让小鹈鹕在窗口角落陪你工作。</small><label class="switch"><input type="checkbox" id="desktopPet"><i></i></label></div><div class="panel setting"><b>离开电脑阈值</b><small>超过多久没有输入，就判定为离开。</small><select id="idleSeconds"><option value="60">1 分钟</option><option value="120">2 分钟</option><option value="180">3 分钟</option><option value="300">5 分钟</option><option value="600">10 分钟</option></select></div><div class="panel setting"><b>显示器与鼠标空间</b><small id="displayInfo">正在识别显示器布局…</small></div><div class="panel setting"><b>天气场景</b><small>天气只用于当前界面视觉，不写入工作数据库。</small><label class="switch"><input type="checkbox" id="weatherEnabled"><i></i></label></div><div class="panel setting brand-card"><div class="brand-ribbon">AUTHOR MARK</div><b>TF7Z-XY</b><small>作者烙印显示在软件设置区，不参与任何工作数据统计。</small><div class="author-mark"><span class="author-seal">TF7Z-XY</span><div><strong>鹈鹕工作台</strong><em>让工作有迹可循，也让每天有一点可爱。</em></div></div></div><div class="panel setting donate-card"><div class="brand-ribbon">SUPPORT</div><b>支持这个小项目</b><small>如果你觉得鹈鹕工作台有帮助，可以自愿请作者喝杯咖啡。不会解锁隐藏功能，也不会影响统计。</small><button class="donate-btn" id="donateBtn">☕ 打赏作者</button><div class="donate-note">微信收款码已内置到安装包中</div></div><div class="panel setting privacy"><b>隐私中心 <span>✓ 已开启</span></b><small>键盘只记录数量与字符数。</small><p>✓ 实际输入文字：不保存<br>✓ 窗口标题 / 文件名：不保存<br>✓ URL / 网页正文：不保存<br>✓ 数据库：仅本机</p><button class="ghost" id="forgetToday">删除今天的统计</button></div><div class="panel setting"><b>办公室成长</b><small id="growthText">还没有解锁家具。</small><div id="settingsUnlocks" class="unlocks large"></div></div></div></section>
+<div class="donate-modal hidden" id="donateModal"><div class="donate-backdrop" id="donateBackdrop"></div><div class="donate-dialog"><button class="modal-close" id="donateClose">×</button><div class="brand-ribbon">THANK YOU</div><h3>请鹈鹕喝杯咖啡 ☕</h3><p>自愿打赏，完全不影响功能。</p><div class="qr-wrap"><img id="wechatQr" src="/assets/wechat_qr.png" alt="微信收款码 · 锂电池(*翌)"><div id="qrFallback" class="qr-fallback">请将你的微信收款码命名为<br><code>wechat_qr.png</code><br>放入 <code>web/assets/</code></div></div><span class="donate-modal-tip">仅用于打赏，不收集支付信息。</span></div></div></div>
+<footer><span>🐦 Pelican Workbench V3.2 · TF7Z-XY</span><span>本地统计 · 隐私优先 · Windows Tray</span></footer>
+</main></div>
+<script src="/assets/app.js"></script>
+</body></html>
