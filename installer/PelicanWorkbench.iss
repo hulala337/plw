@@ -1,6 +1,6 @@
 #define MyAppName "鹈鹕工作台"
 #ifndef MyAppVersion
-#define MyAppVersion "3.2.3"
+#define MyAppVersion "3.2.5"
 #endif
 #define MyAppPublisher "TF7Z-XY"
 #define MyAppExeName "PelicanWorkbench.exe"
