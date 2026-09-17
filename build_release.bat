@@ -71,6 +71,11 @@ if errorlevel 1 (
   goto :fail
 )
 
+if not exist "%DIST%\PelicanWorkbench.exe" (
+  echo [ERROR] Packaged executable disappeared after self-test.
+  goto :fail
+)
+
 echo [6/9] Optional Authenticode signing...
 if not defined SIGNTOOL for /f "delims=" %%I in ('where signtool.exe 2^>nul') do if not defined SIGNTOOL set "SIGNTOOL=%%I"
 if defined SIGNTOOL if defined PFX_PATH if defined PFX_PASSWORD (
@@ -102,7 +107,7 @@ certutil -hashfile "%RELEASE%\PelicanWorkbench_Setup_%VERSION%.exe" SHA256 > "%R
 echo [9/9] Build complete.
 echo ============================================================
 echo  BUILD SUCCESSFUL
- echo Installer: "%RELEASE%\PelicanWorkbench_Setup_%VERSION%.exe"
+echo Installer: "%RELEASE%\PelicanWorkbench_Setup_%VERSION%.exe"
 echo ============================================================
 start "" explorer.exe "%RELEASE%"
 pause
@@ -112,7 +117,7 @@ exit /b 0
 echo.
 echo ============================================================
 echo  BUILD FAILED
- echo Check the error above before retrying.
+echo Check the error above before retrying.
 echo ============================================================
 pause
 exit /b 1
