@@ -40,8 +40,9 @@ call "%PY%" -m pip install --upgrade pip setuptools wheel || goto :fail
 call "%PIP%" install -r "%ROOT%\requirements.txt" || goto :fail
 call "%PIP%" install --upgrade "pyinstaller>=6.16,<7" || goto :fail
 
-echo [2/9] Applying verified source repairs...
+echo [2/9] Applying verified source repairs and visual polish...
 call "%PY%" "%ROOT%\tools\repair_app.py" || goto :fail
+call "%PY%" "%ROOT%\tools\visual_polish.py" || goto :fail
 
 if not exist "%SIGN_DIR%" mkdir "%SIGN_DIR%"
 if not exist "%PRIVATE_KEY%" (
@@ -104,6 +105,7 @@ certutil -hashfile "%RELEASE%\PelicanWorkbench_Setup_%VERSION%.exe" SHA256 > "%R
 >>"%RELEASE%\BUILD_INFO.txt" echo Integrity protection: Ed25519 signed asset manifest
 >>"%RELEASE%\BUILD_INFO.txt" echo Packaging: PyInstaller one-file
 >>"%RELEASE%\BUILD_INFO.txt" echo Source repairs: verified before packaging
+>>"%RELEASE%\BUILD_INFO.txt" echo Visual polish: V2 applied before packaging
 >>"%RELEASE%\BUILD_INFO.txt" echo Packaged self-test: PASSED
 >>"%RELEASE%\BUILD_INFO.txt" echo Authenticode: %SIGNTOOL%
 
