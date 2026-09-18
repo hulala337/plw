@@ -545,7 +545,6 @@ def tracker() -> None:
             session_active += dt; session_last_active=last_input_ts; session_events += new_events
             if category not in categories: categories.append(category)
         else:
-            incr(idle_seconds=dt)
             if session_id and session_last_active and now-session_last_active > FOCUS_BREAK_SECONDS:
                 _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
                 session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
