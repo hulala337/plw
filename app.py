@@ -805,7 +805,7 @@ def export_rows(start: date,end: date):
     conn=db(); daily=conn.execute("SELECT * FROM daily WHERE day BETWEEN ? AND ? ORDER BY day",(start.isoformat(),end.isoformat())).fetchall(); tl=conn.execute("SELECT slice_start,category,seconds FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start",(start.isoformat(),end.isoformat())).fetchall(); apps=conn.execute("SELECT day,category,seconds FROM app_usage WHERE day BETWEEN ? AND ? ORDER BY day,seconds DESC",(start.isoformat(),end.isoformat())).fetchall(); sessions=conn.execute("SELECT * FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at",((end+timedelta(days=1)).isoformat(),start.isoformat())).fetchall(); conn.close(); return daily,tl,apps,sessions
 
 
-api=FastAPI(title="Pelican Workbench",version=VERSION); api.mount("/assets",StaticFiles(directory=str(WEB/"assets")),name="assets")
+api.mount("/assets",StaticFiles(directory=str(WEB/"assets")),name="assets")
 
 @api.get("/")
 def index(): return FileResponse(WEB/"index.html")
