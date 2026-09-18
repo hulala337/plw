@@ -517,7 +517,8 @@ def self_test() -> int:
 
 
 def tracker() -> None:
-    prev=time.time(); session_id=None; session_started=None; session_active=0.0; session_last_active=None; last_seq=state["event_seq"]; session_events=0; categories=[]
+    global tracker_reset_seq
+    prev=time.time(); session_id=None; session_started=None; session_active=0.0; session_last_active=None; last_seq=state["event_seq"]; session_events=0; categories=[]; local_reset_seq=tracker_reset_seq
     while not STOP.is_set():
         now=time.time(); dt=min(now-prev,5.0); active=(now-last_input_ts)<=int(setting_get("idle_seconds",str(IDLE_SECONDS)))
         name,title=foreground_context(); category=classify_activity(name,title,active)
@@ -572,7 +573,7 @@ def api_payload(kind="today") -> dict:
     start,end=range_bounds(kind); total,by_day,longest,rhythm=fetch_summary(start,end); conn=db()
     timeline=conn.execute("SELECT slice_start,category,seconds,events FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start", (start.isoformat(), end.isoformat())).fetchall()
     apps=conn.execute("SELECT category,COALESCE(SUM(seconds),0) AS seconds FROM app_usage WHERE day BETWEEN ? AND ? GROUP BY category ORDER BY seconds DESC", (start.isoformat(), end.isoformat())).fetchall()
-    sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE date(started_at) BETWEEN ? AND ? ORDER BY started_at DESC", (start.isoformat(), end.isoformat())).fetchall()
+    sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at DESC", ((end+timedelta(days=1)).isoformat(), start.isoformat())).fetchall()
     todos=conn.execute("SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC").fetchall(); conn.close()
     return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
 
@@ -778,7 +779,7 @@ def api_health():
 
 
 def export_rows(start: date,end: date):
-    conn=db(); daily=conn.execute("SELECT * FROM daily WHERE day BETWEEN ? AND ? ORDER BY day",(start.isoformat(),end.isoformat())).fetchall(); tl=conn.execute("SELECT slice_start,category,seconds FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start",(start.isoformat(),end.isoformat())).fetchall(); apps=conn.execute("SELECT day,category,seconds FROM app_usage WHERE day BETWEEN ? AND ? ORDER BY day,seconds DESC",(start.isoformat(),end.isoformat())).fetchall(); sessions=conn.execute("SELECT * FROM focus_sessions WHERE date(started_at) BETWEEN ? AND ? ORDER BY started_at",(start.isoformat(),end.isoformat())).fetchall(); conn.close(); return daily,tl,apps,sessions
+    conn=db(); daily=conn.execute("SELECT * FROM daily WHERE day BETWEEN ? AND ? ORDER BY day",(start.isoformat(),end.isoformat())).fetchall(); tl=conn.execute("SELECT slice_start,category,seconds FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start",(start.isoformat(),end.isoformat())).fetchall(); apps=conn.execute("SELECT day,category,seconds FROM app_usage WHERE day BETWEEN ? AND ? ORDER BY day,seconds DESC",(start.isoformat(),end.isoformat())).fetchall(); sessions=conn.execute("SELECT * FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at",((end+timedelta(days=1)).isoformat(),start.isoformat())).fetchall(); conn.close(); return daily,tl,apps,sessions
 
 
 api=FastAPI(title="Pelican Workbench",version=VERSION); api.mount("/assets",StaticFiles(directory=str(WEB/"assets")),name="assets")
