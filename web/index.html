@@ -27,6 +27,7 @@
       <button class="nav" data-view="replay"><span class="nav-icon">▶</span><b>一天回放</b><small>Replay</small></button>
       <button class="nav" data-view="timeline"><span class="nav-icon">◷</span><b>24 小时</b><small>Timeline</small></button>
       <button class="nav" data-view="stats"><span class="nav-icon">▥</span><b>统计趋势</b><small>Insights</small></button>
+      <button class="nav" data-view="growth"><span class="nav-icon">🐦</span><b>成长中心</b><small>Growth</small></button>
       <button class="nav" data-view="settings"><span class="nav-icon">⚙</span><b>设置中心</b><small>Settings</small></button>
     </nav>
 
@@ -220,6 +221,26 @@
       <div class="stats-head"><div><span class="eyebrow">INSIGHTS</span><h2>今天 / 本周 / 本月</h2><p>看趋势，不把工作价值压缩成一个数字。</p></div><div class="tabs"><button class="active" data-range="today">今日</button><button data-range="week">本周</button><button data-range="month">本月</button></div></div>
       <div class="report" id="statsReport"></div>
       <div class="stats-grid"><div class="panel"><div class="panel-head"><div><span class="eyebrow">TREND</span><h2>工作时长</h2></div></div><div class="trend" id="statsTrend"></div></div><div class="panel export"><div><span class="eyebrow">YOUR DATA</span><h2>导出与隐私</h2></div><p>导出的内容只有统计数字、工作分类和 Session，不包含实际输入、窗口标题、URL 或文档正文。</p><div><a class="primary" id="csv" download>CSV</a><a class="ghost" id="xlsx" download>Excel</a></div></div></div>
+    </section>
+
+    <!-- 成长中心 -->
+    <section id="view-growth" class="view hidden">
+      <div class="stats-head"><div><span class="eyebrow">PELICAN GROWTH</span><h2>成长中心</h2><p>真实工作带来 XP、等级和内容解锁；不通过挂机刷经验。</p></div></div>
+      <div class="report" id="growthReport"></div>
+      <div class="stats-grid">
+        <div class="panel">
+          <div class="panel-head"><div><span class="eyebrow">UNLOCKS</span><h2>已解锁内容</h2></div></div>
+          <div class="unlocks large" id="growthUnlocks"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><span class="eyebrow">ACHIEVEMENTS</span><h2>成就</h2></div></div>
+          <div class="unlocks large" id="growthAchievements"></div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">SCENES</span><h2>场景</h2></div></div><div class="unlocks large" id="growthScenes"></div></div>
+        <div class="panel"><div class="panel-head"><div><span class="eyebrow">PELICANS</span><h2>鹈鹕</h2></div></div><div class="unlocks large" id="growthPelicans"></div></div>
+      </div>
     </section>
 
     <!-- 设置 -->
