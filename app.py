@@ -60,6 +60,9 @@ LOCK = threading.RLock()
 STOP = threading.Event()
 PORT = 0
 
+# FastAPI application must be created before any @api route decorators below.
+api = FastAPI(title="Pelican Workbench", version=VERSION if "VERSION" in globals() else "3.6")
+
 CATEGORY_LABELS = {
     "document": "文档编辑",
     "web": "网页检索",
