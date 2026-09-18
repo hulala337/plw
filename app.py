@@ -340,11 +340,14 @@ def persist_tracker_tick(day: str, slice_key: str, category: str, dt: float, eve
         conn = db()
         try:
             conn.execute("INSERT OR IGNORE INTO daily(day) VALUES(?)", (day,))
+            conn.execute("INSERT OR IGNORE INTO progress_profile(id,xp,total_active_seconds,level,updated_at) VALUES(1,0,0,1,?)", (datetime.now().isoformat(timespec="seconds"),))
             updates = dict(batch)
             time_field = "active_seconds" if category != "idle" else "idle_seconds"
             updates[time_field] = updates.get(time_field, 0) + dt
             sets = ", ".join(f"{k}={k}+?" for k in updates)
             conn.execute(f"UPDATE daily SET {sets} WHERE day=?", [*updates.values(), day])
+            if time_field == "active_seconds" and dt > 0:
+                conn.execute("UPDATE progress_profile SET total_active_seconds=total_active_seconds+?,updated_at=? WHERE id=1",(dt,datetime.now().isoformat(timespec="seconds")))
             conn.execute(
                 """INSERT INTO activity_slices(slice_start,category,seconds,events)
                    VALUES(?,?,?,?)
@@ -710,8 +713,14 @@ def award_progress_event(conn,event_key: str,event_type: str,xp: int,now: str) -
 def sync_progression() -> dict:
     """Materialize Growth from durable work facts and idempotent progression events."""
     conn=db()
-    row=conn.execute("SELECT COALESCE(SUM(active_seconds),0) AS active, COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()
-    active=float(row["active"] or 0); chars=int(row["chars"] or 0); now=datetime.now().isoformat(timespec="seconds")
+    row=conn.execute("SELECT total_active_seconds FROM progress_profile WHERE id=1").fetchone()
+    if row is None:
+        conn.execute("INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at) VALUES(1,0,0,1,?)",(datetime.now().isoformat(timespec="seconds"),))
+        active=0.0
+    else:
+        active=float(row["total_active_seconds"] or 0)
+    chars=int(conn.execute("SELECT COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()["chars"] or 0)
+    now=datetime.now().isoformat(timespec="seconds")
     for r in conn.execute("SELECT id,completed_at FROM todos WHERE done=1 AND completed_at IS NOT NULL").fetchall():
         award_progress_event(conn,"todo:%s:completed"%r["id"],"todo",20,r["completed_at"] or now)
     for ach in ACHIEVEMENT_CATALOG:
@@ -772,7 +781,8 @@ def api_payload(kind="today") -> dict:
     apps=conn.execute("SELECT category,COALESCE(SUM(seconds),0) AS seconds FROM app_usage WHERE day BETWEEN ? AND ? GROUP BY category ORDER BY seconds DESC", (start.isoformat(), end.isoformat())).fetchall()
     sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at DESC", ((end+timedelta(days=1)).isoformat(), start.isoformat())).fetchall()
     todos=conn.execute("SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC").fetchall(); conn.close()
-    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
+    world = growth_payload()
+    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"world":{"equipment":world["equipment"],"scenes":world["scenes"],"pelicans":world["pelicans"]},"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
 
 
 def startup_enabled() -> bool:
