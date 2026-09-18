@@ -92,6 +92,7 @@ listener_refs = []
 listener_restart_lock = threading.Lock()
 listener_last_ok = 0.0
 listener_restart_count = 0
+listener_error = ""
 tracker_reset_seq = 0
 listener_last_keyboard_event = 0.0
 listener_last_mouse_event = 0.0
@@ -721,7 +722,7 @@ def set_windows_dpi_awareness() -> None:
         ctypes.windll.user32.SetProcessDPIAware()
 
 def listeners_start() -> bool:
-    global listener_refs, listener_last_ok
+    global listener_refs, listener_last_ok, listener_error
     new_refs = []
     try:
         k=keyboard.Listener(on_press=on_press)
@@ -730,8 +731,10 @@ def listeners_start() -> bool:
         k.start(); m.start()
         listener_refs=new_refs
         listener_last_ok=time.time()
+        listener_error=""
         return True
-    except Exception:
+    except Exception as exc:
+        listener_error=f"{type(exc).__name__}: {exc}"
         # Stop both locally-created hooks even if the second hook failed after
         # the first one had already started. This prevents an orphaned global
         # keyboard hook and makes watchdog recovery deterministic.
@@ -798,6 +801,7 @@ def api_health():
         "last_keyboard_event": listener_last_keyboard_event,
         "last_mouse_event": listener_last_mouse_event,
         "listener_restarts": listener_restart_count,
+        "listener_error": listener_error,
     }
 
 
@@ -906,7 +910,10 @@ def main() -> None:
     run_server()
     if not wait_for_server():
         raise SystemExit("Pelican Workbench local server failed to start")
-    listeners_start()
+    if not listeners_start():
+        # Do not pretend input tracking is active. The watchdog will retry and
+        # the dashboard health indicator exposes the actual failure reason.
+        pass
     threading.Thread(target=tracker, daemon=True, name="tracker").start()
     threading.Thread(target=listener_watchdog, daemon=True, name="listener-watchdog").start()
 
