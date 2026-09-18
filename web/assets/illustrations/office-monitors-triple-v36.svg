@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室三显示器资产">
+<defs>
+  <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243b4a"/><stop offset="1" stop-color="#526d78"/></linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#244b66"/><stop offset="1" stop-color="#5d91a7"/></linearGradient>
+</defs>
+<g>
+  <rect x="300" y="330" width="270" height="150" rx="16" fill="url(#frame)" stroke="#718d99" stroke-width="8"/>
+  <rect x="317" y="347" width="236" height="116" rx="9" fill="#315d73"/>
+  <path d="M339 384H425M339 407H485M339 430H451" stroke="#d9eef2" stroke-width="8" stroke-linecap="round" opacity=".66"/>
+  <path d="M339 451H395" stroke="#efc777" stroke-width="7" stroke-linecap="round" opacity=".84"/>
+  <path d="M433 480V512" stroke="#6a4b3d" stroke-width="15" stroke-linecap="round"/><rect x="380" y="505" width="110" height="18" rx="9" fill="#68493d"/>
+</g>
+<g>
+  <rect x="605" y="296" width="390" height="178" rx="18" fill="url(#frame)" stroke="#718d99" stroke-width="8"/>
+  <rect x="626" y="317" width="348" height="135" rx="10" fill="url(#screen)"/>
+  <path d="M652 354H776M652 378H843M652 402H808" stroke="#e0f1f4" stroke-width="9" stroke-linecap="round" opacity=".72"/>
+  <path d="M652 426H730" stroke="#f0c875" stroke-width="8" stroke-linecap="round" opacity=".88"/>
+  <circle cx="939" cy="339" r="8" fill="#83c39c" opacity=".9"/>
+  <path d="M795 474V507" stroke="#6a4b3d" stroke-width="15" stroke-linecap="round"/><rect x="735" y="500" width="180" height="18" rx="9" fill="#68493d"/>
+</g>
+<g>
+  <rect x="1035" y="324" width="270" height="150" rx="16" fill="url(#frame)" stroke="#718d99" stroke-width="8"/>
+  <rect x="1052" y="341" width="236" height="116" rx="9" fill="#315d73"/>
+  <path d="M1074 378H1160M1074 401H1220M1074 424H1186" stroke="#d9eef2" stroke-width="8" stroke-linecap="round" opacity=".66"/>
+  <path d="M1074 445H1130" stroke="#efc777" stroke-width="7" stroke-linecap="round" opacity=".84"/>
+  <path d="M1168 474V507" stroke="#6a4b3d" stroke-width="15" stroke-linecap="round"/><rect x="1115" y="500" width="110" height="18" rx="9" fill="#68493d"/>
+</g>
+<g fill="#91c8a5"><circle cx="570" cy="463" r="3"/><circle cx="960" cy="463" r="3"/><circle cx="1268" cy="463" r="3"/></g>
+</svg>
