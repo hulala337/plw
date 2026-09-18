@@ -220,6 +220,7 @@ def init_db() -> None:
             achievement_id TEXT PRIMARY KEY,
             unlocked_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS progress_events (event_key TEXT PRIMARY KEY,event_type TEXT NOT NULL,xp INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS equipment (
             slot TEXT PRIMARY KEY,
             item_type TEXT NOT NULL,
@@ -681,50 +682,52 @@ def active_session() -> dict | None:
     item=dict(row); item["live_seconds"]=max(0,round(time.time()-datetime.fromisoformat(item["started_at"]).timestamp())); return item
 
 
+UNLOCK_CATALOG = [
+    {"item_type":"decoration","item_id":"green_plant","name":"植物","description":"给工作室添一点绿色。","required_level":1},
+    {"item_type":"decoration","item_id":"lamp","name":"台灯","description":"温柔的桌面灯光。","required_level":2},
+    {"item_type":"decoration","item_id":"coffee_machine","name":"咖啡机","description":"工作室的咖啡补给站。","required_level":3},
+    {"item_type":"scene","item_id":"dual_monitor_office","name":"双屏工作室","description":"适配双屏工作的专属布局。","required_level":4},
+    {"item_type":"pelican","item_id":"coffee_pelican","name":"咖啡鹈鹕","description":"解锁咖啡主题鹈鹕。","required_level":5},
+    {"item_type":"decoration","item_id":"fish_tank","name":"鱼缸","description":"工作间的小小水族箱。","required_level":6},
+    {"item_type":"scene","item_id":"sunset_office","name":"黄昏工作室","description":"黄昏时间模式。","required_level":8},
+    {"item_type":"decoration","item_id":"bookshelf","name":"书架","description":"让工作室更有生活感。","required_level":10},
+]
+ACHIEVEMENT_CATALOG = [
+    {"id":"first_session","name":"第一次 Session","description":"累计有效工作达到 1 分钟。","condition":"active>=60","xp":25},
+    {"id":"ten_hours","name":"累计 10 小时","description":"累计有效工作达到 10 小时。","condition":"active>=36000","xp":100},
+    {"id":"hundred_hours","name":"累计 100 小时","description":"累计有效工作达到 100 小时。","condition":"active>=360000","xp":500},
+    {"id":"multi_monitor","name":"多显示器","description":"检测到至少两块显示器。","condition":"monitors>=2","xp":50},
+    {"id":"seven_day_streak","name":"连续 7 天","description":"连续 7 天每天有超过 1 分钟有效工作。","condition":"streak>=7","xp":100},
+]
+
+def progression_xp_from_events(conn) -> int:
+    row=conn.execute("SELECT COALESCE(SUM(xp),0) AS xp FROM progress_events").fetchone()
+    return int(row["xp"] or 0)
+
+def award_progress_event(conn,event_key: str,event_type: str,xp: int,now: str) -> None:
+    if xp>0: conn.execute("INSERT OR IGNORE INTO progress_events(event_key,event_type,xp,created_at) VALUES(?,?,?,?)",(event_key,event_type,int(xp),now))
+
 def sync_progression() -> dict:
-    """Materialize the P1 growth model from real accumulated work data."""
+    """Materialize Growth from durable work facts and idempotent progression events."""
     conn=db()
     row=conn.execute("SELECT COALESCE(SUM(active_seconds),0) AS active, COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()
-    todo_row=conn.execute("SELECT COUNT(*) AS n FROM todos WHERE done=1").fetchone()
-    active=float(row["active"] or 0); chars=int(row["chars"] or 0); completed=int(todo_row["n"] or 0)
-    hours=active/3600.0
-    xp=int(active/60.0)+completed*20
-    level=min(12,1+xp//600)
-    now=datetime.now().isoformat(timespec="seconds")
-    conn.execute("""INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at)
-                    VALUES(1,?,?,?,?)
-                    ON CONFLICT(id) DO UPDATE SET xp=excluded.xp,total_active_seconds=excluded.total_active_seconds,level=excluded.level,updated_at=excluded.updated_at""",
-                 (xp,active,level,now))
-    unlock_rules=[
-        ("decoration","green_plant",1),
-        ("decoration","lamp",2),
-        ("decoration","coffee_machine",3),
-        ("scene","dual_monitor_office",4),
-        ("pelican","coffee_pelican",5),
-        ("decoration","fish_tank",6),
-        ("scene","sunset_office",8),
-        ("decoration","bookshelf",10),
-    ]
-    for item_type,item_id,required_level in unlock_rules:
-        if level>=required_level:
-            conn.execute("INSERT OR IGNORE INTO unlocks(item_type,item_id,unlocked_at) VALUES(?,?,?)",(item_type,item_id,now))
-    achievement_rules=[
-        ("first_session", active>=60),
-        ("ten_hours", active>=10*3600),
-        ("hundred_hours", active>=100*3600),
-        ("multi_monitor", len(refresh_monitor_layout())>=2),
-        ("seven_day_streak", streak_days()>=7),
-    ]
-    for achievement_id,ready in achievement_rules:
+    active=float(row["active"] or 0); chars=int(row["chars"] or 0); now=datetime.now().isoformat(timespec="seconds")
+    for r in conn.execute("SELECT id,completed_at FROM todos WHERE done=1 AND completed_at IS NOT NULL").fetchall():
+        award_progress_event(conn,"todo:%s:completed"%r["id"],"todo",20,r["completed_at"] or now)
+    for ach in ACHIEVEMENT_CATALOG:
+        ready=(ach["id"]=="first_session" and active>=60) or (ach["id"]=="ten_hours" and active>=36000) or (ach["id"]=="hundred_hours" and active>=360000) or (ach["id"]=="multi_monitor" and len(refresh_monitor_layout())>=2) or (ach["id"]=="seven_day_streak" and streak_days()>=7)
         if ready:
-            conn.execute("INSERT OR IGNORE INTO achievements(achievement_id,unlocked_at) VALUES(?,?)",(achievement_id,now))
+            conn.execute("INSERT OR IGNORE INTO achievements(achievement_id,unlocked_at) VALUES(?,?)",(ach["id"],now))
+            award_progress_event(conn,"achievement:"+ach["id"],"achievement",ach["xp"],now)
+    xp=int(active/60.0)+progression_xp_from_events(conn); level=min(12,1+xp//600)
+    conn.execute("""INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at) VALUES(1,?,?,?,?) ON CONFLICT(id) DO UPDATE SET xp=excluded.xp,total_active_seconds=excluded.total_active_seconds,level=excluded.level,updated_at=excluded.updated_at""",(xp,active,level,now))
+    for item in UNLOCK_CATALOG:
+        if level>=item["required_level"]: conn.execute("INSERT OR IGNORE INTO unlocks(item_type,item_id,unlocked_at) VALUES(?,?,?)",(item["item_type"],item["item_id"],now))
     conn.commit()
     unlock_rows=conn.execute("SELECT item_type,item_id,unlocked_at FROM unlocks ORDER BY unlocked_at,item_type,item_id").fetchall()
     achievement_rows=conn.execute("SELECT achievement_id,unlocked_at FROM achievements ORDER BY unlocked_at,achievement_id").fetchall()
     conn.close()
-    return {"xp":xp,"level":level,"active_hours":round(hours,2),"text_chars":chars,
-            "unlocks":[dict(x) for x in unlock_rows],"achievements":[dict(x) for x in achievement_rows]}
-
+    return {"xp":xp,"level":level,"active_hours":round(active/3600.0,2),"text_chars":chars,"unlocks":[dict(x) for x in unlock_rows],"achievements":[dict(x) for x in achievement_rows]}
 
 def lifetime_stats() -> dict:
     p=sync_progression()
@@ -733,34 +736,26 @@ def lifetime_stats() -> dict:
 
 
 def growth_payload() -> dict:
-    conn=db()
+    p=sync_progression(); conn=db()
     scenes=[dict(x) for x in conn.execute("SELECT * FROM scenes ORDER BY required_level,id").fetchall()]
     pelicans=[dict(x) for x in conn.execute("SELECT * FROM pelicans ORDER BY required_level,id").fetchall()]
     equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]
-    conn.close()
-    p=sync_progression()
-    unlocked={(x["item_type"],x["item_id"]) for x in p["unlocks"]}
-    return {"profile":{"xp":p["xp"],"level":p["level"],"active_hours":p["active_hours"]},
+    conn.close(); unlocked={(x["item_type"],x["item_id"]) for x in p["unlocks"]}
+    xp=p["xp"]; level=p["level"]; start=(level-1)*600; nxt=level*600 if level<12 else start; into=max(0,xp-start)
+    return {"profile":{"xp":xp,"level":level,"active_hours":p["active_hours"],"level_xp_start":start,"next_level_xp":nxt,"xp_into_level":into,"xp_to_next_level":max(0,nxt-xp),"progress_pct":100 if level>=12 else round(min(1,into/max(1,nxt-start))*100,1)},
             "unlocks":p["unlocks"],"achievements":p["achievements"],
+            "collection":{"pelicans":pelicans,"outfits":[],"accessories":[],"scenes":scenes,"decorations":[x for x in UNLOCK_CATALOG if x["item_type"]=="decoration"],"effects":[]},
             "scenes":[{**x,"unlocked":("scene",x["id"]) in unlocked or x["required_level"]<=1} for x in scenes],
-            "pelicans":[{**x,"unlocked":("pelican",x["id"]) in unlocked or x["required_level"]<=1} for x in pelicans],
-            "equipment":equipment}
-
+            "pelicans":[{**x,"unlocked":("pelican",x["id"]) in unlocked or x["required_level"]<=1} for x in pelicans],"equipment":equipment}
 
 def seed_progression_catalog() -> None:
     conn=db()
-    conn.executemany("INSERT OR IGNORE INTO scenes(id,name,required_level,base_id,weather,time_mode,monitor_mode) VALUES(?,?,?,?,?,?,?)",[
-        ("office","基础工作室",1,"office","clear","auto","auto"),
-        ("dual_monitor_office","双屏工作室",4,"office","clear","auto","dual"),
-        ("sunset_office","黄昏工作室",8,"office","clear","dusk","auto"),
-    ])
-    conn.executemany("INSERT OR IGNORE INTO pelicans(id,name,required_level,body_id,outfit_id) VALUES(?,?,?,?,?)",[
-        ("classic","基础鹈鹕",1,"classic","default"),
-        ("coffee_pelican","咖啡鹈鹕",5,"classic","coffee"),
-    ])
-    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("pelican","pelican","classic",datetime.now().isoformat(timespec="seconds")))
+    conn.executemany("INSERT OR IGNORE INTO scenes(id,name,required_level,base_id,weather,time_mode,monitor_mode) VALUES(?,?,?,?,?,?,?)",[("office","基础工作室",1,"office","clear","auto","auto"),("dual_monitor_office","双屏工作室",4,"office","clear","auto","dual"),("sunset_office","黄昏工作室",8,"office","clear","dusk","auto")])
+    conn.executemany("INSERT OR IGNORE INTO pelicans(id,name,required_level,body_id,outfit_id) VALUES(?,?,?,?,?)",[("classic","基础鹈鹕",1,"classic","default"),("coffee_pelican","咖啡鹈鹕",5,"classic","coffee")])
+    now=datetime.now().isoformat(timespec="seconds")
+    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("pelican","pelican","classic",now))
+    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("scene","scene","office",now))
     conn.commit(); conn.close()
-
 
 def streak_days() -> int:
     conn=db(); rows=conn.execute("SELECT day,active_seconds FROM daily WHERE active_seconds>60 ORDER BY day DESC LIMIT 60").fetchall(); conn.close()
@@ -1006,6 +1001,24 @@ def growth():
     return growth_payload()
 
 
+class EquipmentPatch(BaseModel):
+    slot: str
+    item_id: str
+
+@api.patch("/api/equipment")
+def patch_equipment(item: EquipmentPatch):
+    slot=item.slot.strip().lower()
+    if slot not in {"scene","pelican"}: raise HTTPException(400,"不支持的装备槽位")
+    conn=db(); table="scenes" if slot=="scene" else "pelicans"; item_type=slot
+    row=conn.execute("SELECT id,required_level FROM %s WHERE id=?"%table,(item.item_id,)).fetchone()
+    if not row: conn.close(); raise HTTPException(404,"内容不存在")
+    profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone(); level=int(profile["level"] if profile else 1)
+    unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(item_type,item.item_id)).fetchone()
+    if not unlocked and int(row["required_level"] or 1)>level: conn.close(); raise HTTPException(403,"内容尚未解锁")
+    now=datetime.now().isoformat(timespec="seconds")
+    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(slot,item_type,item.item_id,now))
+    conn.commit(); equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]; conn.close()
+    return {"ok":True,"equipment":equipment}
 @api.get("/api/dashboard")
 def dashboard(range: str="today"):
     if range not in {"today","week","month"}: raise HTTPException(400,"invalid range")
