@@ -105,7 +105,7 @@ certutil -hashfile "%RELEASE%\PelicanWorkbench_Setup_%VERSION%.exe" SHA256 > "%R
 >>"%RELEASE%\BUILD_INFO.txt" echo Integrity protection: Ed25519 signed asset manifest
 >>"%RELEASE%\BUILD_INFO.txt" echo Packaging: PyInstaller one-file
 >>"%RELEASE%\BUILD_INFO.txt" echo Source repairs: verified before packaging
->>"%RELEASE%\BUILD_INFO.txt" echo Visual polish: V2 applied before packaging
+>>"%RELEASE%\BUILD_INFO.txt" echo Visual system: V3.6 assets and integration applied before packaging
 >>"%RELEASE%\BUILD_INFO.txt" echo Packaged self-test: PASSED
 >>"%RELEASE%\BUILD_INFO.txt" echo Authenticode: %SIGNTOOL%
 
