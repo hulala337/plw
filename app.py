@@ -243,7 +243,29 @@ def init_db() -> None:
             body_id TEXT NOT NULL DEFAULT 'classic',
             outfit_id TEXT NOT NULL DEFAULT 'default'
         );
-        """
+        CREATE TABLE IF NOT EXISTS outfits (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1,
+            pelican_id TEXT,
+            FOREIGN KEY(pelican_id) REFERENCES pelicans(id) ON DELETE SET NULL
+        );
+        CREATE TABLE IF NOT EXISTS accessories (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1
+        );
+        CREATE TABLE IF NOT EXISTS decorations (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1,
+            slot TEXT NOT NULL DEFAULT 'room'
+        );
+        CREATE TABLE IF NOT EXISTS effects (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1
+        );        """
     )
     # Migrate older databases that predate activity_events.
     daily_cols = {r[1] for r in conn.execute("PRAGMA table_info(daily)").fetchall()}
@@ -594,7 +616,7 @@ def self_test() -> int:
                 raise RuntimeError("frontend view missing: "+view)
         seed_progression_catalog()
         conn=db()
-        required_tables={"progress_profile","progress_events","unlocks","achievements","equipment","scenes","pelicans"}
+        required_tables={"progress_profile","progress_events","unlocks","achievements","equipment","scenes","pelicans","outfits","accessories","decorations","effects"}
         actual_tables={r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
         if required_tables-actual_tables:
             conn.close(); raise RuntimeError("P1 tables missing: "+", ".join(sorted(required_tables-actual_tables)))
@@ -704,8 +726,11 @@ UNLOCK_CATALOG = [
     {"item_type":"decoration","item_id":"coffee_machine","name":"咖啡机","description":"工作室的咖啡补给站。","required_level":3},
     {"item_type":"scene","item_id":"dual_monitor_office","name":"双屏工作室","description":"适配双屏工作的专属布局。","required_level":4},
     {"item_type":"pelican","item_id":"coffee_pelican","name":"咖啡鹈鹕","description":"解锁咖啡主题鹈鹕。","required_level":5},
+    {"item_type":"outfit","item_id":"coffee_outfit","name":"咖啡围裙","description":"咖啡主题服装。","required_level":5},
     {"item_type":"decoration","item_id":"fish_tank","name":"鱼缸","description":"工作间的小小水族箱。","required_level":6},
+    {"item_type":"accessory","item_id":"headphones","name":"耳机","description":"专注时的工作配饰。","required_level":7},
     {"item_type":"scene","item_id":"sunset_office","name":"黄昏工作室","description":"黄昏时间模式。","required_level":8},
+    {"item_type":"effect","item_id":"focus_sparkles","name":"专注星光","description":"专注工作时出现的轻微环境效果。","required_level":9},
     {"item_type":"decoration","item_id":"bookshelf","name":"书架","description":"让工作室更有生活感。","required_level":10},
 ]
 ACHIEVEMENT_CATALOG = [
@@ -763,26 +788,27 @@ def lifetime_stats() -> dict:
 
 def growth_payload() -> dict:
     p=sync_progression(); conn=db()
-    scenes=[dict(x) for x in conn.execute("SELECT * FROM scenes ORDER BY required_level,id").fetchall()]
-    pelicans=[dict(x) for x in conn.execute("SELECT * FROM pelicans ORDER BY required_level,id").fetchall()]
+    tables={"scenes":"scenes","pelicans":"pelicans","outfits":"outfits","accessories":"accessories","decorations":"decorations","effects":"effects"}
+    rows={k:[dict(x) for x in conn.execute("SELECT * FROM "+v+" ORDER BY required_level,id").fetchall()] for k,v in tables.items()}
     equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]
     conn.close(); unlocked={(x["item_type"],x["item_id"]) for x in p["unlocks"]}
+    def decorate(items,kind): return [{**x,"unlocked":(kind,x["id"]) in unlocked or x["required_level"]<=1} for x in items]
     xp=p["xp"]; level=p["level"]; start=(level-1)*600; nxt=level*600 if level<12 else start; into=max(0,xp-start)
     return {"profile":{"xp":xp,"level":level,"active_hours":p["active_hours"],"level_xp_start":start,"next_level_xp":nxt,"xp_into_level":into,"xp_to_next_level":max(0,nxt-xp),"progress_pct":100 if level>=12 else round(min(1,into/max(1,nxt-start))*100,1)},
             "unlocks":p["unlocks"],"achievements":p["achievements"],
-            "collection":{"pelicans":pelicans,"outfits":[],"accessories":[],"scenes":scenes,"decorations":[x for x in UNLOCK_CATALOG if x["item_type"]=="decoration"],"effects":[]},
-            "scenes":[{**x,"unlocked":("scene",x["id"]) in unlocked or x["required_level"]<=1} for x in scenes],
-            "pelicans":[{**x,"unlocked":("pelican",x["id"]) in unlocked or x["required_level"]<=1} for x in pelicans],"equipment":equipment}
-
+            "collection":{"pelicans":decorate(rows["pelicans"],"pelican"),"outfits":decorate(rows["outfits"],"outfit"),"accessories":decorate(rows["accessories"],"accessory"),"scenes":decorate(rows["scenes"],"scene"),"decorations":decorate(rows["decorations"],"decoration"),"effects":decorate(rows["effects"],"effect")},
+            "scenes":decorate(rows["scenes"],"scene"),"pelicans":decorate(rows["pelicans"],"pelican"),"equipment":equipment}
 def seed_progression_catalog() -> None:
-    conn=db()
+    conn=db(); now=datetime.now().isoformat(timespec="seconds")
     conn.executemany("INSERT OR IGNORE INTO scenes(id,name,required_level,base_id,weather,time_mode,monitor_mode) VALUES(?,?,?,?,?,?,?)",[("office","基础工作室",1,"office","clear","auto","auto"),("dual_monitor_office","双屏工作室",4,"office","clear","auto","dual"),("sunset_office","黄昏工作室",8,"office","clear","dusk","auto")])
     conn.executemany("INSERT OR IGNORE INTO pelicans(id,name,required_level,body_id,outfit_id) VALUES(?,?,?,?,?)",[("classic","基础鹈鹕",1,"classic","default"),("coffee_pelican","咖啡鹈鹕",5,"classic","coffee")])
-    now=datetime.now().isoformat(timespec="seconds")
-    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("pelican","pelican","classic",now))
-    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("scene","scene","office",now))
+    conn.executemany("INSERT OR IGNORE INTO outfits(id,name,required_level,pelican_id) VALUES(?,?,?,?)",[("default","基础服装",1,"classic"),("coffee_outfit","咖啡围裙",5,"coffee_pelican")])
+    conn.executemany("INSERT OR IGNORE INTO accessories(id,name,required_level) VALUES(?,?,?)",[("headphones","耳机",7)])
+    conn.executemany("INSERT OR IGNORE INTO decorations(id,name,required_level,slot) VALUES(?,?,?,?)",[("green_plant","植物",1,"room"),("lamp","台灯",2,"desk"),("coffee_machine","咖啡机",3,"desk"),("fish_tank","鱼缸",6,"room"),("bookshelf","书架",10,"room")])
+    conn.executemany("INSERT OR IGNORE INTO effects(id,name,required_level) VALUES(?,?,?)",[("focus_sparkles","专注星光",9)])
+    for slot,item_type,item_id in [("scene","scene","office"),("pelican","pelican","classic"),("outfit","outfit","default")]:
+        conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",(slot,item_type,item_id,now))
     conn.commit(); conn.close()
-
 def streak_days() -> int:
     conn=db(); rows=conn.execute("SELECT day,active_seconds FROM daily WHERE active_seconds>60 ORDER BY day DESC LIMIT 60").fetchall(); conn.close()
     streak=0; cursor=date.today()
@@ -1035,15 +1061,15 @@ class EquipmentPatch(BaseModel):
 @api.patch("/api/equipment")
 def patch_equipment(item: EquipmentPatch):
     slot=item.slot.strip().lower()
-    if slot not in {"scene","pelican"}: raise HTTPException(400,"不支持的装备槽位")
-    conn=db(); table="scenes" if slot=="scene" else "pelicans"; item_type=slot
-    row=conn.execute("SELECT id,required_level FROM %s WHERE id=?"%table,(item.item_id,)).fetchone()
+    allowed={"scene":"scenes","pelican":"pelicans","outfit":"outfits","accessory":"accessories","decoration":"decorations","effect":"effects"}
+    if slot not in allowed: raise HTTPException(400,"不支持的装备槽位")
+    conn=db(); row=conn.execute("SELECT id,required_level FROM "+allowed[slot]+" WHERE id=?",(item.item_id,)).fetchone()
     if not row: conn.close(); raise HTTPException(404,"内容不存在")
     profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone(); level=int(profile["level"] if profile else 1)
-    unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(item_type,item.item_id)).fetchone()
+    unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
     if not unlocked and int(row["required_level"] or 1)>level: conn.close(); raise HTTPException(403,"内容尚未解锁")
     now=datetime.now().isoformat(timespec="seconds")
-    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(slot,item_type,item.item_id,now))
+    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(slot,slot,item.item_id,now))
     conn.commit(); equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]; conn.close()
     return {"ok":True,"equipment":equipment}
 @api.get("/api/dashboard")
