@@ -39,7 +39,7 @@ on('autostart','change',e=>patch('autostart',e.target.checked));
 on('desktopPet','change',e=>patch('desktop_pet',e.target.checked));
 on('weatherEnabled','change',e=>{weatherEnabled=e.target.checked;patch('weather_enabled',e.target.checked).then(renderWeather);});
 on('idleSeconds','change',e=>patch('idle_seconds',Number(e.target.value)));
-on('todoForm','submit',async e=>{e.preventDefault();const v=$('todoInput').value.trim();if(!v)return;await fetch('/api/todos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:v})});$('todoInput').value='';getData(state.range);};
+on('todoForm','submit',async e=>{e.preventDefault();const v=$('todoInput').value.trim();if(!v)return;await fetch('/api/todos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:v})});$('todoInput').value='';getData(state.range);});
 on('replayBtn','click',()=>setView('replay'));
 on('nowBtn','click',()=>{const track=$('track'),scrub=$('scrub');if(!track||!scrub)return;const p=(new Date().getHours()*60+new Date().getMinutes())/1440;scrub.style.left=(p*100)+'%';});
 on('zoomPlus','click',()=>{state.zoom=Math.min(2.5,state.zoom+.5);renderTimeline();});
