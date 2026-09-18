@@ -795,7 +795,7 @@ def growth_payload() -> dict:
     def decorate(items,kind): return [{**x,"unlocked":(kind,x["id"]) in unlocked or x["required_level"]<=1} for x in items]
     xp=p["xp"]; level=p["level"]; start=(level-1)*600; nxt=level*600 if level<12 else start; into=max(0,xp-start)
     return {"profile":{"xp":xp,"level":level,"active_hours":p["active_hours"],"level_xp_start":start,"next_level_xp":nxt,"xp_into_level":into,"xp_to_next_level":max(0,nxt-xp),"progress_pct":100 if level>=12 else round(min(1,into/max(1,nxt-start))*100,1)},
-            "unlocks":p["unlocks"],"achievements":p["achievements"],
+            "unlocks":p["unlocks"],"achievements":p["achievements"],"unlock_catalog":[{**x,"unlocked":(x["item_type"],x["item_id"]) in unlocked} for x in UNLOCK_CATALOG],"achievement_catalog":[{**x,"unlocked":x["id"] in {a["achievement_id"] for a in p["achievements"]}} for x in ACHIEVEMENT_CATALOG],
             "collection":{"pelicans":decorate(rows["pelicans"],"pelican"),"outfits":decorate(rows["outfits"],"outfit"),"accessories":decorate(rows["accessories"],"accessory"),"scenes":decorate(rows["scenes"],"scene"),"decorations":decorate(rows["decorations"],"decoration"),"effects":decorate(rows["effects"],"effect")},
             "scenes":decorate(rows["scenes"],"scene"),"pelicans":decorate(rows["pelicans"],"pelican"),"equipment":equipment}
 def seed_progression_catalog() -> None:
