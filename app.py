@@ -836,6 +836,7 @@ def world_payload() -> dict:
             "outfit":eq.get("outfit","default"),"accessory":eq.get("accessory"),
             "decorations":[x["item_id"] for x in g["equipment"] if x["item_type"]=="decoration"],
             "effect":eq.get("effect"),"display_count":displays["count"],
+            "current_monitor_index":displays.get("current_monitor_index"),
             "work_state":"working" if active else "resting"}
 
 def api_payload(kind="today") -> dict:
@@ -1035,7 +1036,22 @@ def display_info() -> dict:
             import ctypes
             user32=ctypes.windll.user32
             monitors=[{"name":"PRIMARY","left":0,"top":0,"right":user32.GetSystemMetrics(0),"bottom":user32.GetSystemMetrics(1),"width":user32.GetSystemMetrics(0),"height":user32.GetSystemMetrics(1)}]
-    return {"count":len(monitors),"mode":"single" if len(monitors)<=1 else "multi","monitors":monitors}
+    current = None
+    if last_xy is not None:
+        current = monitor_at(last_xy[0], last_xy[1])
+    current_index = None
+    if current is not None:
+        for m in monitors:
+            if (m["left"],m["top"],m["right"],m["bottom"]) == current:
+                current_index = m["index"]
+                break
+    return {
+        "count": len(monitors),
+        "mode": "single" if len(monitors)<=1 else "multi",
+        "monitors": monitors,
+        "current_monitor_index": current_index,
+        "current_cursor": {"x": last_xy[0], "y": last_xy[1]} if last_xy is not None else None,
+    }
 
 
 @api.get("/api/display-info")
@@ -1046,7 +1062,7 @@ def api_display_info():
 @api.get("/api/health")
 def api_health():
     return {
-        "status": "ok" if listeners_healthy() else "degraded",
+        "status": "ok" if listeners_healthy() and any(t.name == "tracker" and t.is_alive() for t in threading.enumerate()) and DB_PATH.exists() else "degraded",
         "listeners": listeners_healthy(),
         "keyboard_listener": bool(listener_refs and len(listener_refs) >= 1 and listener_refs[0].is_alive()),
         "mouse_listener": bool(listener_refs and len(listener_refs) >= 2 and listener_refs[1].is_alive()),
