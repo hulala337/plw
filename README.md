@@ -1,4 +1,4 @@
-# Pelican Workbench V3.2.4
+# Pelican Workbench V3.6.0
 
 Windows 产品版：鹈鹕工作台 · TF7Z-XY
 
@@ -7,9 +7,9 @@ Windows 产品版：鹈鹕工作台 · TF7Z-XY
 1. Windows 安装 Python 3.11/3.12 x64。
 2. 安装 Inno Setup 6。
 3. 双击 `build_release.bat`。
-4. 最终安装包位于 `release\\PelicanWorkbench_Setup_3.2.3.exe`。
+4. 最终安装包位于 `release\\PelicanWorkbench_Setup_3.6.0.exe`。
 
-构建脚本会创建项目自己的 `.venv`，安装固定版本的 pywebview 与 PyInstaller，生成 one-file EXE，随后调用 Inno Setup。
+构建脚本会创建项目自己的 `.venv`，安装固定版本的 pywebview 与 PyInstaller，执行源码自检与资源完整性检查，生成 one-file EXE，随后调用 Inno Setup。
 
 ## 隐私
 
