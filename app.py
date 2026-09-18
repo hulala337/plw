@@ -614,6 +614,15 @@ def run_server() -> int:
     threading.Thread(target=uvicorn.run,kwargs={"app":api,"host":"127.0.0.1","port":PORT,"log_level":"warning"},daemon=True).start(); return PORT
 
 
+def wait_for_server(timeout: float = 5.0) -> bool:
+    deadline=time.time()+timeout
+    while time.time() < deadline:
+        with suppress(Exception):
+            sock=socket.create_connection(("127.0.0.1",PORT),timeout=0.25); sock.close(); return True
+        time.sleep(0.05)
+    return False
+
+
 def open_ui() -> bool:
     global webview_window
     url=f"http://127.0.0.1:{PORT}/"
@@ -883,6 +892,8 @@ def main() -> None:
     ensure_today()
     set_windows_dpi_awareness()
     run_server()
+    if not wait_for_server():
+        raise SystemExit("Pelican Workbench local server failed to start")
     listeners_start()
     threading.Thread(target=tracker, daemon=True, name="tracker").start()
     threading.Thread(target=listener_watchdog, daemon=True, name="listener-watchdog").start()
