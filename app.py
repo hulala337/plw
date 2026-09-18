@@ -577,7 +577,7 @@ def run_server() -> int:
     threading.Thread(target=uvicorn.run,kwargs={"app":api,"host":"127.0.0.1","port":PORT,"log_level":"warning"},daemon=True).start(); return PORT
 
 
-def open_ui() -> None:
+def open_ui() -> bool:
     global webview_window
     url=f"http://127.0.0.1:{PORT}/"
     if webview:
@@ -598,15 +598,16 @@ def open_ui() -> None:
 
             webview_window.events.closing += on_closing
             webview.start(gui="edgechromium",debug=False)
-            return
+            return True
         except Exception:
             # WebView2 may be missing/broken on a fresh Windows machine. Keep
             # the application useful by opening the local dashboard in the
             # default browser instead of silently leaving only a tray icon.
             with suppress(Exception):
                 webbrowser.open(url)
-            return
+            return False
     webbrowser.open(url)
+    return False
 
 
 def start_tray() -> None:
@@ -827,9 +828,9 @@ def export_xlsx(range:str="today"):
 
 
 def main() -> None:
+    enforce_release_integrity()
     if "--self-test" in sys.argv:
         raise SystemExit(self_test())
-    enforce_release_integrity()
     init_db()
     recover_stale_sessions()
     ensure_today()
@@ -851,11 +852,19 @@ def main() -> None:
     elif os.name == "nt" and pystray:
         tray_thread = threading.Thread(target=start_tray, daemon=True, name="tray")
         tray_thread.start()
-        open_ui()
-        STOP.set()
+        ui_owned_loop = open_ui()
+        if ui_owned_loop:
+            STOP.set()
+        else:
+            while not STOP.wait(0.5):
+                pass
     else:
-        open_ui()
-        STOP.set()
+        ui_owned_loop = open_ui()
+        if ui_owned_loop:
+            STOP.set()
+        else:
+            while not STOP.wait(0.5):
+                pass
 
 
 if __name__=="__main__": main()
