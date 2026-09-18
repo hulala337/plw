@@ -543,7 +543,7 @@ def self_test() -> int:
             raise RuntimeError("Growth UI navigation/view missing")
         import re
         html_ids=set(re.findall(r'id="([^"]+)"',html))
-        js_ids=set(re.findall(r"\$\(['"]([^'"]+)['"]\)",js))
+        js_ids=set(re.findall(r"\$\('([^']+)'\)",js))
         missing_dom=sorted(js_ids-html_ids)
         if missing_dom:
             raise RuntimeError("frontend DOM contract missing IDs: "+", ".join(missing_dom))
