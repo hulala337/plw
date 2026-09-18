@@ -818,14 +818,29 @@ def streak_days() -> int:
     return streak
 
 
+def world_payload() -> dict:
+    g=growth_payload(); eq={x["slot"]:x["item_id"] for x in g["equipment"]}
+    displays=display_info()
+    selected_scene=eq.get("scene","office")
+    # Automatic monitor adaptation is a property of the world, not of the tracker.
+    if selected_scene=="office" and displays["count"]>=3: effective_scene="dual_monitor_office"
+    elif selected_scene=="office" and displays["count"]>=2: effective_scene="dual_monitor_office"
+    else: effective_scene=selected_scene
+    active=bool(active_session())
+    return {"scene":effective_scene,"selected_scene":selected_scene,"pelican":eq.get("pelican","classic"),
+            "outfit":eq.get("outfit","default"),"accessory":eq.get("accessory"),
+            "decorations":[x["item_id"] for x in g["equipment"] if x["slot"]=="decoration"],
+            "effect":eq.get("effect"),"display_count":displays["count"],
+            "work_state":"working" if active else "resting"}
+
 def api_payload(kind="today") -> dict:
     start,end=range_bounds(kind); total,by_day,longest,rhythm=fetch_summary(start,end); conn=db()
     timeline=conn.execute("SELECT slice_start,category,seconds,events FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start", (start.isoformat(), end.isoformat())).fetchall()
     apps=conn.execute("SELECT category,COALESCE(SUM(seconds),0) AS seconds FROM app_usage WHERE day BETWEEN ? AND ? GROUP BY category ORDER BY seconds DESC", (start.isoformat(), end.isoformat())).fetchall()
     sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at DESC", ((end+timedelta(days=1)).isoformat(), start.isoformat())).fetchall()
     todos=conn.execute("SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC").fetchall(); conn.close()
-    world = growth_payload()
-    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"world":{"equipment":world["equipment"],"scenes":world["scenes"],"pelicans":world["pelicans"]},"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
+    world = world_payload()
+    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"world":world,"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
 
 
 def startup_enabled() -> bool:
