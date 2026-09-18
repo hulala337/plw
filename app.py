@@ -526,9 +526,19 @@ def tracker() -> None:
         name,title=foreground_context(); category=classify_activity(name,title,active)
         with LOCK: current_seq=state["event_seq"]
         new_events=max(0,current_seq-last_seq); last_seq=current_seq
-        flush_pending()
+        try:
+            flush_pending()
+            if active:
+                incr(active_seconds=dt)
+            else:
+                incr(idle_seconds=dt)
+        except Exception:
+            # A transient database failure must not kill the tracker thread.
+            # Pending input remains queued by flush_pending() for a later retry.
+            prev=now
+            STOP.wait(TRACK_INTERVAL)
+            continue
         if active:
-            incr(active_seconds=dt)
             if session_id is None:
                 conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)", (datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
                 session_started=last_input_ts; session_active=0; session_last_active=last_input_ts; session_events=0; categories=[]
@@ -843,7 +853,7 @@ def forget_today():
     with pending_lock:
         for key in pending:
             pending[key]=0
-    last_input_ts=time.time()
+    last_input_ts=0.0
     last_xy=None; last_monitor_index=None; tracker_reset_seq += 1
     conn=db()
     conn.execute("DELETE FROM daily WHERE day=?",(target,))
