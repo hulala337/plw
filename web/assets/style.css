@@ -38,3 +38,6 @@ main{min-width:0;padding:26px 34px 24px}.topbar{display:flex;align-items:flex-st
 @media(max-width:560px){main{padding:15px}.top-title h1{font-size:22px}.office-scene{height:350px!important}.scene-window{width:57%;height:42%}.board{width:28%;height:40%}.pelican{left:13%;width:39%}.scene-bubble{left:31%;top:18%}.metrics-panel{grid-template-columns:repeat(2,1fr)}.metrics-title{grid-column:1/-1}.focus-mini{grid-column:1/-1}.insight-grid{grid-template-columns:1fr}.donut-wrap{justify-content:center}.report{grid-template-columns:repeat(2,1fr)}.replay-head,.stats-head{display:block}.replay-head .primary{margin-top:12px}}
 
 .metrics-panel .rhythm{display:none!important}
+
+/* P1 Growth progress component */
+.growth-xp{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px}.growth-xp i{display:block;height:8px;border-radius:99px;background:#e5edf1;position:relative;overflow:hidden}.growth-xp i:after{content:"";position:absolute;inset:0;background:#73ad8c;transform-origin:left;}
