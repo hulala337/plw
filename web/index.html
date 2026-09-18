@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="stylesheet" href="/assets/art-system.css">
 <link rel="stylesheet" href="/assets/environment.css">
-<link rel="stylesheet" href="/assets/visual-v35.css">
 </head>
 <body>
 <div class="app-shell">
@@ -264,104 +263,18 @@
   setInterval(syncArt,30000);
 })();
 </script>
-<script>
-(function(){
-  function syncSettings(){
-    const a=document.getElementById('autostart'), b=document.getElementById('autostartSettings');
-    if(a&&b){
-      b.checked=a.checked;
-      b.onchange=async()=>{ a.checked=b.checked; if(typeof patch==='function') await patch('autostart',b.checked); };
-    }
-    const d=document.getElementById('displayInfo'), ds=document.getElementById('displayInfoSettings');
-    if(d&&ds) ds.textContent=d.textContent||'正在识别显示器布局…';
-    const g=document.getElementById('growthText'), gs=document.getElementById('growthTextSettings');
-    if(g&&gs) gs.textContent=g.textContent||'还没有解锁家具。';
-  }
-  function renderDonut(){
-    if(!window.state || !state.data) return;
-    const apps=state.data.apps||[];
-    const total=apps.reduce((n,x)=>n+Number(x.seconds||0),0);
-    const donut=document.getElementById('donutChart'), legend=document.getElementById('donutLegend'), totalEl=document.getElementById('donutTotal');
-    if(!donut||!legend) return;
-    totalEl.textContent=total>=3600?(total/3600).toFixed(1)+'h':Math.round(total/60)+'m';
-    if(!apps.length){ donut.style.background='#dbe6ea'; legend.innerHTML='<span class="empty">今天还没有足够的工作活动。</span>'; return; }
-    const colors=Object.values(CAT).map(x=>x[1]);
-    let acc=0; const stops=[];
-    apps.slice().sort((a,b)=>b.seconds-a.seconds).forEach((x,i)=>{
-      const p=x.seconds/total*100, end=acc+p; stops.push(`${colors[i%colors.length]} ${acc}% ${end}%`); acc=end;
-    });
-    donut.style.background=`conic-gradient(${stops.join(',')})`;
-    legend.innerHTML=apps.slice().sort((a,b)=>b.seconds-a.seconds).slice(0,6).map((x,i)=>{
-      const name=CAT[x.category]?.[0]||x.category, pct=Math.round(x.seconds/total*100);
-      return `<div><span><i style="background:${colors[i%colors.length]}"></i>${name}</span><b>${pct}%</b></div>`;
-    }).join('');
-  }
-  syncSettings(); renderDonut();
-  setInterval(()=>{syncSettings();renderDonut()},1000);
-})();
-</script>
 
 
-<script>
-/* V3.4 Stage 2 — environment presentation layer.
-   Reads existing weather/clock text only; it does not alter business logic or APIs. */
-(function () {
-  const scene = document.getElementById('scene');
-  const weather = document.getElementById('weather');
-  const clock = document.getElementById('clock');
-  if (!scene) return;
 
-  function classifyWeather(text) {
-    const s = (text || '').toLowerCase();
-    if (/雨|雷|阵雨|暴雨|小雨|中雨|大雨|storm|rain|drizzle/.test(s)) return 'rain';
-    if (/雪|snow|sleet/.test(s)) return 'snow';
-    if (/阴|云|多云|cloud|overcast/.test(s)) return 'cloud';
-    if (/雾|霾|fog|mist|haze/.test(s)) return 'mist';
-    return 'clear';
-  }
-
-  function classifyTime() {
-    const m = (clock && clock.textContent || '').match(/(\d{1,2}):(\d{2})/);
-    if (!m) return 'day';
-    const h = Number(m[1]);
-    if (h >= 5 && h < 8) return 'dawn';
-    if (h >= 8 && h < 17) return 'day';
-    if (h >= 17 && h < 19) return 'dusk';
-    return 'night';
-  }
-
-  function syncEnvironment() {
-    const time = classifyTime();
-    const wx = classifyWeather(weather && weather.textContent);
-    scene.dataset.time = time;
-    scene.dataset.weather = wx;
-    scene.dataset.environment = time + '-' + wx;
-    document.documentElement.dataset.officeTime = time;
-    document.documentElement.dataset.officeWeather = wx;
-  }
-
-  syncEnvironment();
-  setInterval(syncEnvironment, 15000);
-  new MutationObserver(syncEnvironment).observe(weather || scene, {subtree:true, childList:true, characterData:true});
-})();
-</script>
-
-<link rel="stylesheet" href="/assets/visual-stage3.css">
-<script src="/assets/visual-stage3.js"></script>
-<script src="/assets/visual-v35.js"></script>
-<link rel="stylesheet" href="/assets/visual-v35-life.css">
-<script src="/assets/visual-v35-life.js"></script>
-<link rel="stylesheet" href="/assets/visual-v35-life-round3.css">
-<script src="/assets/visual-v35-life-round3.js"></script>
-<script src="/assets/visual-v36.js"></script>
 <link rel="stylesheet" href="/assets/visual-v36.css">
 <link rel="stylesheet" href="/assets/visual-v36b.css">
-<script src="/assets/visual-v36b.js"></script>
-<link rel="stylesheet" href="/assets/visual-v36d.css">
-<script src="/assets/visual-v36d.js"></script>
-<link rel="stylesheet" href="/assets/visual-v36e.css">
-<script src="/assets/visual-v36e.js"></script>
 <link rel="stylesheet" href="/assets/visual-v36c.css">
+<link rel="stylesheet" href="/assets/visual-v36d.css">
+<link rel="stylesheet" href="/assets/visual-v36e.css">
+<script src="/assets/visual-v36.js"></script>
+<script src="/assets/visual-v36b.js"></script>
 <script src="/assets/visual-v36c.js"></script>
+<script src="/assets/visual-v36d.js"></script>
+<script src="/assets/visual-v36e.js"></script>
 </body>
 </html>
