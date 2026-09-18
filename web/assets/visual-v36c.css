@@ -43,3 +43,13 @@
 #scene .scene-monitors-v36 img{width:100%;height:100%;display:block;object-fit:cover}
 #scene.is-idle .scene-monitors-v36{filter:saturate(.88) brightness(.98)}
 #scene.high-intensity .scene-monitors-v36{filter:brightness(1.04)}
+
+/* V3.6 monitor topology: single-display users must not see a second monitor. */
+#scene .scene-monitors-single{display:none}
+#scene .scene-monitors-multi{display:block}
+#scene[data-monitors="1"] .scene-monitors-single{display:block}
+#scene[data-monitors="1"] .scene-monitors-multi{display:none}
+#scene[data-monitors="2"] .scene-monitors-single,
+#scene[data-monitors="3"] .scene-monitors-single{display:none}
+#scene[data-monitors="2"] .scene-monitors-multi,
+#scene[data-monitors="3"] .scene-monitors-multi{display:block}
