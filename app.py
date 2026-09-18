@@ -521,6 +521,8 @@ def tracker() -> None:
     prev=time.time(); session_id=None; session_started=None; session_active=0.0; session_last_active=None; last_seq=state["event_seq"]; session_events=0; categories=[]; local_reset_seq=tracker_reset_seq
     while not STOP.is_set():
         now=time.time(); dt=min(now-prev,5.0); active=(now-last_input_ts)<=int(setting_get("idle_seconds",str(IDLE_SECONDS)))
+        if local_reset_seq != tracker_reset_seq:
+            session_id=None; session_started=None; session_active=0.0; session_last_active=None; session_events=0; categories=[]; local_reset_seq=tracker_reset_seq
         name,title=foreground_context(); category=classify_activity(name,title,active)
         with LOCK: current_seq=state["event_seq"]
         new_events=max(0,current_seq-last_seq); last_seq=current_seq
@@ -825,12 +827,22 @@ def delete_todo(todo_id:int):
 
 @api.post("/api/forget-today")
 def forget_today():
+    global last_input_ts, last_xy, last_monitor_index, tracker_reset_seq
     target=today_key()
+    start=target+"T00:00:00"
+    end=(date.today()+timedelta(days=1)).isoformat()+"T00:00:00"
+    with pending_lock:
+        for key in pending:
+            pending[key]=0
+    last_input_ts=time.time()
+    last_xy=None; last_monitor_index=None; tracker_reset_seq += 1
     conn=db()
     conn.execute("DELETE FROM daily WHERE day=?",(target,))
     conn.execute("DELETE FROM activity_slices WHERE date(slice_start)=?",(target,))
     conn.execute("DELETE FROM app_usage WHERE day=?",(target,))
-    conn.execute("DELETE FROM focus_sessions WHERE date(started_at)=?",(target,))
+    # Remove any focus session that overlaps today, including cross-midnight
+    # sessions, so forgotten activity cannot remain visible in session history.
+    conn.execute("DELETE FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?)",(end,start))
     conn.commit(); conn.close(); ensure_today(target)
     return {"ok":True,"day":target}
 
