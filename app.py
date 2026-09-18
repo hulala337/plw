@@ -89,6 +89,7 @@ listener_refs = []
 listener_restart_lock = threading.Lock()
 listener_last_ok = 0.0
 listener_restart_count = 0
+tracker_reset_seq = 0
 listener_last_keyboard_event = 0.0
 listener_last_mouse_event = 0.0
 pending_lock = threading.Lock()
@@ -115,8 +116,12 @@ class SettingsPatch(BaseModel):
 
 def db() -> __import__("sqlite3").Connection:
     import sqlite3
-    conn = sqlite3.connect(DB_PATH, timeout=15, check_same_thread=False)
+    conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    with suppress(Exception):
+        conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
+    conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
 
@@ -259,18 +264,28 @@ def queue_input(**kwargs) -> None:
 
 
 def flush_pending() -> None:
+    # Keep the batch queued until SQLite confirms the commit. A transient lock
+    # must never turn input events into silent data loss.
     ensure_today()
     with pending_lock:
         batch = {k:v for k,v in pending.items() if v}
-        for k in pending:
-            pending[k] = 0
     if not batch:
         return
     with LOCK:
         conn = db()
-        sets = ", ".join(f"{k}={k}+?" for k in batch)
-        conn.execute(f"UPDATE daily SET {sets} WHERE day=?", [*batch.values(), today_key()])
-        conn.commit(); conn.close()
+        try:
+            sets = ", ".join("%s=%s+?" % (k,k) for k in batch)
+            conn.execute("UPDATE daily SET %s WHERE day=?" % sets, [*batch.values(), today_key()])
+            conn.commit()
+        except Exception:
+            with suppress(Exception):
+                conn.rollback()
+            raise
+        finally:
+            conn.close()
+    with pending_lock:
+        for key, value in batch.items():
+            pending[key] = max(0, pending[key] - value)
 
 
 def incr(**kwargs) -> None:
