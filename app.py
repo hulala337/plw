@@ -331,6 +331,43 @@ def flush_pending() -> None:
             pending[key] = max(0, pending[key] - value)
 
 
+def persist_tracker_tick(day: str, slice_key: str, category: str, dt: float, events: int = 0) -> None:
+    """Atomically persist one tracker tick and all queued input counters."""
+    with LOCK:
+        with pending_lock:
+            batch = {k: v for k, v in pending.items() if v}
+        conn = db()
+        try:
+            conn.execute("INSERT OR IGNORE INTO daily(day) VALUES(?)", (day,))
+            updates = dict(batch)
+            updates["active_seconds"] = updates.get("active_seconds", 0) + dt
+            sets = ", ".join(f"{k}={k}+?" for k in updates)
+            conn.execute(f"UPDATE daily SET {sets} WHERE day=?", [*updates.values(), day])
+            conn.execute(
+                """INSERT INTO activity_slices(slice_start,category,seconds,events)
+                   VALUES(?,?,?,?)
+                   ON CONFLICT(slice_start,category) DO UPDATE
+                   SET seconds=seconds+excluded.seconds,events=events+excluded.events""",
+                (slice_key, category, int(round(dt)), events),
+            )
+            conn.execute(
+                """INSERT INTO app_usage(day,category,seconds) VALUES(?,?,?)
+                   ON CONFLICT(day,category) DO UPDATE SET seconds=seconds+excluded.seconds""",
+                (day, category, dt),
+            )
+            conn.commit()
+        except Exception:
+            with suppress(Exception):
+                conn.rollback()
+            raise
+        finally:
+            conn.close()
+    if batch:
+        with pending_lock:
+            for key, value in batch.items():
+                pending[key] = max(0, pending[key] - value)
+
+
 def incr(**kwargs) -> None:
     # Retained for non-hook bookkeeping; input hooks use queue_input().
     ensure_today()
@@ -609,11 +646,8 @@ def tracker() -> None:
         with LOCK: current_seq=state["event_seq"]
         new_events=max(0,current_seq-last_seq); last_seq=current_seq
         try:
-            flush_pending()
-            if active:
-                incr(active_seconds=dt)
-            else:
-                incr(idle_seconds=dt)
+            slice_key=datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes")
+            persist_tracker_tick(today_key(), slice_key, category, dt, new_events)
         except Exception:
             # A transient database failure must not kill the tracker thread.
             # Pending input remains queued by flush_pending() for a later retry.
@@ -631,11 +665,8 @@ def tracker() -> None:
                 if session_id and session_last_active and now-session_last_active > FOCUS_BREAK_SECONDS:
                     _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
                     session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
-            persist_slice(today_key(), datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), category, dt, new_events)
         except Exception:
-            # Any SQLite failure must keep the tracker alive. The input batch
-            # remains queued when flush_pending() failed; slice/session writes
-            # are retried on the next tracker tick instead of killing the thread.
+            # Session bookkeeping must never terminate the tracker.
             prev=now
             STOP.wait(TRACK_INTERVAL)
             continue
