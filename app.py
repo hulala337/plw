@@ -87,7 +87,7 @@ last_monitor_index: tuple[int, int, int, int] | None = None
 monitor_layout = []
 monitor_layout_signature = ()
 monitor_layout_ts = 0.0
-last_input_ts = time.time()
+last_input_ts = 0.0
 listener_refs = []
 listener_restart_lock = threading.Lock()
 listener_last_ok = 0.0
@@ -679,7 +679,7 @@ def tracker() -> None:
     global tracker_reset_seq
     prev=time.time(); session_id=None; session_started=None; session_active=0.0; session_last_active=None; last_seq=state["event_seq"]; session_events=0; categories=[]; local_reset_seq=tracker_reset_seq
     while not STOP.is_set():
-        now=time.time(); dt=min(now-prev,5.0); active=(now-last_input_ts)<=int(setting_get("idle_seconds",str(IDLE_SECONDS)))
+        now=time.time(); dt=min(now-prev,5.0); active=(last_input_ts > 0 and now-last_input_ts<=int(setting_get("idle_seconds",str(IDLE_SECONDS))))
         if local_reset_seq != tracker_reset_seq:
             session_id=None; session_started=None; session_active=0.0; session_last_active=None; session_events=0; categories=[]; local_reset_seq=tracker_reset_seq
         name,title=foreground_context(); category=classify_activity(name,title,active)
