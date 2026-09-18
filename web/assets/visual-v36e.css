@@ -1,0 +1,48 @@
+/* V3.6-E — local character motion. Face/eye layers are real assets; no business state is changed. */
+#scene .pelican-face-layer,
+#scene .pelican-typing-marks-v36{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+#scene .pelican-face-layer{z-index:3}
+#scene .pelican-eye-whites-v36{opacity:0;transition:opacity .22s ease}
+#scene.working .pelican-eye-whites-v36,
+#scene.focus-mode .pelican-eye-whites-v36,
+#scene.high-intensity .pelican-eye-whites-v36,
+#scene.behavior-think .pelican-eye-whites-v36,
+#scene.behavior-coffee .pelican-eye-whites-v36,
+#scene.behavior-read-board .pelican-eye-whites-v36{opacity:1}
+#scene .pelican-pupil-left-v36,
+#scene .pelican-pupil-right-v36,
+#scene .pelican-pupil-left-think-v36,
+#scene .pelican-pupil-right-think-v36{opacity:0;will-change:transform}
+#scene.working .pelican-pupil-left-v36,
+#scene.working .pelican-pupil-right-v36,
+#scene.focus-mode .pelican-pupil-left-v36,
+#scene.focus-mode .pelican-pupil-right-v36,
+#scene.high-intensity .pelican-pupil-left-v36,
+#scene.high-intensity .pelican-pupil-right-v36,
+#scene.behavior-type .pelican-pupil-left-v36,
+#scene.behavior-type .pelican-pupil-right-v36,
+#scene.behavior-read-board .pelican-pupil-left-v36,
+#scene.behavior-read-board .pelican-pupil-right-v36,
+#scene.behavior-coffee .pelican-pupil-left-v36,
+#scene.behavior-coffee .pelican-pupil-right-v36{opacity:1}
+#scene.behavior-think .pelican-pupil-left-v36,
+#scene.behavior-think .pelican-pupil-right-v36{opacity:0}
+#scene.behavior-think .pelican-pupil-left-think-v36,
+#scene.behavior-think .pelican-pupil-right-think-v36{opacity:1}
+#scene .pelican-pupil-left-v36{transform:translate3d(calc(var(--v36e-gaze-x,0px) - .15px),calc(var(--v36e-gaze-y,0px) + .05px),0)}
+#scene .pelican-pupil-right-v36{transform:translate3d(calc(var(--v36e-gaze-x,0px) + .15px),calc(var(--v36e-gaze-y,0px) - .05px),0)}
+#scene .pelican-pupil-left-think-v36{transform:translate3d(calc(var(--v36e-gaze-x,0px) - .15px),calc(var(--v36e-gaze-y,0px) + .05px),0)}
+#scene .pelican-pupil-right-think-v36{transform:translate3d(calc(var(--v36e-gaze-x,0px) + .15px),calc(var(--v36e-gaze-y,0px) - .05px),0)}
+#scene .pelican-typing-marks-v36{z-index:2.8;opacity:0;transform:translateY(2px);transition:opacity .25s ease,transform .4s ease}
+#scene.behavior-type .pelican-typing-marks-v36,
+#scene.high-intensity .pelican-typing-marks-v36{opacity:1;animation:v36e-typing-marks 1.05s ease-in-out infinite}
+#scene.tired .pelican-face-layer,
+#scene.resting .pelican-face-layer,
+#scene.tired .pelican-typing-marks-v36,
+#scene.resting .pelican-typing-marks-v36{opacity:0!important}
+#scene.behavior-think .pelican-face-layer{transition:opacity .25s ease}
+@keyframes v36e-typing-marks{0%,100%{transform:translate(0,2px);opacity:.25}45%{transform:translate(-1px,-1px);opacity:.9}70%{transform:translate(1px,0);opacity:.48}}
+@media(prefers-reduced-motion:reduce){
+  #scene .pelican-typing-marks-v36{animation:none!important;transition:none!important}
+  #scene .pelican-face-layer{transition:none!important}
+}

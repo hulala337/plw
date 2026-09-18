@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" aria-hidden="true">
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#dbe7ea" stop-opacity=".18"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#a8d8e4" stop-opacity=".28"/><stop offset="1" stop-color="#a8d8e4" stop-opacity="0"/></radialGradient>
+</defs>
+<!-- subtle desk interaction: paper edge, keyboard glint, and monitor reflection -->
+<g class="desk-paper" opacity=".55">
+ <path d="M128 347 Q174 338 213 350 L205 374 Q165 365 132 372Z" fill="url(#paper)" stroke="#b8cbd3" stroke-opacity=".32"/>
+ <path d="M139 353 Q170 347 198 354" fill="none" stroke="#8daab6" stroke-opacity=".25" stroke-width="2" stroke-linecap="round"/>
+</g>
+<ellipse class="desk-glow" cx="236" cy="350" rx="92" ry="42" fill="url(#glow)" opacity=".35"/>
+<g class="key-glints" fill="#e8f3f6" opacity="0">
+ <circle cx="188" cy="354" r="1.8"/><circle cx="200" cy="351" r="1.2"/><circle cx="213" cy="355" r="1.4"/><circle cx="226" cy="352" r="1.1"/>
+</g>
+<g class="completion-mark" opacity="0">
+ <path d="M286 326 l5 5 10-12" fill="none" stroke="#8db99d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle cx="293" cy="320" r="15" fill="none" stroke="#8db99d" stroke-opacity=".25" stroke-width="2"/>
+</g>
+</svg>

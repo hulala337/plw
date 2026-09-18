@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室玻璃反光与材质高光资产">
+<defs>
+ <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0">
+  <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".46" stop-color="#fff" stop-opacity=".16"/><stop offset=".54" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+ </linearGradient>
+ <linearGradient id="screenSheen" x1="0" y1="0" x2="1" y2="1">
+  <stop stop-color="#fff" stop-opacity=".15"/><stop offset=".38" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/>
+ </linearGradient>
+</defs>
+<!-- window glass reflection -->
+<path d="M112 86h705v348H112z" fill="url(#sheen)" opacity=".62"/>
+<path d="M170 103h320" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".16"><animate attributeName="opacity" values=".08;.20;.08" dur="8s" repeatCount="indefinite"/></path>
+<path d="M700 100l104 90" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".07"><animate attributeName="opacity" values=".03;.11;.03" dur="11s" repeatCount="indefinite"/></path>
+<!-- monitor glass -->
+<path d="M558 320h358v132H558z" fill="url(#screenSheen)" opacity=".56"/>
+<path d="M1018 335h286v130h-286z" fill="url(#screenSheen)" opacity=".34"/>
+<!-- desk lacquer highlight -->
+<path d="M44 482C350 468 712 477 1030 480c244 2 410-5 526 4" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".12"/>
+</svg>

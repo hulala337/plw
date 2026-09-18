@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" role="img" aria-label="鹈鹕工作台夜间办公室插画">
+<defs>
+ <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#334e62"/><stop offset=".6" stop-color="#5c6870"/><stop offset="1" stop-color="#503e38"/></linearGradient>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#172b45"/><stop offset="1" stop-color="#334f67"/></linearGradient>
+ <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a87150"/><stop offset="1" stop-color="#654636"/></linearGradient>
+ <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2b6280"/><stop offset="1" stop-color="#61a7bf"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect width="1600" height="720" fill="url(#wall)"/>
+<path d="M0 520Q400 475 800 505T1600 495V720H0Z" fill="#2c2522" opacity=".34"/>
+<!-- window -->
+<g>
+<rect x="90" y="70" width="740" height="350" rx="24" fill="#d6dedc" stroke="#748894" stroke-width="10"/>
+<rect x="112" y="92" width="696" height="306" rx="12" fill="url(#sky)"/>
+<circle cx="690" cy="145" r="42" fill="#dfe4df" opacity=".92"/>
+<g fill="#71899a"><rect x="145" y="280" width="48" height="118" rx="4"/><rect x="208" y="228" width="58" height="170" rx="4"/><rect x="281" y="298" width="50" height="100" rx="4"/><rect x="344" y="258" width="76" height="140" rx="4"/><rect x="438" y="214" width="58" height="184" rx="4"/><rect x="513" y="285" width="68" height="113" rx="4"/><rect x="596" y="244" width="55" height="154" rx="4"/><rect x="668" y="272" width="84" height="126" rx="4"/></g>
+<g fill="#f6cf78"><rect x="157" y="304" width="11" height="7"/><rect x="220" y="252" width="11" height="7"/><rect x="361" y="282" width="11" height="7"/><rect x="452" y="238" width="11" height="7"/><rect x="526" y="308" width="11" height="7"/><rect x="610" y="264" width="11" height="7"/><rect x="685" y="294" width="11" height="7"/></g>
+<g stroke="#e3e8e6" stroke-width="7"><path d="M460 92V398"/><path d="M112 262H808"/></g>
+</g>
+<!-- shelf and plant -->
+<rect x="70" y="42" width="390" height="12" rx="6" fill="#5b4539"/>
+<g fill="#718b98"><rect x="94" y="8" width="52" height="34" rx="4"/><rect x="154" y="14" width="42" height="28" rx="4"/><rect x="205" y="7" width="58" height="35" rx="4"/><rect x="271" y="13" width="38" height="29" rx="4"/><rect x="317" y="5" width="51" height="37" rx="4"/></g>
+<g transform="translate(1330 280)"><path d="M85 135C75 83 77 41 93 0" fill="none" stroke="#4f805f" stroke-width="10"/><g fill="#5f9670"><ellipse cx="68" cy="78" rx="42" ry="15" transform="rotate(-38 68 78)"/><ellipse cx="113" cy="59" rx="40" ry="14" transform="rotate(35 113 59)"/><ellipse cx="66" cy="34" rx="35" ry="13" transform="rotate(-25 66 34)"/><ellipse cx="121" cy="18" rx="34" ry="12" transform="rotate(30 121 18)"/></g><path d="M35 128Q86 111 138 128L129 210Q85 232 43 210Z" fill="#9d6b4e"/></g>
+<!-- wall art -->
+<g transform="translate(1110 70) rotate(2)"><rect width="300" height="190" rx="12" fill="#c6bdab" stroke="#8d8477" stroke-width="4"/><path d="M30 145Q90 75 150 125T270 80" fill="none" stroke="#7ba4b5" stroke-width="8" stroke-linecap="round"/><circle cx="83" cy="66" r="26" fill="#c99b61"/><text x="30" y="38" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#536b78" letter-spacing="3">GOOD WORK TODAY</text></g>
+<!-- desk -->
+<ellipse cx="800" cy="690" rx="600" ry="40" fill="#1e1a19" opacity=".25"/>
+<rect x="0" y="472" width="1600" height="38" rx="12" fill="#a87352"/><rect x="0" y="508" width="1600" height="212" fill="url(#desk)"/>
+<rect x="170" y="540" width="330" height="118" rx="8" fill="#81553f" opacity=".78"/>
+<!-- monitor glow -->
+<rect x="500" y="270" width="820" height="245" rx="100" fill="#62b5d3" opacity=".12" filter="url(#glow)"/>
+<g><rect x="545" y="300" width="390" height="172" rx="18" fill="#182b38" stroke="#5c7787" stroke-width="8"/><rect x="566" y="320" width="348" height="130" rx="10" fill="url(#screen)"/><path d="M593 358h125M593 381h188M593 404h155" stroke="#d6edf4" stroke-width="9" stroke-linecap="round" opacity=".72"/><rect x="1015" y="328" width="270" height="144" rx="16" fill="#1a2d3a" stroke="#5d7888" stroke-width="8"/><rect x="1032" y="345" width="236" height="108" rx="9" fill="#3f7e97"/><path d="M1054 380h88M1054 402h146M1054 424h105" stroke="#d8edf2" stroke-width="8" stroke-linecap="round" opacity=".64"/><path d="M735 472v35M1148 472v35" stroke="#5b4236" stroke-width="15" stroke-linecap="round"/><rect x="675" y="500" width="180" height="18" rx="9" fill="#5b4236"/><rect x="1095" y="500" width="110" height="18" rx="9" fill="#5b4236"/></g>
+<!-- keyboard and mouse -->
+<g transform="translate(675 530) rotate(-2)"><rect width="330" height="92" rx="15" fill="#c5d2d4" stroke="#7f989f" stroke-width="5"/><g fill="#edf3f2"><rect x="17" y="14" width="25" height="19" rx="4"/><rect x="49" y="14" width="25" height="19" rx="4"/><rect x="81" y="14" width="25" height="19" rx="4"/><rect x="113" y="14" width="25" height="19" rx="4"/><rect x="145" y="14" width="25" height="19" rx="4"/><rect x="177" y="14" width="25" height="19" rx="4"/><rect x="209" y="14" width="25" height="19" rx="4"/><rect x="241" y="14" width="25" height="19" rx="4"/><rect x="273" y="14" width="40" height="19" rx="4"/><rect x="17" y="40" width="36" height="19" rx="4"/><rect x="58" y="40" width="25" height="19" rx="4"/><rect x="90" y="40" width="25" height="19" rx="4"/><rect x="122" y="40" width="25" height="19" rx="4"/><rect x="154" y="40" width="25" height="19" rx="4"/><rect x="186" y="40" width="25" height="19" rx="4"/><rect x="218" y="40" width="25" height="19" rx="4"/><rect x="250" y="40" width="63" height="19" rx="4"/><rect x="17" y="66" width="48" height="14" rx="4"/><rect x="70" y="66" width="180" height="14" rx="4"/><rect x="255" y="66" width="58" height="14" rx="4"/></g></g>
+<path d="M1035 553q28-23 55 0v50q-28 24-55 0z" fill="#dce7e7" stroke="#7f989f" stroke-width="5"/><path d="M1063 557v20" stroke="#7f989f" stroke-width="4" stroke-linecap="round"/>
+<g transform="translate(1250 425)"><ellipse cx="55" cy="54" rx="58" ry="14" fill="#2a211e" opacity=".3"/><path d="M15 20Q15 75 55 78Q95 75 95 20Z" fill="#ddd9cc" stroke="#93989a" stroke-width="5"/><ellipse cx="55" cy="21" rx="40" ry="12" fill="#5a3b31"/><path d="M95 32q38-4 31 23q-5 18-31 11" fill="none" stroke="#93989a" stroke-width="7"/><path d="M42 4q-9-22 3-36M59 4q-4-25 12-38" fill="none" stroke="#f0f0eb" stroke-width="5" stroke-linecap="round" opacity=".45"/></g>
+<g transform="translate(390 505) rotate(-6)"><rect width="180" height="120" rx="6" fill="#e5d8bd" stroke="#a79678" stroke-width="4"/><path d="M25 30h120M25 55h98M25 80h125" stroke="#9e8e76" stroke-width="6" stroke-linecap="round"/></g>
+</svg>

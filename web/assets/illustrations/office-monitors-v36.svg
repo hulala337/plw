@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室双显示器资产">
+<defs><linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243b4a"/><stop offset="1" stop-color="#526d78"/></linearGradient><linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#244b66"/><stop offset="1" stop-color="#5d91a7"/></linearGradient></defs>
+<!-- main monitor -->
+<g><rect x="545" y="296" width="390" height="178" rx="18" fill="url(#frame)" stroke="#718d99" stroke-width="8"/><rect x="566" y="317" width="348" height="135" rx="10" fill="url(#screen)"/>
+<path d="M592 354H716M592 378H783M592 402H748" stroke="#e0f1f4" stroke-width="9" stroke-linecap="round" opacity=".72"/>
+<path d="M592 426H670" stroke="#f0c875" stroke-width="8" stroke-linecap="round" opacity=".88"/><circle cx="879" cy="339" r="8" fill="#83c39c" opacity=".9"/>
+<path d="M735 474V507" stroke="#6a4b3d" stroke-width="15" stroke-linecap="round"/><rect x="675" y="500" width="180" height="18" rx="9" fill="#68493d"/></g>
+<!-- side monitor -->
+<g><rect x="1015" y="324" width="270" height="150" rx="16" fill="url(#frame)" stroke="#718d99" stroke-width="8"/><rect x="1032" y="341" width="236" height="116" rx="9" fill="#315d73"/>
+<path d="M1054 378H1140M1054 401H1200M1054 424H1166" stroke="#d9eef2" stroke-width="8" stroke-linecap="round" opacity=".66"/><path d="M1054 445H1110" stroke="#efc777" stroke-width="7" stroke-linecap="round" opacity=".84"/>
+<path d="M1148 474V507" stroke="#6a4b3d" stroke-width="15" stroke-linecap="round"/><rect x="1095" y="500" width="110" height="18" rx="9" fill="#68493d"/></g>
+<!-- tiny status lights --> <g fill="#91c8a5"><circle cx="900" cy="464" r="3"/><circle cx="1248" cy="463" r="3"/></g>
+</svg>

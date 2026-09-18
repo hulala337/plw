@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" aria-hidden="true">
+<defs>
+  <linearGradient id="wingShade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c2d4dd" stop-opacity=".85"/><stop offset="1" stop-color="#6f91a2" stop-opacity=".9"/></linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="1.2"/></filter>
+</defs>
+<!-- Face/eye life layer: deliberately painted as an overlay so the original functional asset remains untouched. -->
+<g id="face" transform-origin="193 103">
+  <ellipse cx="193" cy="103" rx="10.8" ry="10.8" fill="#f8fbfc" opacity=".01"/>
+  <path d="M184 104 Q193 96 202 104 Q193 111 184 104Z" fill="#f8fbfc" opacity=".98">
+    <animate attributeName="d" dur="5.6s" repeatCount="indefinite"
+      values="M184 104 Q193 96 202 104 Q193 111 184 104Z;M184 103 Q193 103 202 103 Q193 105 184 103Z;M184 104 Q193 96 202 104 Q193 111 184 104Z"
+      keyTimes="0;.5;1"/>
+  </path>
+  <circle cx="194" cy="103" r="5.2" fill="#203640">
+    <animate attributeName="cy" dur="7.8s" repeatCount="indefinite" values="103;102;104;103" keyTimes="0;.3;.62;1"/>
+    <animate attributeName="cx" dur="8.7s" repeatCount="indefinite" values="194;196;191;194" keyTimes="0;.34;.68;1"/>
+  </circle>
+  <circle cx="196" cy="100" r="1.8" fill="#fff" opacity=".95"/>
+</g>
+<!-- tiny head/neck rhythm -->
+<g id="head-rhythm" transform-origin="193 145">
+  <path d="M227 118c18 16 24 39 17 59" fill="none" stroke="#c2d3dc" stroke-width="3" stroke-linecap="round" opacity=".32"/>
+  <animateTransform attributeName="transform" type="rotate" dur="6.4s" repeatCount="indefinite" values="0 193 145;-0.8 193 145;0.5 193 145;0 193 145" keyTimes="0;.35;.7;1"/>
+</g>
+<!-- Working wing accent: makes the existing illustrated wing feel articulated rather than CSS-shaken. -->
+<g id="wing-action" transform-origin="214 313">
+  <path d="M173 286 Q207 274 241 294" fill="none" stroke="url(#wingShade)" stroke-width="7" stroke-linecap="round" opacity=".28">
+    <animate attributeName="d" dur="2.35s" repeatCount="indefinite" values="M173 286 Q207 274 241 294;M175 289 Q209 280 243 299;M173 286 Q207 274 241 294" keyTimes="0;.5;1"/>
+  </path>
+  <path d="M181 301 Q209 292 233 305" fill="none" stroke="#dce8ed" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+  <animateTransform attributeName="transform" type="rotate" dur="2.35s" repeatCount="indefinite" values="0 214 313;-2.2 214 313;1.1 214 313;0 214 313" keyTimes="0;.45;.72;1"/>
+</g>
+<!-- typing particles / paper movement, restrained and integrated with the illustration -->
+<g id="desk-gesture" fill="#d7e5ea" opacity="0">
+  <circle cx="152" cy="365" r="2"/><circle cx="160" cy="371" r="1.5"/><circle cx="267" cy="368" r="1.5"/>
+  <animate attributeName="opacity" dur="3.4s" repeatCount="indefinite" values="0;.35;0" keyTimes="0;.5;1"/>
+  <animateTransform attributeName="transform" type="translate" dur="3.4s" repeatCount="indefinite" values="0 0;3 -4;0 0" keyTimes="0;.5;1"/>
+</g>
+<!-- headphone micro-bounce -->
+<path d="M151 78c7-42 67-58 99-15" fill="none" stroke="#6c8999" stroke-width="2.5" stroke-linecap="round" opacity=".35">
+  <animateTransform attributeName="transform" type="translate" dur="4.9s" repeatCount="indefinite" values="0 0;0 -1.5;0 0" keyTimes="0;.5;1"/>
+</path>
+</svg>

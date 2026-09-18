@@ -1,0 +1,97 @@
+
+/*
+ * Pelican Workbench V3.4 — Stage 2: Living Environment
+ * Presentation only. Existing business logic remains untouched.
+ */
+
+#scene{
+  --scene-temp:1;
+  --scene-brightness:1;
+  --scene-sat:1;
+  --scene-overlay:0;
+  isolation:isolate;
+  transition:filter 1.8s ease, background 1.8s ease;
+}
+#scene .scene-art-layer,
+#scene .scene-weather-overlay,
+#scene .scene-light{
+  transition:opacity 1.8s ease, filter 1.8s ease;
+}
+
+/* Dawn */
+#scene[data-time="dawn"]{
+  filter:saturate(.98) brightness(1.02);
+}
+#scene[data-time="dawn"] .scene-light-morning{
+  opacity:.7;
+}
+
+/* Day */
+#scene[data-time="day"] .scene-art-day{opacity:1}
+#scene[data-time="day"] .scene-art-night{opacity:0}
+#scene[data-time="day"] .scene-light-night{opacity:0}
+
+/* Dusk: retain day art but warm the scene naturally */
+#scene[data-time="dusk"]{
+  filter:saturate(.92) brightness(.92);
+}
+#scene[data-time="dusk"] .scene-art-day{
+  filter:saturate(.9) sepia(.12);
+}
+#scene[data-time="dusk"] .scene-light-morning{opacity:.45}
+
+/* Night */
+#scene[data-time="night"]{
+  filter:saturate(.82) brightness(.78);
+}
+#scene[data-time="night"] .scene-art-day{opacity:0}
+#scene[data-time="night"] .scene-art-night{opacity:1}
+#scene[data-time="night"] .scene-light-morning{opacity:0}
+#scene[data-time="night"] .scene-light-night{opacity:1}
+
+/* Weather atmosphere */
+#scene[data-weather="cloud"] .scene-art-day{
+  filter:saturate(.82) brightness(.93);
+}
+#scene[data-weather="mist"] .scene-art-day{
+  filter:saturate(.72) brightness(.96) blur(.12px);
+}
+#scene[data-weather="rain"] .scene-weather-overlay{
+  opacity:.72;
+}
+#scene[data-weather="snow"] .scene-weather-overlay{
+  opacity:.35;
+  filter:grayscale(.4) brightness(1.12);
+}
+
+/* Rain layer gets a slow, almost imperceptible drift. */
+.scene-weather-overlay{
+  pointer-events:none;
+}
+.scene-weather-overlay img{
+  animation:weatherDrift 12s linear infinite;
+  transform-origin:center;
+}
+@keyframes weatherDrift{
+  0%{transform:translate3d(-.5%,0,0)}
+  50%{transform:translate3d(.5%,1%,0)}
+  100%{transform:translate3d(-.5%,0,0)}
+}
+
+/* Night monitor glow: restrained, not neon. */
+#scene[data-time="night"] .desk-activity-glow{
+  opacity:.75;
+  animation:monitorBreath 4.5s ease-in-out infinite;
+}
+@keyframes monitorBreath{
+  0%,100%{opacity:.48}
+  50%{opacity:.78}
+}
+
+/* Environment reacts gently to idle/active classes if the existing art system supplies them. */
+#scene.is-idle .scene-art-layer{
+  filter:saturate(.9);
+}
+#scene.is-idle .desk-activity-glow{
+  opacity:.25;
+}

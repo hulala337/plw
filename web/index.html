@@ -1,57 +1,366 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>鹈鹕工作台 V3.2 · TF7Z-XY</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鹈鹕工作台 V3.6 · TF7Z-XY</title>
 <link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/art-system.css">
+<link rel="stylesheet" href="/assets/environment.css">
+<link rel="stylesheet" href="/assets/visual-v35.css">
 </head>
 <body>
 <div class="app-shell">
-<aside class="sidebar">
-  <div class="brand"><div class="brand-mark">🐦</div><div><strong>鹈鹕工作台</strong><span>Pelican Workbench</span><small class="brand-signature">TF7Z-XY</small></div></div>
-  <nav><button class="nav active" data-view="home"><span>⌂</span>今天</button><button class="nav" data-view="replay"><span>▶</span>一天回放</button><button class="nav" data-view="timeline"><span>◷</span>24 小时</button><button class="nav" data-view="stats"><span>▥</span>统计趋势</button><button class="nav" data-view="settings"><span>⚙</span>设置中心</button></nav>
-  <div class="side-pet"><div class="mini-pelican">🐦</div><div><b id="sideMood">准备开工</b><small id="sidePetText">今天也请多关照。</small></div></div>
-  <div class="side-foot"><div class="privacy-chip">🛡 本地 · 不保存内容</div><div class="ver">v3.2.0</div></div>
-</aside>
-<main>
-<header class="topbar"><div><span class="eyebrow">PELICAN WORKBENCH · V3</span><h1>让鹈鹕陪你把一天过得有迹可循。</h1><p>记录工作节奏，不读取工作内容。</p></div><div class="top-right"><div class="live"><i></i><span id="liveStatus">监听中</span></div><div class="clock"><b id="clock">--:--</b><span id="date">----</span><small id="weather">天气加载中…</small></div></div></header>
 
-<section id="view-home" class="view">
-  <section class="hero grid-hero">
-    <div class="office-scene" id="scene">
-      <div class="scene-sky"></div><div class="sun"></div><div class="moon"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="rain"></div>
-      <div class="window"><div class="city"></div><div class="window-light"></div></div>
-      <div class="shelf"><span>BOOKS</span><span>IDEAS</span><span>∞</span></div><div class="plant">🌿</div>
-      <div class="wall-note">GOOD<br><b>WORK</b><br>TODAY</div>
-      <div class="desk"><div class="desk-top"></div><div class="desk-front"></div></div>
-      <div class="monitor"><div class="monitor-screen"><i></i><i></i><i></i></div><div class="stand"></div></div>
-      <div class="keyboard"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="coffee"><div class="liquid" id="coffeeLiquid"></div><div class="cup"></div><div class="handle"></div><em></em><em></em></div>
-      <div class="board"><b>TO DO</b><span id="todoBoardCount">0</span><div id="boardTodos"></div><div class="done-head">DONE</div><div id="boardDone"></div></div>
-      <div class="pelican" id="pelican"><div class="p-shadow"></div><div class="p-body"></div><div class="p-neck"></div><div class="p-head"></div><div class="p-eye"></div><div class="p-beak"></div><div class="p-wing"></div><div class="p-foot"></div><div class="p-headset"></div></div>
-      <div class="scene-bubble" id="sceneBubble">🐦 准备好了吗？</div><div class="scene-caption"><b id="pelicanState">准备开工</b><span id="sceneHint">鹈鹕正在整理桌面。</span></div>
+  <!-- 左侧品牌导航 -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><span class="brand-bird">P</span></div>
+      <div>
+        <strong>鹈鹕工作台</strong>
+        <span>Pelican Workbench</span>
+        <small class="brand-signature">TF7Z-XY</small>
+      </div>
     </div>
-    <div class="pet-panel"><div class="pet-head"><div><span class="eyebrow">DESK PET</span><h2>小鹈鹕</h2></div><span class="state-pill" id="petState">待命</span></div><div class="pet-card"><div class="big-pet" id="bigPet">🐦</div><div class="pet-speech" id="petSpeech">“今天准备做一件什么小事？”</div></div><div class="level-row"><span>Lv.<b id="level">1</b></span><div><div class="level-track"><i id="levelBar"></i></div><small id="lifetimeText">累计工作 0h</small></div><span>🔥<b id="streak">0</b>天</span></div><div class="unlocks" id="unlocks"></div><button class="pet-btn" id="replayBtn">▶ 看看今天发生了什么</button></div>
-  </section>
 
-  <section class="metrics panel"><div class="metric"><span>◷</span><small>今日工作</small><b id="active">0h 00m</b></div><div class="metric"><span>⌨</span><small>键盘</small><b id="keys">0</b><em>次</em></div><div class="metric"><span>A</span><small>输入</small><b id="chars">0</b><em>字</em></div><div class="metric"><span>◉</span><small>鼠标</small><b id="cursorDistance">0</b><em>px</em></div><div class="metric"><span>✦</span><small>操作</small><b id="ops">0</b><em>次</em></div><div class="metric"><span>◎</span><small>专注最长</small><b id="longest">0h 00m</b></div><div class="rhythm"><small>今日工作节奏</small><b id="rhythm">0</b><span>/100</span><div><i id="rhythmBar"></i></div></div></section>
+    <nav class="primary-nav">
+      <button class="nav active" data-view="home"><span class="nav-icon">⌂</span><b>今天</b><small>Today</small></button>
+      <button class="nav" data-view="replay"><span class="nav-icon">▶</span><b>一天回放</b><small>Replay</small></button>
+      <button class="nav" data-view="timeline"><span class="nav-icon">◷</span><b>24 小时</b><small>Timeline</small></button>
+      <button class="nav" data-view="stats"><span class="nav-icon">▥</span><b>统计趋势</b><small>Insights</small></button>
+      <button class="nav" data-view="settings"><span class="nav-icon">⚙</span><b>设置中心</b><small>Settings</small></button>
+    </nav>
 
-  <section class="dash-grid">
-    <div class="panel timeline-card"><div class="panel-head"><div><span class="eyebrow">24 HOURS</span><h2>今天的工作时间轴</h2><p>拖动时间点，看看鹈鹕那一刻在做什么。</p></div><div class="timeline-tools"><button id="nowBtn">现在</button><button id="zoomMinus">−</button><span id="zoomLabel">1×</span><button id="zoomPlus">＋</button></div></div><div class="timeline-shell" id="timelineShell"><div class="hours" id="hours"></div><div class="track" id="track"><div class="gridlines"></div><div id="segments"></div><div class="scrub" id="scrub"><span></span><b id="scrubLabel">现在</b></div></div></div><div class="legend" id="legend"></div></div>
-    <div class="panel focus-card"><div class="panel-head"><div><span class="eyebrow">FOCUS</span><h2>专注 Session</h2></div><span id="focusStatus" class="status">待命</span></div><div class="focus-orb"><div class="orb"></div><div><b id="focusLive">0h 00m</b><small id="focusHint">当前专注</small></div></div><div class="session-list" id="sessionList"></div><div class="rule-note">连续有行为 → 持续累计；短暂切换应用 → 继续；连续 2 分钟无输入 → 结束。</div></div>
-    <div class="panel todo-card"><div class="panel-head"><div><span class="eyebrow">PLAN → DONE</span><h2>今天想完成什么？</h2></div><span class="counter" id="todoCount">0/0</span></div><form id="todoForm"><input id="todoInput" maxlength="120" placeholder="写一件小事…"><button>＋</button></form><div class="todo-cols"><div><small>TODO</small><div id="todos"></div></div><div class="done-col"><small>DONE</small><div id="doneTodos"></div></div></div></div>
-    <div class="panel apps-card"><div class="panel-head"><div><span class="eyebrow">WHERE TIME WENT</span><h2>工作类型</h2></div><span class="privacy-mini">只保存分类</span></div><div id="apps"></div></div>
-  </section>
-</section>
+    <div class="sidebar-scene">
+      <img class="side-office-art" src="/assets/illustrations/office-night.svg" alt="" draggable="false">
+      <div class="side-window"><i></i><i></i><i></i></div>
+      <div class="side-plant"><span></span><span></span><span></span></div>
+      <div class="side-desk"></div>
+      <div class="side-pelican"><img src="/assets/illustrations/pelican-mini.svg" alt="" draggable="false"></div>
+      <div class="side-caption">每天一点点，<b>让工作有迹可循。</b></div>
+    </div>
 
-<section id="view-replay" class="view hidden"><div class="panel replay-card"><div class="replay-head"><div><span class="eyebrow">A DAY IN MOTION</span><h2>一天回放</h2><p>像看一部“工作电影”，但只播放行为分类。</p></div><button class="primary" id="startReplay">▶ 开始播放</button></div><div class="replay-stage"><div class="replay-scene" id="replayScene"><div class="replay-pelican">🐦</div><div class="replay-window"></div><div class="replay-desk"></div><div class="replay-info"><b id="replayTime">00:00</b><span id="replayCategory">等待播放…</span><small id="replayDesc">你的输入内容从不进入回放。</small></div></div></div><div class="replay-progress"><div class="replay-track"><i id="replayBar"></i></div><div id="replayMarks"></div></div></div></section>
+    <div class="side-foot">
+      <div class="privacy-chip"><span>●</span> 本地 · 不保存内容</div>
+      <div class="ver">v3.6.0</div>
+    </div>
+  </aside>
 
-<section id="view-timeline" class="view hidden"><div class="panel detail-timeline"><div class="panel-head"><div><span class="eyebrow">WORK RHYTHM</span><h2>24 小时完整时间轴</h2></div><span class="date-chip" id="timelineDate">今天</span></div><div class="big-scroll"><div class="big-hours" id="bigHours"></div><div class="big-track" id="bigTrack"><div class="gridlines"></div><div id="bigSegments"></div><div class="scrub big" id="bigScrub"><span></span><b id="bigLabel">现在</b></div></div></div><div class="timeline-summary" id="timelineSummary"></div></div></section>
+  <main>
+    <header class="topbar">
+      <div class="top-title">
+        <span class="eyebrow">PELICAN WORKBENCH · V3.6</span>
+        <h1>今天，也好好工作。</h1>
+        <p>记录工作节奏，不读取工作内容。</p>
+      </div>
+      <div class="top-right">
+        <div class="live"><i></i><span id="liveStatus">监听中</span></div>
+        <div class="weather-card">
+          <div class="weather-main"><b id="weather">天气加载中…</b></div>
+          <div class="clock"><b id="clock">--:--</b><span id="date">----</span></div>
+        </div>
+      </div>
+    </header>
 
-<section id="view-stats" class="view hidden"><div class="stats-head"><div><span class="eyebrow">INSIGHTS</span><h2>今天 / 本周 / 本月</h2><p>看趋势，不把工作价值压缩成一个数字。</p></div><div class="tabs"><button class="active" data-range="today">今日</button><button data-range="week">本周</button><button data-range="month">本月</button></div></div><div class="report" id="reportGrid"></div><div class="stats-grid"><div class="panel"><div class="panel-head"><div><span class="eyebrow">TREND</span><h2>工作时长</h2></div></div><div class="trend" id="trendChart"></div></div><div class="panel export"><div><span class="eyebrow">YOUR DATA</span><h2>导出与隐私</h2></div><p>导出的内容只有统计数字、工作分类和 Session，不包含实际输入、窗口标题、URL 或文档正文。</p><div><a class="primary" id="csv" download>CSV</a><a class="ghost" id="xlsx" download>Excel</a></div></div></div></section>
+    <section id="view-home" class="view">
+      <!-- 主视觉：沉浸式办公室 -->
+      <section class="hero-scene">
+        <div class="office-scene" id="scene" data-art-scene="day">
+          <!-- V3.6-C environment is asset-layered; business DOM below remains unchanged. -->
+          <div class="scene-room-base-v36"><img src="/assets/illustrations/office-room-base-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-art-layer scene-art-day"><img src="/assets/illustrations/office-window-day-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-art-layer scene-art-night"><img src="/assets/illustrations/office-window-night-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-window-cloud-v36"><img src="/assets/illustrations/office-window-cloud-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-window-rain-v36"><img src="/assets/illustrations/office-window-rain-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-environment-decor-v36"><img src="/assets/illustrations/office-decor-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-monitors-v36"><img src="/assets/illustrations/office-monitors-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-environment-desk-v36"><img src="/assets/illustrations/office-desk-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-lamp-v36"><img src="/assets/illustrations/office-lamp-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-contact-shadows-v36d"><img src="/assets/illustrations/office-contact-shadows-v36d.svg" alt="" draggable="false"></div>
+          <div class="scene-depth-v36"><img src="/assets/illustrations/office-depth-v36.svg" alt="" draggable="false"></div>
+          <div class="scene-glass-v36d"><img src="/assets/illustrations/office-glass-v36d.svg" alt="" draggable="false"></div>
+          <div class="scene-screen-reflection-v36d"><img src="/assets/illustrations/office-screen-reflection-v36d.svg" alt="" draggable="false"></div>
+          <div class="scene-weather-overlay"><img src="/assets/illustrations/rain.svg" alt="" draggable="false"></div>
+          <div class="scene-light scene-light-morning"></div>
+          <div class="scene-light scene-light-night"></div>
+          <div class="desk-props-v36" aria-hidden="true">
+            <img class="desk-prop desk-notebook-v36" src="/assets/illustrations/desk-notebook-v36.svg" alt="" draggable="false">
+            <img class="desk-prop desk-keyboard-v36" src="/assets/illustrations/desk-keyboard-v36.svg" alt="" draggable="false">
+            <img class="desk-prop desk-mouse-v36" src="/assets/illustrations/desk-mouse-v36.svg" alt="" draggable="false">
+            <img class="desk-prop desk-coffee-v36" src="/assets/illustrations/desk-coffee-v36.svg" alt="" draggable="false">
+          </div>
 
-<section id="view-settings" class="view hidden"><div class="stats-head"><div><span class="eyebrow">SETTINGS CENTER</span><h2>设置中心</h2><p>让鹈鹕更像你喜欢的工作伙伴。</p></div></div><div class="settings-grid"><div class="panel setting"><b>开机启动</b><small>登录 Windows 后静默进入托盘。</small><label class="switch"><input type="checkbox" id="autostart"><i></i></label></div><div class="panel setting"><b>桌面宠物</b><small>让小鹈鹕在窗口角落陪你工作。</small><label class="switch"><input type="checkbox" id="desktopPet"><i></i></label></div><div class="panel setting"><b>离开电脑阈值</b><small>超过多久没有输入，就判定为离开。</small><select id="idleSeconds"><option value="60">1 分钟</option><option value="120">2 分钟</option><option value="180">3 分钟</option><option value="300">5 分钟</option><option value="600">10 分钟</option></select></div><div class="panel setting"><b>显示器与鼠标空间</b><small id="displayInfo">正在识别显示器布局…</small></div><div class="panel setting"><b>天气场景</b><small>天气只用于当前界面视觉，不写入工作数据库。</small><label class="switch"><input type="checkbox" id="weatherEnabled"><i></i></label></div><div class="panel setting brand-card"><div class="brand-ribbon">AUTHOR MARK</div><b>TF7Z-XY</b><small>作者烙印显示在软件设置区，不参与任何工作数据统计。</small><div class="author-mark"><span class="author-seal">TF7Z-XY</span><div><strong>鹈鹕工作台</strong><em>让工作有迹可循，也让每天有一点可爱。</em></div></div></div><div class="panel setting donate-card"><div class="brand-ribbon">SUPPORT</div><b>支持这个小项目</b><small>如果你觉得鹈鹕工作台有帮助，可以自愿请作者喝杯咖啡。不会解锁隐藏功能，也不会影响统计。</small><button class="donate-btn" id="donateBtn">☕ 打赏作者</button><div class="donate-note">微信收款码已内置到安装包中</div></div><div class="panel setting privacy"><b>隐私中心 <span>✓ 已开启</span></b><small>键盘只记录数量与字符数。</small><p>✓ 实际输入文字：不保存<br>✓ 窗口标题 / 文件名：不保存<br>✓ URL / 网页正文：不保存<br>✓ 数据库：仅本机</p><button class="ghost" id="forgetToday">删除今天的统计</button></div><div class="panel setting"><b>办公室成长</b><small id="growthText">还没有解锁家具。</small><div id="settingsUnlocks" class="unlocks large"></div></div></div></section>
-<div class="donate-modal hidden" id="donateModal"><div class="donate-backdrop" id="donateBackdrop"></div><div class="donate-dialog"><button class="modal-close" id="donateClose">×</button><div class="brand-ribbon">THANK YOU</div><h3>请鹈鹕喝杯咖啡 ☕</h3><p>自愿打赏，完全不影响功能。</p><div class="qr-wrap"><img id="wechatQr" src="/assets/wechat_qr.png" alt="微信收款码 · 锂电池(*翌)"><div id="qrFallback" class="qr-fallback">请将你的微信收款码命名为<br><code>wechat_qr.png</code><br>放入 <code>web/assets/</code></div></div><span class="donate-modal-tip">仅用于打赏，不收集支付信息。</span></div></div></div>
-<footer><span>🐦 Pelican Workbench V3.2 · TF7Z-XY</span><span>本地统计 · 隐私优先 · Windows Tray</span></footer>
-</main></div>
+          <!-- TODO 白板是可交互 DOM；插画负责环境，数据仍由原逻辑渲染。 -->
+          <div class="board">
+            <div class="board-title"><b>TO DO</b><span id="todoBoardCount">0</span></div>
+            <div id="boardTodos"></div>
+            <div class="board-done-title">DONE</div>
+            <div id="boardDone"></div>
+          </div>
+
+          <!-- 角色改为独立插画资产；CSS 只负责状态切换与微动画，不再绘制角色。 -->
+          <div class="pelican" id="pelican" aria-label="小鹈鹕">
+            <img class="pelican-state pelican-working" src="/assets/illustrations/pelican-v36-working.svg" alt="" draggable="false">
+            <img class="pelican-state pelican-thinking-v36" src="/assets/illustrations/pelican-v36-thinking.svg" alt="" draggable="false">
+            <img class="pelican-state pelican-coffee-v36" src="/assets/illustrations/pelican-v36-coffee.svg" alt="" draggable="false">
+            <img class="pelican-state pelican-tired" src="/assets/illustrations/pelican-v36-tired.svg" alt="" draggable="false">
+            <img class="pelican-state pelican-resting" src="/assets/illustrations/pelican-v36-resting.svg" alt="" draggable="false">
+            <img class="pelican-face-layer pelican-eye-whites-v36" src="/assets/illustrations/pelican-eye-whites-v36.svg" alt="" draggable="false">
+            <img class="pelican-face-layer pelican-pupil-left-v36" src="/assets/illustrations/pelican-pupil-left-v36.svg" alt="" draggable="false">
+            <img class="pelican-face-layer pelican-pupil-right-v36" src="/assets/illustrations/pelican-pupil-right-v36.svg" alt="" draggable="false">
+            <img class="pelican-face-layer pelican-pupil-left-think-v36" src="/assets/illustrations/pelican-pupil-think-left-v36.svg" alt="" draggable="false">
+            <img class="pelican-face-layer pelican-pupil-right-think-v36" src="/assets/illustrations/pelican-pupil-think-right-v36.svg" alt="" draggable="false">
+            <img class="pelican-typing-marks-v36" src="/assets/illustrations/pelican-typing-marks-v36.svg" alt="" draggable="false">
+            <img class="pelican-eyelid-v36 pelican-eyelid-left-v36" src="/assets/illustrations/pelican-eyelid-left-v36.svg" alt="" draggable="false">
+            <img class="pelican-eyelid-v36 pelican-eyelid-right-v36" src="/assets/illustrations/pelican-eyelid-right-v36.svg" alt="" draggable="false">
+          </div>
+
+          <div class="desk-activity-glow"></div>
+          <div class="scene-bubble" id="sceneBubble">小鹈鹕，准备好了吗？</div>
+          <div class="scene-caption"><b id="pelicanState">准备开工</b><span id="sceneHint">鹈鹕正在整理桌面。</span></div>
+        </div>
+      </section>
+
+      <!-- 右侧工具栏 -->
+      <aside class="utility-rail">
+        <section class="rail-card todo-rail">
+          <div class="rail-head"><div><span class="eyebrow">TODAY</span><h2>待办事项</h2></div><span class="counter" id="todoCount">0/0</span></div>
+          <form id="todoForm"><input id="todoInput" maxlength="120" placeholder="写一件小事…"><button>＋</button></form>
+          <div id="todos" class="rail-todos"></div>
+          <div class="rail-done"><small>DONE</small><div id="doneTodos"></div></div>
+        </section>
+
+        <section class="rail-pet">
+          <div class="rail-pet-art"><img src="/assets/illustrations/pelican-mini.svg" alt="" draggable="false"><span class="pet-spark s1"></span><span class="pet-spark s2"></span></div>
+          <div class="rail-pet-copy">
+            <b id="sideMood">准备开工</b>
+            <p id="sidePetText">今天也请多关照。</p>
+          </div>
+        </section>
+
+        <section class="rail-actions">
+          <button class="rail-action" data-action="autostart"><span>↗</span><div><b>开机启动</b><small>登录 Windows 后自动运行</small></div><label class="switch"><input type="checkbox" id="autostart"><i></i></label></button>
+          <button class="rail-action" data-view-jump="settings"><span>⇩</span><div><b>数据导出</b><small>CSV / Excel</small></div></button>
+          <button class="rail-action" data-view-jump="settings"><span>✓</span><div><b>隐私保护</b><small>只保存统计数字</small></div></button>
+          <button class="rail-action" data-view-jump="settings"><span>◐</span><div><b>主题与外观</b><small>办公室成长与显示</small></div></button>
+          <button class="rail-action" data-view-jump="settings"><span>i</span><div><b>关于我们</b><small>TF7Z-XY · Pelican Workbench</small></div></button>
+        </section>
+      </aside>
+
+      <!-- 指标 -->
+      <section class="metrics-panel">
+        <div class="metrics-title"><span class="eyebrow">TODAY AT A GLANCE</span><b>今日工作评分卡</b></div>
+        <div class="metric"><span class="metric-icon work">◷</span><small>今日工作</small><b id="active">0h 00m</b></div>
+        <div class="metric"><span class="metric-icon key">⌨</span><small>键盘</small><b id="keys">0</b><em>次</em></div>
+        <div class="metric"><span class="metric-icon text">A</span><small>输入</small><b id="chars">0</b><em>字</em></div>
+        <div class="metric"><span class="metric-icon mouse">◉</span><small>鼠标</small><b id="cursorDistance">0</b><em>px</em></div>
+        <div class="metric"><span class="metric-icon ops">✦</span><small>操作</small><b id="ops">0</b><em>次</em></div>
+        <div class="metric"><span class="metric-icon focus">◎</span><small>专注最长</small><b id="longest">0h 00m</b></div>
+        <div class="focus-mini">
+          <div class="focus-mini-top"><span>专注 Session</span><strong id="focusLive">0m</strong></div>
+          <div class="focus-mini-bar"><i></i></div>
+          <small id="focusHint">当前专注</small>
+          <span id="focusStatus" class="status">待命</span>
+        </div>
+        <div class="rhythm" aria-hidden="true"><small>今日节奏</small><b id="rhythm">0</b><span>/100</span><div><i id="rhythmBar"></i></div></div>
+      </section>
+
+      <!-- 全宽时间轴 -->
+      <section class="panel timeline-card">
+        <div class="panel-head">
+          <div><span class="eyebrow">24 HOURS</span><h2>今天的工作时间轴</h2><p>拖动时间点，看看鹈鹕那一刻在做什么。</p></div>
+          <div class="timeline-tools"><button id="nowBtn">现在</button><button id="zoomMinus">−</button><span id="zoomLabel">1×</span><button id="zoomPlus">＋</button></div>
+        </div>
+        <div class="timeline-shell" id="timelineShell"><div class="hours" id="hours"></div><div class="track" id="track"><div class="gridlines"></div><div id="segments"></div><div class="scrub" id="scrub"><span></span><b id="scrubLabel">现在</b></div></div></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <!-- 底部分析 -->
+      <section class="insight-grid">
+        <div class="panel distribution-card">
+          <div class="panel-head"><div><span class="eyebrow">WHERE TIME WENT</span><h2>工作类型分布</h2></div><span class="privacy-mini">只保存分类</span></div>
+          <div class="donut-wrap"><div class="donut" id="donutChart"><div><b id="donutTotal">0h</b><small>今日工作</small></div></div><div id="donutLegend" class="donut-legend"></div></div>
+        </div>
+        <div class="panel weekly-card">
+          <div class="panel-head"><div><span class="eyebrow">WEEKLY RHYTHM</span><h2>一周趋势</h2></div><span class="date-chip">最近 7 天</span></div>
+          <div class="week-chart" id="trendChart"></div>
+        </div>
+        <div class="panel recent-card">
+          <div class="panel-head"><div><span class="eyebrow">RECENT 7 DAYS</span><h2>最近 7 天</h2></div></div>
+          <div class="recent-summary" id="reportGrid"></div>
+          <div class="mini-note">趋势只反映记录到的工作行为，不代表工作价值。</div>
+        </div>
+      </section>
+
+      <!-- 保留旧功能节点，视觉上隐藏；避免现有 JS/API 改动 -->
+      <div class="compat-hidden">
+        <div id="sessionList"></div><div id="apps"></div><div id="unlocks"></div><div id="settingsUnlocks"></div>
+        <div id="level">1</div><div id="streak">0</div><div id="levelBar"></div><div id="lifetimeText"></div><div id="growthText"></div>
+        <div id="petState"></div><div id="petSpeech"></div><div id="bigPet">P</div><div id="displayInfo"></div>
+      </div>
+    </section>
+
+    <!-- 回放 -->
+    <section id="view-replay" class="view hidden">
+      <div class="panel replay-card">
+        <div class="replay-head"><div><span class="eyebrow">A DAY IN MOTION</span><h2>一天回放</h2><p>像看一部“工作电影”，但只播放行为分类。</p></div><button class="primary" id="startReplay">▶ 开始播放</button></div>
+        <div class="replay-stage"><div class="replay-scene" id="replayScene"><img class="replay-office-art" src="/assets/illustrations/office-day.svg" alt="" draggable="false"><div class="replay-pelican"><img src="/assets/illustrations/pelican-working.svg" alt="" draggable="false"></div><div class="replay-info"><b id="replayTime">00:00</b><span id="replayCategory">等待播放…</span><small id="replayDesc">你的输入内容从不进入回放。</small></div></div></div>
+        <div class="replay-progress"><div class="replay-track"><i id="replayBar"></i></div><div id="replayMarks"></div></div>
+      </div>
+    </section>
+
+    <!-- 完整时间轴 -->
+    <section id="view-timeline" class="view hidden">
+      <div class="panel detail-timeline"><div class="panel-head"><div><span class="eyebrow">WORK RHYTHM</span><h2>24 小时完整时间轴</h2></div><span class="date-chip" id="timelineDate">今天</span></div><div class="big-scroll"><div class="big-hours" id="bigHours"></div><div class="big-track" id="bigTrack"><div class="gridlines"></div><div id="bigSegments"></div><div class="scrub big" id="bigScrub"><span></span><b id="bigLabel">现在</b></div></div></div><div class="timeline-summary" id="timelineSummary"></div></div>
+    </section>
+
+    <!-- 统计 -->
+    <section id="view-stats" class="view hidden">
+      <div class="stats-head"><div><span class="eyebrow">INSIGHTS</span><h2>今天 / 本周 / 本月</h2><p>看趋势，不把工作价值压缩成一个数字。</p></div><div class="tabs"><button class="active" data-range="today">今日</button><button data-range="week">本周</button><button data-range="month">本月</button></div></div>
+      <div class="report" id="statsReport"></div>
+      <div class="stats-grid"><div class="panel"><div class="panel-head"><div><span class="eyebrow">TREND</span><h2>工作时长</h2></div></div><div class="trend" id="statsTrend"></div></div><div class="panel export"><div><span class="eyebrow">YOUR DATA</span><h2>导出与隐私</h2></div><p>导出的内容只有统计数字、工作分类和 Session，不包含实际输入、窗口标题、URL 或文档正文。</p><div><a class="primary" id="csv" download>CSV</a><a class="ghost" id="xlsx" download>Excel</a></div></div></div>
+    </section>
+
+    <!-- 设置 -->
+    <section id="view-settings" class="view hidden">
+      <div class="stats-head"><div><span class="eyebrow">SETTINGS CENTER</span><h2>设置中心</h2><p>让鹈鹕更像你喜欢的工作伙伴。</p></div></div>
+      <div class="settings-grid">
+        <div class="panel setting"><b>开机启动</b><small>登录 Windows 后静默进入托盘。</small><label class="switch"><input type="checkbox" id="autostartSettings"><i></i></label></div>
+        <div class="panel setting"><b>桌面宠物</b><small>让小鹈鹕在窗口角落陪你工作。</small><label class="switch"><input type="checkbox" id="desktopPet"><i></i></label></div>
+        <div class="panel setting"><b>离开电脑阈值</b><small>超过多久没有输入，就判定为离开。</small><select id="idleSeconds"><option value="60">1 分钟</option><option value="120">2 分钟</option><option value="180">3 分钟</option><option value="300">5 分钟</option><option value="600">10 分钟</option></select></div>
+        <div class="panel setting"><b>显示器与鼠标空间</b><small id="displayInfoSettings">正在识别显示器布局…</small></div>
+        <div class="panel setting"><b>天气场景</b><small>天气只用于当前界面视觉，不写入工作数据库。</small><label class="switch"><input type="checkbox" id="weatherEnabled"><i></i></label></div>
+        <div class="panel setting privacy"><b>隐私中心 <span>✓ 已开启</span></b><small>键盘只记录数量与字符数。</small><p>✓ 实际输入文字：不保存<br>✓ 窗口标题 / 文件名：不保存<br>✓ URL / 网页正文：不保存<br>✓ 数据库：仅本机</p><button class="ghost" id="forgetToday">删除今天的统计</button></div>
+        <div class="panel setting"><b>办公室成长</b><small id="growthTextSettings">还没有解锁家具。</small><div id="settingsUnlocks" class="unlocks large"></div></div>
+        <div class="panel setting donate-card"><div class="brand-ribbon">SUPPORT</div><b>支持这个小项目</b><small>如果你觉得鹈鹕工作台有帮助，可以自愿请作者喝杯咖啡。</small><button class="donate-btn" id="donateBtn">☕ 打赏作者</button></div>
+      </div>
+    </section>
+
+    <footer><span>Pelican Workbench V3.6 · TF7Z-XY</span><span>本地统计 · 隐私优先 · Windows Tray</span></footer>
+  </main>
+</div>
+
+<div class="donate-modal hidden" id="donateModal"><div class="donate-backdrop" id="donateBackdrop"></div><div class="donate-dialog"><button class="modal-close" id="donateClose">×</button><div class="brand-ribbon">THANK YOU</div><h3>请鹈鹕喝杯咖啡</h3><p>自愿打赏，完全不影响功能。</p><div class="qr-wrap"><img id="wechatQr" src="/assets/wechat_qr.png" alt="微信收款码"><div id="qrFallback" class="qr-fallback">请将你的微信收款码命名为 <code>wechat_qr.png</code> 放入 <code>web/assets/</code></div></div></div></div></div>
+
 <script src="/assets/app.js"></script>
-</body></html>
+<script>
+(function(){
+  // 纯视觉桥接：读取现有天气/场景状态，不改变任何业务数据或 API。
+  const scene=document.getElementById('scene');
+  const weather=document.getElementById('weather');
+  if(!scene) return;
+  function syncArt(){
+    const text=(weather?.textContent||'').toLowerCase();
+    scene.classList.toggle('weather-rain', /雨|阵雨|雷|drizzle|rain|storm/.test(text));
+    scene.classList.toggle('weather-cloud', /阴|多云|cloud|overcast/.test(text));
+    scene.classList.toggle('weather-clear', /晴|clear|sun/.test(text));
+    const hour=new Date().getHours();
+    scene.classList.toggle('time-night', hour>=19 || hour<6);
+    scene.classList.toggle('time-dawn', hour>=6 && hour<9);
+    scene.dataset.artScene=scene.classList.contains('time-night')?'night':'day';
+  }
+  syncArt();
+  setInterval(syncArt,30000);
+})();
+</script>
+<script>
+(function(){
+  function syncSettings(){
+    const a=document.getElementById('autostart'), b=document.getElementById('autostartSettings');
+    if(a&&b){
+      b.checked=a.checked;
+      b.onchange=async()=>{ a.checked=b.checked; if(typeof patch==='function') await patch('autostart',b.checked); };
+    }
+    const d=document.getElementById('displayInfo'), ds=document.getElementById('displayInfoSettings');
+    if(d&&ds) ds.textContent=d.textContent||'正在识别显示器布局…';
+    const g=document.getElementById('growthText'), gs=document.getElementById('growthTextSettings');
+    if(g&&gs) gs.textContent=g.textContent||'还没有解锁家具。';
+  }
+  function renderDonut(){
+    if(!window.state || !state.data) return;
+    const apps=state.data.apps||[];
+    const total=apps.reduce((n,x)=>n+Number(x.seconds||0),0);
+    const donut=document.getElementById('donutChart'), legend=document.getElementById('donutLegend'), totalEl=document.getElementById('donutTotal');
+    if(!donut||!legend) return;
+    totalEl.textContent=total>=3600?(total/3600).toFixed(1)+'h':Math.round(total/60)+'m';
+    if(!apps.length){ donut.style.background='#dbe6ea'; legend.innerHTML='<span class="empty">今天还没有足够的工作活动。</span>'; return; }
+    const colors=Object.values(CAT).map(x=>x[1]);
+    let acc=0; const stops=[];
+    apps.slice().sort((a,b)=>b.seconds-a.seconds).forEach((x,i)=>{
+      const p=x.seconds/total*100, end=acc+p; stops.push(`${colors[i%colors.length]} ${acc}% ${end}%`); acc=end;
+    });
+    donut.style.background=`conic-gradient(${stops.join(',')})`;
+    legend.innerHTML=apps.slice().sort((a,b)=>b.seconds-a.seconds).slice(0,6).map((x,i)=>{
+      const name=CAT[x.category]?.[0]||x.category, pct=Math.round(x.seconds/total*100);
+      return `<div><span><i style="background:${colors[i%colors.length]}"></i>${name}</span><b>${pct}%</b></div>`;
+    }).join('');
+  }
+  syncSettings(); renderDonut();
+  setInterval(()=>{syncSettings();renderDonut()},1000);
+})();
+</script>
+
+
+<script>
+/* V3.4 Stage 2 — environment presentation layer.
+   Reads existing weather/clock text only; it does not alter business logic or APIs. */
+(function () {
+  const scene = document.getElementById('scene');
+  const weather = document.getElementById('weather');
+  const clock = document.getElementById('clock');
+  if (!scene) return;
+
+  function classifyWeather(text) {
+    const s = (text || '').toLowerCase();
+    if (/雨|雷|阵雨|暴雨|小雨|中雨|大雨|storm|rain|drizzle/.test(s)) return 'rain';
+    if (/雪|snow|sleet/.test(s)) return 'snow';
+    if (/阴|云|多云|cloud|overcast/.test(s)) return 'cloud';
+    if (/雾|霾|fog|mist|haze/.test(s)) return 'mist';
+    return 'clear';
+  }
+
+  function classifyTime() {
+    const m = (clock && clock.textContent || '').match(/(\d{1,2}):(\d{2})/);
+    if (!m) return 'day';
+    const h = Number(m[1]);
+    if (h >= 5 && h < 8) return 'dawn';
+    if (h >= 8 && h < 17) return 'day';
+    if (h >= 17 && h < 19) return 'dusk';
+    return 'night';
+  }
+
+  function syncEnvironment() {
+    const time = classifyTime();
+    const wx = classifyWeather(weather && weather.textContent);
+    scene.dataset.time = time;
+    scene.dataset.weather = wx;
+    scene.dataset.environment = time + '-' + wx;
+    document.documentElement.dataset.officeTime = time;
+    document.documentElement.dataset.officeWeather = wx;
+  }
+
+  syncEnvironment();
+  setInterval(syncEnvironment, 15000);
+  new MutationObserver(syncEnvironment).observe(weather || scene, {subtree:true, childList:true, characterData:true});
+})();
+</script>
+
+<link rel="stylesheet" href="/assets/visual-stage3.css">
+<script src="/assets/visual-stage3.js"></script>
+<script src="/assets/visual-v35.js"></script>
+<link rel="stylesheet" href="/assets/visual-v35-life.css">
+<script src="/assets/visual-v35-life.js"></script>
+</body>
+</html>
+<link rel="stylesheet" href="/assets/visual-v35-life-round3.css">
+<script src="/assets/visual-v35-life-round3.js"></script>
+<script src="/assets/visual-v36.js"></script>
+<link rel="stylesheet" href="/assets/visual-v36.css">
+<link rel="stylesheet" href="/assets/visual-v36b.css">
+<script src="/assets/visual-v36b.js"></script>
+<link rel="stylesheet" href="/assets/visual-v36d.css">
+<script src="/assets/visual-v36d.js"></script>
+<link rel="stylesheet" href="/assets/visual-v36e.css">
+<script src="/assets/visual-v36e.js"></script>
+<link rel="stylesheet" href="/assets/visual-v36c.css">
+<script src="/assets/visual-v36c.js"></script>

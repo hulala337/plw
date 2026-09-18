@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="显示器玻璃反射资产">
+<defs>
+ <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".22"/><stop offset=".25" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<path d="M571 319h330v130H571z" fill="url(#gloss)" opacity=".7"/>
+<path d="M1028 337h262v124h-262z" fill="url(#gloss)" opacity=".42"/>
+<path d="M592 337l95 0" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".1"/>
+</svg>

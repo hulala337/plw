@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="鹈鹕工作台办公室环境底图">
+<defs>
+ <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dceff5"/><stop offset=".56" stop-color="#f5f0e8"/><stop offset="1" stop-color="#d8b590"/></linearGradient>
+ <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c9966f"/><stop offset="1" stop-color="#83563f"/></linearGradient>
+ <radialGradient id="corner" cx=".18" cy=".18" r=".85"><stop stop-color="#ffffff" stop-opacity=".5"/><stop offset="1" stop-color="#b7d2d8" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1600" height="720" fill="url(#wall)"/>
+<rect width="1600" height="720" fill="url(#corner)"/>
+<path d="M0 458 Q380 438 800 462 T1600 446V720H0Z" fill="#9d765d" opacity=".10"/>
+<path d="M0 486H1600V720H0Z" fill="url(#floor)"/>
+<path d="M0 486 Q400 468 800 486 T1600 480" fill="none" stroke="#754e3d" stroke-opacity=".18" stroke-width="8"/>
+<path d="M0 690 Q420 642 840 678 T1600 662" fill="none" stroke="#624436" stroke-opacity=".13" stroke-width="12"/>
+</svg>

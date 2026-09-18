@@ -1,0 +1,45 @@
+/* V3.6-C — environment asset reconstruction. Presentation only. */
+#scene .scene-room-base-v36,
+#scene .scene-environment-decor-v36,
+#scene .scene-environment-desk-v36,
+#scene .scene-lamp-v36,
+#scene .scene-window-cloud-v36,
+#scene .scene-window-rain-v36{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#scene .scene-room-base-v36 img,
+#scene .scene-environment-decor-v36 img,
+#scene .scene-environment-desk-v36 img,
+#scene .scene-lamp-v36 img,
+#scene .scene-window-cloud-v36 img,
+#scene .scene-window-rain-v36 img{width:100%;height:100%;display:block;object-fit:cover}
+#scene .scene-room-base-v36{z-index:0}
+#scene .scene-art-layer{z-index:1}
+#scene .scene-window-cloud-v36{z-index:2;opacity:0;transition:opacity 1.4s ease}
+#scene .scene-window-rain-v36{z-index:3;opacity:0;transition:opacity 1.2s ease}
+#scene .scene-environment-decor-v36{z-index:4}
+#scene .scene-environment-desk-v36{z-index:5}
+#scene .scene-lamp-v36{z-index:6;opacity:.7;mix-blend-mode:multiply;transition:opacity 1.4s ease,filter 1.4s ease}
+#scene .scene-depth-v36{z-index:9}
+#scene .scene-weather-overlay{z-index:11}
+#scene .scene-light{z-index:12}
+#scene[data-time="dusk"] .scene-art-day{opacity:1;filter:saturate(.88) sepia(.14) brightness(.94)}
+#scene[data-time="night"] .scene-art-day{opacity:0}
+#scene[data-time="night"] .scene-art-night{opacity:1}
+#scene[data-time="night"] .scene-lamp-v36{opacity:1;filter:brightness(1.12) saturate(1.06);mix-blend-mode:normal}
+#scene[data-time="night"] .scene-window-cloud-v36{opacity:.12}
+#scene[data-weather="cloud"] .scene-window-cloud-v36{opacity:.82}
+#scene[data-weather="mist"] .scene-window-cloud-v36{opacity:.55;filter:blur(.25px)}
+#scene[data-weather="rain"] .scene-window-rain-v36{opacity:.96}
+#scene[data-weather="rain"] .scene-window-cloud-v36{opacity:.48}
+#scene[data-weather="snow"] .scene-window-cloud-v36{opacity:.35;filter:grayscale(.25) brightness(1.08)}
+#scene[data-weather="snow"] .scene-window-rain-v36{opacity:.28;filter:grayscale(1)}
+#scene.is-idle .scene-environment-decor-v36{filter:saturate(.9) brightness(.99)}
+#scene.is-idle .scene-lamp-v36{opacity:.58}
+#scene.high-intensity .scene-lamp-v36{opacity:.84}
+#scene.focus-mode .scene-lamp-v36{opacity:.9}
+#scene.resting .scene-lamp-v36{opacity:.62}
+@media(max-width:900px){#scene .scene-lamp-v36{opacity:.58}#scene .scene-window-rain-v36{opacity:.9}}
+@media(prefers-reduced-motion:reduce){#scene .scene-window-cloud-v36,#scene .scene-window-rain-v36,#scene .scene-lamp-v36{transition:none!important}}
+#scene .scene-monitors-v36{position:absolute;inset:0;z-index:4.5;pointer-events:none;overflow:hidden}
+#scene .scene-monitors-v36 img{width:100%;height:100%;display:block;object-fit:cover}
+#scene.is-idle .scene-monitors-v36{filter:saturate(.88) brightness(.98)}
+#scene.high-intensity .scene-monitors-v36{filter:brightness(1.04)}

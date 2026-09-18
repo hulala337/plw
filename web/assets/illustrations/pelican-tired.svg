@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 460" role="img" aria-label="疲劳的鹈鹕">
+<defs><linearGradient id="f" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f9fbfb"/><stop offset="1" stop-color="#c3d3da"/></linearGradient><linearGradient id="b" x1="0" x2="1"><stop stop-color="#efb36d"/><stop offset="1" stop-color="#d87e54"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-opacity=".18"/></filter></defs>
+<ellipse cx="210" cy="425" rx="128" ry="18" fill="#294451" opacity=".15"/><g filter="url(#s)">
+<path d="M118 375c-4-60 17-119 65-145 49-27 121-9 145 42 27 58 4 116-47 138-54 23-126 10-163-35z" fill="url(#f)"/>
+<path d="M165 229c-35-7-58-31-59-61-1-36 25-63 59-69 37-6 71 13 84 45 12 31 0 61-27 77-18 10-37 13-57 8z" fill="#f7fafb"/>
+<path d="M118 198c-41-7-75-25-91-49-10-15-2-29 16-29 37 1 78 20 107 48-5 15-15 24-32 30z" fill="url(#b)"/><path d="M62 127c-14 10-16 23-7 36 23 27 62 42 91 30-16-24-50-54-84-66z" fill="#eda05d"/>
+<path d="M171 117q16 7 34 0" stroke="#6e8490" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<path d="M225 118c20 17 25 42 16 65" fill="none" stroke="#b2c7d1" stroke-width="8" stroke-linecap="round"/>
+<path d="M145 267c-9 42 7 75 42 96 31 18 72 19 101 0-28-10-52-28-64-51-12-22-14-44-8-65-25 13-47 19-71 20z" fill="#7f9cab"/>
+<path d="M156 342q-21 15-37 29" stroke="#6f8e9b" stroke-width="9" stroke-linecap="round"/><path d="M245 349q20 10 36 25" stroke="#6f8e9b" stroke-width="9" stroke-linecap="round"/>
+<path d="M127 378l-7 27M258 379l9 26" stroke="#d48750" stroke-width="8" stroke-linecap="round"/><path d="M108 405h38M256 405h37" stroke="#c97849" stroke-width="7" stroke-linecap="round"/>
+<path d="M152 91c11-35 57-47 86-20" fill="none" stroke="#35596e" stroke-width="11" stroke-linecap="round"/><rect x="140" y="83" width="23" height="35" rx="9" fill="#35596e"/><rect x="227" y="82" width="23" height="35" rx="9" fill="#35596e"/>
+<!-- sleepy eyes --> <path d="M178 105q10 9 20 0M209 105q10 9 20 0" fill="none" stroke="#29414e" stroke-width="5" stroke-linecap="round"/>
+</g></svg>

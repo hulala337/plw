@@ -1,0 +1,41 @@
+/* V3.5 Life Layer — visual-only character choreography. */
+.pelican{isolation:isolate}
+.pelican-life-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:4;pointer-events:none;overflow:visible;filter:drop-shadow(0 5px 5px rgba(40,61,69,.05));mix-blend-mode:normal;opacity:.98}
+.pelican-state{z-index:2}
+.pelican-life-layer{transition:opacity .35s ease,filter .35s ease}
+.office-scene.is-idle .pelican-life-layer{opacity:.72;filter:saturate(.82) brightness(.99)}
+.office-scene.tired .pelican-life-layer{opacity:.58;filter:saturate(.72) brightness(.96)}
+.office-scene.resting .pelican-life-layer{opacity:.36;filter:saturate(.65) brightness(.97)}
+.office-scene.high-intensity .pelican-life-layer{animation:life-energy 1.55s ease-in-out infinite}
+.office-scene.focus-mode .pelican-life-layer{animation:life-focus 3.9s ease-in-out infinite}
+.office-scene.listening .pelican-life-layer{filter:drop-shadow(0 5px 8px rgba(65,125,148,.12))}
+@keyframes life-energy{0%,100%{transform:translateY(0)}45%{transform:translateY(-1px)}70%{transform:translateY(.7px)}}
+@keyframes life-focus{0%,100%{transform:translateY(0)}50%{transform:translateY(-.7px)}}
+/* Scene-level behavioral cues. These do not touch business state; they react to existing classes. */
+.office-scene.tired .pelican-life-layer{transform:rotate(1.2deg) translateY(2px)}
+.office-scene.resting .pelican-life-layer{transform:rotate(2deg) translateY(4px)}
+.office-scene.high-intensity .pelican-life-layer{filter:drop-shadow(0 7px 9px rgba(40,61,69,.08))}
+.pelican-life-badge{position:absolute;left:50%;bottom:3%;transform:translate(-50%,6px);z-index:18;pointer-events:none;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(90,122,136,.14);box-shadow:0 8px 18px rgba(39,67,79,.08);color:#587381;font-size:9px;letter-spacing:.15px;opacity:0;transition:opacity .45s ease,transform .45s ease;backdrop-filter:blur(7px)}
+.office-scene.pelican-thinking .pelican-life-badge{opacity:1;transform:translate(-50%,0)}
+.office-scene.pelican-thinking .pelican-life-layer{filter:saturate(.88) brightness(1.01)}
+@media(prefers-reduced-motion:reduce){.pelican-life-layer{animation:none!important}.pelican-life-badge{transition:none!important}}
+
+/* V3.5 Life Round 2 — character ↔ workspace relationship. */
+.pelican-desk-life{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:5;pointer-events:none;overflow:visible;opacity:.82;transition:opacity .5s ease,filter .5s ease}
+.pelican-desk-life .desk-paper{transform-origin:170px 355px}
+.pelican-desk-life .desk-glow{transition:opacity .6s ease}
+.office-scene.is-idle .pelican-desk-life{opacity:.38}
+.office-scene.tired .pelican-desk-life{opacity:.28;filter:saturate(.7)}
+.office-scene.resting .pelican-desk-life{opacity:.16}
+.office-scene.working-at-desk .pelican-desk-life .desk-paper{animation:paperBreath 4.8s ease-in-out infinite}
+.office-scene.working-at-desk .pelican-desk-life .key-glints{animation:keyGlint 2.1s ease-in-out infinite}
+.office-scene.working-at-desk .pelican-desk-life .desk-glow{animation:deskGlow 3.4s ease-in-out infinite}
+.office-scene.task-celebrate .pelican-desk-life .completion-mark{animation:completionPulse 1.5s cubic-bezier(.2,.8,.2,1) both}
+.office-scene.board-focus .pelican-life-layer{filter:saturate(.92) brightness(1.02) drop-shadow(0 6px 8px rgba(74,120,136,.13))}
+.office-scene.board-focus .pelican-life-layer{animation:boardAttention 4.2s ease-in-out infinite}
+@keyframes paperBreath{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(1px,-.7px) rotate(.25deg)}}
+@keyframes keyGlint{0%,65%,100%{opacity:0;transform:translateY(0)}72%{opacity:.55;transform:translateY(-1px)}80%{opacity:.12;transform:translateY(0)}}
+@keyframes deskGlow{0%,100%{opacity:.22;transform:scale(.98)}50%{opacity:.46;transform:scale(1.02)}}
+@keyframes completionPulse{0%{opacity:0;transform:scale(.7)}30%{opacity:.8;transform:scale(1.08)}70%{opacity:.45;transform:scale(1)}100%{opacity:0;transform:scale(1.16)}}
+@keyframes boardAttention{0%,100%{transform:translateY(0) rotate(0)}38%{transform:translateY(-.5px) rotate(-.35deg)}62%{transform:translateY(.3px) rotate(.25deg)}}
+@media(prefers-reduced-motion:reduce){.office-scene.working-at-desk .pelican-desk-life .desk-paper,.office-scene.working-at-desk .pelican-desk-life .key-glints,.office-scene.working-at-desk .pelican-desk-life .desk-glow,.office-scene.task-celebrate .pelican-desk-life .completion-mark,.office-scene.board-focus .pelican-life-layer{animation:none!important}}
