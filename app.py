@@ -345,7 +345,12 @@ def refresh_monitor_layout(force: bool = False) -> list[dict]:
 
 
 def monitor_at(x: int, y: int) -> int | None:
-    for m in refresh_monitor_layout():
+    layout = refresh_monitor_layout()
+    for m in layout:
+        if m["left"] <= x < m["right"] and m["top"] <= y < m["bottom"]:
+            return int(m["index"])
+    layout = refresh_monitor_layout(force=True)
+    for m in layout:
         if m["left"] <= x < m["right"] and m["top"] <= y < m["bottom"]:
             return int(m["index"])
     return None
@@ -359,9 +364,9 @@ def on_move(x, y) -> None:
         current_monitor = monitor_at(xi, yi)
         if last_xy is not None:
             dist = math.hypot(xi-last_xy[0], yi-last_xy[1])
-            # pynput reports Windows virtual-desktop coordinates, including
-            # negative coordinates for displays placed left/above primary.
-            if dist < 5000:
+            # Count the full Windows virtual-desktop movement. Large jumps are
+            # legitimate on 4K and multi-monitor layouts and must not be dropped.
+            if math.isfinite(dist) and dist >= 0:
                 payload = {"cursor_distance_px":dist}
                 if last_monitor_index is not None and current_monitor is not None and current_monitor != last_monitor_index:
                     payload["monitor_switches"] = 1
@@ -444,6 +449,33 @@ def _close_focus_session(session_id, session_started, session_active, session_la
     conn=db(); conn.execute("UPDATE focus_sessions SET ended_at=?,active_seconds=?,break_seconds=?,event_count=?,categories=?,ended_reason=? WHERE id=?", (end_dt,round(session_active),max(0,round(time.time()-(session_last_active or time.time()))),session_events,",".join(categories),reason,session_id)); conn.commit(); conn.close()
 
 
+def recover_stale_sessions() -> None:
+    """Close focus sessions left open by a crash or forced termination."""
+    conn = db()
+    now = datetime.now().isoformat(timespec="seconds")
+    conn.execute("UPDATE focus_sessions SET ended_at=COALESCE(ended_at, ?), ended_reason=CASE WHEN ended_reason='' THEN 'recovered' ELSE ended_reason END WHERE ended_at IS NULL", (now,))
+    conn.commit()
+    conn.close()
+
+
+def self_test() -> int:
+    """Offline smoke test used by the Windows release pipeline."""
+    try:
+        init_db()
+        recover_stale_sessions()
+        ensure_today()
+        if not (WEB / "index.html").is_file(): raise RuntimeError("web/index.html missing")
+        if not (WEB / "assets").is_dir(): raise RuntimeError("web/assets missing")
+        if not api.routes: raise RuntimeError("FastAPI routes were not registered")
+        info = display_info()
+        if not isinstance(info.get("count"), int): raise RuntimeError("display detection returned invalid data")
+        print("Pelican Workbench self-test: PASS")
+        return 0
+    except Exception as exc:
+        print(f"Pelican Workbench self-test: FAIL: {exc}")
+        return 1
+
+
 def tracker() -> None:
     prev=time.time(); session_id=None; session_started=None; session_active=0.0; session_last_active=None; last_seq=state["event_seq"]; session_events=0; categories=[]
     while not STOP.is_set():
@@ -498,9 +530,9 @@ def streak_days() -> int:
 
 def api_payload(kind="today") -> dict:
     start,end=range_bounds(kind); total,by_day,longest,rhythm=fetch_summary(start,end); conn=db()
-    timeline=conn.execute("SELECT slice_start,category,seconds,events FROM activity_slices WHERE date(slice_start)=? ORDER BY slice_start", (today_key(),)).fetchall()
-    apps=conn.execute("SELECT category,seconds FROM app_usage WHERE day=? ORDER BY seconds DESC", (today_key(),)).fetchall()
-    sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE date(started_at)=? ORDER BY started_at DESC", (today_key(),)).fetchall()
+    timeline=conn.execute("SELECT slice_start,category,seconds,events FROM activity_slices WHERE date(slice_start) BETWEEN ? AND ? ORDER BY slice_start", (start.isoformat(), end.isoformat())).fetchall()
+    apps=conn.execute("SELECT category,COALESCE(SUM(seconds),0) AS seconds FROM app_usage WHERE day BETWEEN ? AND ? GROUP BY category ORDER BY seconds DESC", (start.isoformat(), end.isoformat())).fetchall()
+    sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE date(started_at) BETWEEN ? AND ? ORDER BY started_at DESC", (start.isoformat(), end.isoformat())).fetchall()
     todos=conn.execute("SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC").fetchall(); conn.close()
     return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
 
@@ -772,8 +804,11 @@ def export_xlsx(range:str="today"):
 
 
 def main() -> None:
+    if "--self-test" in sys.argv:
+        raise SystemExit(self_test())
     enforce_release_integrity()
     init_db()
+    recover_stale_sessions()
     ensure_today()
     run_server()
     listeners_start()
