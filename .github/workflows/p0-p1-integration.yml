@@ -1,0 +1,16 @@
+name: P0/P1 integration
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run P0/P1 integration contract
+        run: python tools/p0_p1_integration.py
