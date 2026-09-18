@@ -47,9 +47,12 @@
 /* V3.6 monitor topology: single-display users must not see a second monitor. */
 #scene .scene-monitors-single{display:none}
 #scene .scene-monitors-multi{display:block}
+#scene .scene-monitors-triple{display:none}
 #scene[data-monitors="1"] .scene-monitors-single{display:block}
 #scene[data-monitors="1"] .scene-monitors-multi{display:none}
 #scene[data-monitors="2"] .scene-monitors-single,
 #scene[data-monitors="3"] .scene-monitors-single{display:none}
-#scene[data-monitors="2"] .scene-monitors-multi,
-#scene[data-monitors="3"] .scene-monitors-multi{display:block}
+#scene[data-monitors="2"] .scene-monitors-multi{display:block}
+#scene[data-monitors="2"] .scene-monitors-triple{display:none}
+#scene[data-monitors="3"] .scene-monitors-multi{display:none}
+#scene[data-monitors="3"] .scene-monitors-triple{display:block}
