@@ -620,17 +620,25 @@ def tracker() -> None:
             prev=now
             STOP.wait(TRACK_INTERVAL)
             continue
-        if active:
-            if session_id is None:
-                conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)", (datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
-                session_started=last_input_ts; session_active=0; session_last_active=last_input_ts; session_events=0; categories=[]
-            session_active += dt; session_last_active=last_input_ts; session_events += new_events
-            if category not in categories: categories.append(category)
-        else:
-            if session_id and session_last_active and now-session_last_active > FOCUS_BREAK_SECONDS:
-                _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
-                session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
-        persist_slice(today_key(), datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), category, dt, new_events)
+        try:
+            if active:
+                if session_id is None:
+                    conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)", (datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
+                    session_started=last_input_ts; session_active=0; session_last_active=last_input_ts; session_events=0; categories=[]
+                session_active += dt; session_last_active=last_input_ts; session_events += new_events
+                if category not in categories: categories.append(category)
+            else:
+                if session_id and session_last_active and now-session_last_active > FOCUS_BREAK_SECONDS:
+                    _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
+                    session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
+            persist_slice(today_key(), datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), category, dt, new_events)
+        except Exception:
+            # Any SQLite failure must keep the tracker alive. The input batch
+            # remains queued when flush_pending() failed; slice/session writes
+            # are retried on the next tracker tick instead of killing the thread.
+            prev=now
+            STOP.wait(TRACK_INTERVAL)
+            continue
         prev=now; STOP.wait(TRACK_INTERVAL)
     if session_id: _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"shutdown")
 
