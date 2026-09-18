@@ -612,7 +612,7 @@ def self_test() -> int:
         conn.close()
 
         queue_input(keys=1, text_chars=1, cursor_distance_px=123.0, monitor_switches=1)
-        flush_pending()
+        persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
         conn = db()
         after = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
         expected = {"keys": 1, "text_chars": 1, "cursor_distance_px": 123.0, "activity_events": 1, "monitor_switches": 1}
