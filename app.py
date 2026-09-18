@@ -663,15 +663,20 @@ def set_windows_dpi_awareness() -> None:
 
 def listeners_start() -> bool:
     global listener_refs, listener_last_ok
+    new_refs = []
     try:
         k=keyboard.Listener(on_press=on_press)
         m=mouse.Listener(on_click=on_click,on_scroll=on_scroll,on_move=on_move)
+        new_refs=[k,m]
         k.start(); m.start()
-        listener_refs=[k,m]
+        listener_refs=new_refs
         listener_last_ok=time.time()
         return True
     except Exception:
-        for listener in listener_refs:
+        # Stop both locally-created hooks even if the second hook failed after
+        # the first one had already started. This prevents an orphaned global
+        # keyboard hook and makes watchdog recovery deterministic.
+        for listener in new_refs:
             with suppress(Exception):
                 listener.stop()
         listener_refs=[]
