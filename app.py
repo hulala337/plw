@@ -820,16 +820,15 @@ def streak_days() -> int:
 
 def world_payload() -> dict:
     g=growth_payload(); eq={x["slot"]:x["item_id"] for x in g["equipment"]}
-    displays=display_info()
+    displays=display_info(); unlocked={x["item_id"] for x in g["unlocks"] if x["item_type"]=="scene"}
     selected_scene=eq.get("scene","office")
-    # Automatic monitor adaptation is a property of the world, not of the tracker.
-    if selected_scene=="office" and displays["count"]>=3: effective_scene="dual_monitor_office"
-    elif selected_scene=="office" and displays["count"]>=2: effective_scene="dual_monitor_office"
-    else: effective_scene=selected_scene
+    effective_scene=selected_scene
+    if selected_scene=="office" and displays["count"]>=2 and "dual_monitor_office" in unlocked:
+        effective_scene="dual_monitor_office"
     active=bool(active_session())
     return {"scene":effective_scene,"selected_scene":selected_scene,"pelican":eq.get("pelican","classic"),
             "outfit":eq.get("outfit","default"),"accessory":eq.get("accessory"),
-            "decorations":[x["item_id"] for x in g["equipment"] if x["slot"]=="decoration"],
+            "decorations":[x["item_id"] for x in g["equipment"] if x["item_type"]=="decoration"],
             "effect":eq.get("effect"),"display_count":displays["count"],
             "work_state":"working" if active else "resting"}
 
@@ -1084,9 +1083,11 @@ def patch_equipment(item: EquipmentPatch):
     unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
     if not unlocked and int(row["required_level"] or 1)>level: conn.close(); raise HTTPException(403,"内容尚未解锁")
     now=datetime.now().isoformat(timespec="seconds")
-    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(slot,slot,item.item_id,now))
+    storage_slot=("decoration:"+item.item_id) if slot=="decoration" else slot
+    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(storage_slot,slot,item.item_id,now))
     conn.commit(); equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]; conn.close()
     return {"ok":True,"equipment":equipment}
+
 @api.get("/api/dashboard")
 def dashboard(range: str="today"):
     if range not in {"today","week","month"}: raise HTTPException(400,"invalid range")
