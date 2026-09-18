@@ -17,6 +17,10 @@ def replace_if_present(text: str, old: str, new: str, label: str) -> str:
 
 
 def repair(text: str) -> str:
+    required = ('monitor_layout_signature','math.isfinite(dist) and dist >= 0','def self_test() -> int:','WHERE date(slice_start) BETWEEN ? AND ?','recover_stale_sessions()')
+    if all(marker in text for marker in required):
+        return text
+
     text = replace_if_present(
         text,
         '''def monitor_at(x: int, y: int) -> int | None:\n    for m in refresh_monitor_layout():\n        if m["left"] <= x < m["right"] and m["top"] <= y < m["bottom"]:\n            return int(m["index"])\n    return None\n''',
