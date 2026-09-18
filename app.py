@@ -538,8 +538,18 @@ def self_test() -> int:
         if missing:
             raise RuntimeError("required API routes missing: "+", ".join(sorted(missing)))
         html=(WEB/"index.html").read_text(encoding="utf-8")
+        js=(WEB/"assets"/"app.js").read_text(encoding="utf-8")
         if 'data-view="growth"' not in html or 'id="view-growth"' not in html:
             raise RuntimeError("Growth UI navigation/view missing")
+        import re
+        html_ids=set(re.findall(r'id="([^"]+)"',html))
+        js_ids=set(re.findall(r"\$\(['"]([^'"]+)['"]\)",js))
+        missing_dom=sorted(js_ids-html_ids)
+        if missing_dom:
+            raise RuntimeError("frontend DOM contract missing IDs: "+", ".join(missing_dom))
+        for view in ("home","replay","timeline","stats","growth","settings"):
+            if f'id="view-{view}"' not in html:
+                raise RuntimeError("frontend view missing: "+view)
         seed_progression_catalog()
         info = display_info()
         if not isinstance(info.get("count"), int):
