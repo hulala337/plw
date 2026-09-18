@@ -532,8 +532,15 @@ def self_test() -> int:
             raise RuntimeError("web/index.html missing")
         if not (WEB / "assets").is_dir():
             raise RuntimeError("web/assets missing")
-        if not api.routes:
-            raise RuntimeError("FastAPI routes were not registered")
+        paths={getattr(route,"path","") for route in api.routes}
+        required_paths={"/","/api/dashboard","/api/health","/api/display-info","/api/settings","/api/growth","/api/todos","/api/forget-today","/api/replay","/api/export/csv","/api/export/xlsx"}
+        missing=required_paths-paths
+        if missing:
+            raise RuntimeError("required API routes missing: "+", ".join(sorted(missing)))
+        html=(WEB/"index.html").read_text(encoding="utf-8")
+        if 'data-view="growth"' not in html or 'id="view-growth"' not in html:
+            raise RuntimeError("Growth UI navigation/view missing")
+        seed_progression_catalog()
         info = display_info()
         if not isinstance(info.get("count"), int):
             raise RuntimeError("display detection returned invalid data")
