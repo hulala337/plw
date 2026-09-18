@@ -575,7 +575,7 @@ def self_test() -> int:
         if not (WEB / "assets").is_dir():
             raise RuntimeError("web/assets missing")
         paths={getattr(route,"path","") for route in api.routes}
-        required_paths={"/","/api/dashboard","/api/health","/api/display-info","/api/settings","/api/growth","/api/todos","/api/forget-today","/api/replay","/api/export/csv","/api/export/xlsx"}
+        required_paths={"/","/api/dashboard","/api/health","/api/display-info","/api/settings","/api/growth","/api/todos","/api/forget-today","/api/replay","/api/export/csv","/api/export/xlsx","/api/equipment"}
         missing=required_paths-paths
         if missing:
             raise RuntimeError("required API routes missing: "+", ".join(sorted(missing)))
@@ -593,6 +593,19 @@ def self_test() -> int:
             if f'id="view-{view}"' not in html:
                 raise RuntimeError("frontend view missing: "+view)
         seed_progression_catalog()
+        conn=db()
+        required_tables={"progress_profile","progress_events","unlocks","achievements","equipment","scenes","pelicans"}
+        actual_tables={r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
+        if required_tables-actual_tables:
+            conn.close(); raise RuntimeError("P1 tables missing: "+", ".join(sorted(required_tables-actual_tables)))
+        conn.close()
+        gp=growth_payload()
+        if not {"profile","collection","equipment","scenes","pelicans"}.issubset(gp):
+            raise RuntimeError("P1 growth payload incomplete")
+        if not any(x["id"]=="office" and x["unlocked"] for x in gp["scenes"]):
+            raise RuntimeError("default scene not unlocked")
+        if not any(x["id"]=="classic" and x["unlocked"] for x in gp["pelicans"]):
+            raise RuntimeError("default pelican not unlocked")
         info = display_info()
         if not isinstance(info.get("count"), int):
             raise RuntimeError("display detection returned invalid data")
@@ -714,11 +727,15 @@ def sync_progression() -> dict:
     """Materialize Growth from durable work facts and idempotent progression events."""
     conn=db()
     row=conn.execute("SELECT total_active_seconds FROM progress_profile WHERE id=1").fetchone()
+    daily_active=float(conn.execute("SELECT COALESCE(SUM(active_seconds),0) AS active FROM daily").fetchone()["active"] or 0)
     if row is None:
-        conn.execute("INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at) VALUES(1,0,0,1,?)",(datetime.now().isoformat(timespec="seconds"),))
-        active=0.0
+        conn.execute("INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at) VALUES(1,0,?,1,?)",(daily_active,datetime.now().isoformat(timespec="seconds")))
+        active=daily_active
     else:
         active=float(row["total_active_seconds"] or 0)
+        if active <= 0 and daily_active > 0:
+            active=daily_active
+            conn.execute("UPDATE progress_profile SET total_active_seconds=? WHERE id=1",(active,))
     chars=int(conn.execute("SELECT COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()["chars"] or 0)
     now=datetime.now().isoformat(timespec="seconds")
     for r in conn.execute("SELECT id,completed_at FROM todos WHERE done=1 AND completed_at IS NOT NULL").fetchall():
