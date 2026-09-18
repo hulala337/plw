@@ -340,7 +340,8 @@ def persist_tracker_tick(day: str, slice_key: str, category: str, dt: float, eve
         try:
             conn.execute("INSERT OR IGNORE INTO daily(day) VALUES(?)", (day,))
             updates = dict(batch)
-            updates["active_seconds"] = updates.get("active_seconds", 0) + dt
+            time_field = "active_seconds" if category != "idle" else "idle_seconds"
+            updates[time_field] = updates.get(time_field, 0) + dt
             sets = ", ".join(f"{k}={k}+?" for k in updates)
             conn.execute(f"UPDATE daily SET {sets} WHERE day=?", [*updates.values(), day])
             conn.execute(
