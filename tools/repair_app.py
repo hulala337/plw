@@ -17,7 +17,7 @@ def replace_if_present(text: str, old: str, new: str, label: str) -> str:
 
 
 def repair(text: str) -> str:
-    required = ('monitor_layout_signature','math.isfinite(dist) and dist >= 0','def self_test() -> int:','WHERE date(slice_start) BETWEEN ? AND ?','recover_stale_sessions()')
+    required = ('monitor_layout_signature','math.isfinite(dist) and dist >= 0','def self_test() -> int:','input pipeline persistence check failed','PRAGMA journal_mode=WAL','wait_for_server','tracker_reset_seq')
     if all(marker in text for marker in required):
         return text
 
