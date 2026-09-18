@@ -80,8 +80,9 @@ state = {
     "activity_events": 0, "event_seq": 0,
 }
 last_xy: tuple[int, int] | None = None
-last_monitor_index: int | None = None
+last_monitor_index: tuple[int, int, int, int] | None = None
 monitor_layout = []
+monitor_layout_signature = ()
 monitor_layout_ts = 0.0
 last_input_ts = time.time()
 listener_refs = []
@@ -328,34 +329,39 @@ def on_scroll(x, y, dx, dy) -> None:
 
 
 def refresh_monitor_layout(force: bool = False) -> list[dict]:
-    global monitor_layout, monitor_layout_ts
+    global monitor_layout, monitor_layout_signature, monitor_layout_ts, last_xy, last_monitor_index
     if not force and time.time() - monitor_layout_ts < 5:
         return monitor_layout
     monitors = []
     try:
         import win32api as _wapi
         for index, (_handle, _hdc, rect) in enumerate(_wapi.EnumDisplayMonitors()):
-            left, top, right, bottom = rect
-            monitors.append({"index":index,"left":left,"top":top,"right":right,"bottom":bottom,"width":right-left,"height":bottom-top})
+            left, top, right, bottom = map(int, rect)
+            monitors.append({
+                "index": index, "left": left, "top": top, "right": right, "bottom": bottom,
+                "width": right-left, "height": bottom-top,
+            })
     except Exception:
         monitors = []
+    signature = tuple(sorted((m["left"], m["top"], m["right"], m["bottom"]) for m in monitors))
+    if monitor_layout_signature and signature != monitor_layout_signature:
+        last_xy = None
+        last_monitor_index = None
     monitor_layout = monitors
+    monitor_layout_signature = signature
     monitor_layout_ts = time.time()
     return monitor_layout
 
-
-def monitor_at(x: int, y: int) -> int | None:
+def monitor_at(x: int, y: int) -> tuple[int, int, int, int] | None:
     layout = refresh_monitor_layout()
     for m in layout:
         if m["left"] <= x < m["right"] and m["top"] <= y < m["bottom"]:
-            return int(m["index"])
+            return (m["left"], m["top"], m["right"], m["bottom"])
     layout = refresh_monitor_layout(force=True)
     for m in layout:
         if m["left"] <= x < m["right"] and m["top"] <= y < m["bottom"]:
-            return int(m["index"])
+            return (m["left"], m["top"], m["right"], m["bottom"])
     return None
-
-
 def on_move(x, y) -> None:
     global last_xy, last_monitor_index, listener_last_mouse_event
     try:
@@ -643,6 +649,18 @@ def start_tray() -> None:
     tray_icon.run()
 
 
+def set_windows_dpi_awareness() -> None:
+    """Keep pynput and Win32 monitor coordinates in the same physical-pixel space."""
+    if os.name != "nt":
+        return
+    with suppress(Exception):
+        import ctypes
+        if ctypes.windll.shcore.SetProcessDpiAwareness(2) == 0:
+            return
+    with suppress(Exception):
+        import ctypes
+        ctypes.windll.user32.SetProcessDPIAware()
+
 def listeners_start() -> bool:
     global listener_refs, listener_last_ok
     try:
@@ -810,6 +828,7 @@ def main() -> None:
     init_db()
     recover_stale_sessions()
     ensure_today()
+    set_windows_dpi_awareness()
     run_server()
     listeners_start()
     threading.Thread(target=tracker, daemon=True, name="tracker").start()
