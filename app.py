@@ -622,8 +622,14 @@ def self_test() -> int:
             conn.close(); raise RuntimeError("P1 tables missing: "+", ".join(sorted(required_tables-actual_tables)))
         conn.close()
         gp=growth_payload()
-        if not {"profile","collection","equipment","scenes","pelicans"}.issubset(gp):
+        if not {"profile","collection","equipment","scenes","pelicans","unlock_catalog","achievement_catalog"}.issubset(gp):
             raise RuntimeError("P1 growth payload incomplete")
+        if set(gp["collection"]) != {"pelicans","outfits","accessories","scenes","decorations","effects"}:
+            raise RuntimeError("P1 collection categories incomplete")
+        xp_before=gp["profile"]["xp"]
+        xp_after=growth_payload()["profile"]["xp"]
+        if xp_before != xp_after:
+            raise RuntimeError("P1 progression is not idempotent")
         if not any(x["id"]=="office" and x["unlocked"] for x in gp["scenes"]):
             raise RuntimeError("default scene not unlocked")
         if not any(x["id"]=="classic" and x["unlocked"] for x in gp["pelicans"]):
