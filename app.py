@@ -203,6 +203,45 @@ def init_db() -> None:
             completed_at TEXT
         );
         CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS progress_profile (
+            id INTEGER PRIMARY KEY CHECK(id=1),
+            xp INTEGER NOT NULL DEFAULT 0,
+            total_active_seconds REAL NOT NULL DEFAULT 0,
+            level INTEGER NOT NULL DEFAULT 1,
+            updated_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS unlocks (
+            item_type TEXT NOT NULL,
+            item_id TEXT NOT NULL,
+            unlocked_at TEXT NOT NULL,
+            PRIMARY KEY(item_type, item_id)
+        );
+        CREATE TABLE IF NOT EXISTS achievements (
+            achievement_id TEXT PRIMARY KEY,
+            unlocked_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS equipment (
+            slot TEXT PRIMARY KEY,
+            item_type TEXT NOT NULL,
+            item_id TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS scenes (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1,
+            base_id TEXT NOT NULL DEFAULT 'office',
+            weather TEXT NOT NULL DEFAULT 'clear',
+            time_mode TEXT NOT NULL DEFAULT 'auto',
+            monitor_mode TEXT NOT NULL DEFAULT 'auto'
+        );
+        CREATE TABLE IF NOT EXISTS pelicans (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            required_level INTEGER NOT NULL DEFAULT 1,
+            body_id TEXT NOT NULL DEFAULT 'classic',
+            outfit_id TEXT NOT NULL DEFAULT 'default'
+        );
         """
     )
     # Migrate older databases that predate activity_events.
@@ -585,16 +624,85 @@ def active_session() -> dict | None:
     item=dict(row); item["live_seconds"]=max(0,round(time.time()-datetime.fromisoformat(item["started_at"]).timestamp())); return item
 
 
+def sync_progression() -> dict:
+    """Materialize the P1 growth model from real accumulated work data."""
+    conn=db()
+    row=conn.execute("SELECT COALESCE(SUM(active_seconds),0) AS active, COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()
+    todo_row=conn.execute("SELECT COUNT(*) AS n FROM todos WHERE done=1").fetchone()
+    active=float(row["active"] or 0); chars=int(row["chars"] or 0); completed=int(todo_row["n"] or 0)
+    hours=active/3600.0
+    xp=int(active/60.0)+completed*20
+    level=min(12,1+xp//600)
+    now=datetime.now().isoformat(timespec="seconds")
+    conn.execute("""INSERT INTO progress_profile(id,xp,total_active_seconds,level,updated_at)
+                    VALUES(1,?,?,?,?)
+                    ON CONFLICT(id) DO UPDATE SET xp=excluded.xp,total_active_seconds=excluded.total_active_seconds,level=excluded.level,updated_at=excluded.updated_at""",
+                 (xp,active,level,now))
+    unlock_rules=[
+        ("decoration","green_plant",1),
+        ("decoration","lamp",2),
+        ("decoration","coffee_machine",3),
+        ("scene","dual_monitor_office",4),
+        ("pelican","coffee_pelican",5),
+        ("decoration","fish_tank",6),
+        ("scene","sunset_office",8),
+        ("decoration","bookshelf",10),
+    ]
+    for item_type,item_id,required_level in unlock_rules:
+        if level>=required_level:
+            conn.execute("INSERT OR IGNORE INTO unlocks(item_type,item_id,unlocked_at) VALUES(?,?,?)",(item_type,item_id,now))
+    achievement_rules=[
+        ("first_session", active>=60),
+        ("ten_hours", active>=10*3600),
+        ("hundred_hours", active>=100*3600),
+        ("multi_monitor", len(refresh_monitor_layout())>=2),
+        ("seven_day_streak", streak_days()>=7),
+    ]
+    for achievement_id,ready in achievement_rules:
+        if ready:
+            conn.execute("INSERT OR IGNORE INTO achievements(achievement_id,unlocked_at) VALUES(?,?)",(achievement_id,now))
+    conn.commit()
+    unlock_rows=conn.execute("SELECT item_type,item_id,unlocked_at FROM unlocks ORDER BY unlocked_at,item_type,item_id").fetchall()
+    achievement_rows=conn.execute("SELECT achievement_id,unlocked_at FROM achievements ORDER BY unlocked_at,achievement_id").fetchall()
+    conn.close()
+    return {"xp":xp,"level":level,"active_hours":round(hours,2),"text_chars":chars,
+            "unlocks":[dict(x) for x in unlock_rows],"achievements":[dict(x) for x in achievement_rows]}
+
+
 def lifetime_stats() -> dict:
-    conn=db(); row=conn.execute("SELECT COALESCE(SUM(active_seconds),0) a, COALESCE(SUM(text_chars),0) c FROM daily").fetchone(); conn.close()
-    hours=float(row["a"] or 0)/3600; level=1+int(hours//20)
-    unlocked=["green_plant"]
-    if hours>=10: unlocked.append("lamp")
-    if hours>=30: unlocked.append("coffee_machine")
-    if hours>=60: unlocked.append("fish_tank")
-    if hours>=120: unlocked.append("bookshelf")
-    if hours>=250: unlocked.append("sunset_window")
-    return {"active_hours":round(hours,2),"text_chars":int(row["c"] or 0),"level":min(level,12),"unlocked":unlocked}
+    p=sync_progression()
+    return {"active_hours":p["active_hours"],"text_chars":p["text_chars"],"level":p["level"],
+            "xp":p["xp"],"unlocked":[x["item_id"] for x in p["unlocks"]]}
+
+
+def growth_payload() -> dict:
+    conn=db()
+    scenes=[dict(x) for x in conn.execute("SELECT * FROM scenes ORDER BY required_level,id").fetchall()]
+    pelicans=[dict(x) for x in conn.execute("SELECT * FROM pelicans ORDER BY required_level,id").fetchall()]
+    equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]
+    conn.close()
+    p=sync_progression()
+    unlocked={(x["item_type"],x["item_id"]) for x in p["unlocks"]}
+    return {"profile":{"xp":p["xp"],"level":p["level"],"active_hours":p["active_hours"]},
+            "unlocks":p["unlocks"],"achievements":p["achievements"],
+            "scenes":[{**x,"unlocked":("scene",x["id"]) in unlocked or x["required_level"]<=1} for x in scenes],
+            "pelicans":[{**x,"unlocked":("pelican",x["id"]) in unlocked or x["required_level"]<=1} for x in pelicans],
+            "equipment":equipment}
+
+
+def seed_progression_catalog() -> None:
+    conn=db()
+    conn.executemany("INSERT OR IGNORE INTO scenes(id,name,required_level,base_id,weather,time_mode,monitor_mode) VALUES(?,?,?,?,?,?,?)",[
+        ("office","基础工作室",1,"office","clear","auto","auto"),
+        ("dual_monitor_office","双屏工作室",4,"office","clear","auto","dual"),
+        ("sunset_office","黄昏工作室",8,"office","clear","dusk","auto"),
+    ])
+    conn.executemany("INSERT OR IGNORE INTO pelicans(id,name,required_level,body_id,outfit_id) VALUES(?,?,?,?,?)",[
+        ("classic","基础鹈鹕",1,"classic","default"),
+        ("coffee_pelican","咖啡鹈鹕",5,"classic","coffee"),
+    ])
+    conn.execute("INSERT OR IGNORE INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?)",("pelican","pelican","classic",datetime.now().isoformat(timespec="seconds")))
+    conn.commit(); conn.close()
 
 
 def streak_days() -> int:
@@ -836,6 +944,11 @@ api.mount("/assets",StaticFiles(directory=str(WEB/"assets")),name="assets")
 @api.get("/")
 def index(): return FileResponse(WEB/"index.html")
 
+@api.get("/api/growth")
+def growth():
+    return growth_payload()
+
+
 @api.get("/api/dashboard")
 def dashboard(range: str="today"):
     if range not in {"today","week","month"}: raise HTTPException(400,"invalid range")
@@ -926,6 +1039,7 @@ def main() -> None:
     if "--self-test" in sys.argv:
         raise SystemExit(self_test())
     init_db()
+    seed_progression_catalog()
     recover_stale_sessions()
     ensure_today()
     set_windows_dpi_awareness()
