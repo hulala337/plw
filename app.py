@@ -484,40 +484,62 @@ def recover_stale_sessions() -> None:
 
 
 def self_test() -> int:
-    """Offline smoke test used by the Windows release pipeline."""
+    """Offline + hook smoke test used by the Windows release pipeline."""
     try:
         init_db()
         recover_stale_sessions()
         ensure_today()
-        if not (WEB / "index.html").is_file(): raise RuntimeError("web/index.html missing")
-        if not (WEB / "assets").is_dir(): raise RuntimeError("web/assets missing")
-        if not api.routes: raise RuntimeError("FastAPI routes were not registered")
+        if not (WEB / "index.html").is_file():
+            raise RuntimeError("web/index.html missing")
+        if not (WEB / "assets").is_dir():
+            raise RuntimeError("web/assets missing")
+        if not api.routes:
+            raise RuntimeError("FastAPI routes were not registered")
         info = display_info()
-        if not isinstance(info.get("count"), int): raise RuntimeError("display detection returned invalid data")
-        # Exercise the real hook -> pending -> SQLite path without installing
-        # global hooks. Restore the exact daily row after verification.
+        if not isinstance(info.get("count"), int):
+            raise RuntimeError("display detection returned invalid data")
+
+        # Verify that the actual pynput hooks can be created and remain alive.
+        if not listeners_start():
+            raise RuntimeError(f"input listeners failed to start: {listener_error}")
+        time.sleep(0.35)
+        if not listeners_healthy():
+            raise RuntimeError(f"input listeners stopped immediately: {listener_error}")
+
+        # Exercise the real hook -> pending -> SQLite path without writing
+        # actual user input. Restore the exact daily row after verification.
         day = today_key()
         conn = db()
-        before = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
+        before_row = conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone()
+        if before_row is None:
+            conn.close()
+            raise RuntimeError("daily row missing")
+        before = dict(before_row)
         conn.close()
+
         queue_input(keys=1, text_chars=1, cursor_distance_px=123.0, monitor_switches=1)
         flush_pending()
         conn = db()
         after = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
-        expected = {"keys":1, "text_chars":1, "cursor_distance_px":123.0, "activity_events":1, "monitor_switches":1}
+        expected = {"keys": 1, "text_chars": 1, "cursor_distance_px": 123.0, "activity_events": 1, "monitor_switches": 1}
         for key, delta in expected.items():
             if (after.get(key) or 0) != (before.get(key) or 0) + delta:
                 raise RuntimeError("input pipeline persistence check failed: " + key)
         columns = [key for key in before if key != "day"]
         assignments = ", ".join("%s=?" % key for key in columns)
         conn.execute("UPDATE daily SET %s WHERE day=?" % assignments, [before[key] for key in columns] + [day])
-        conn.commit(); conn.close()
-        print("Pelican Workbench self-test: PASS (DB + input pipeline + display + web)")
+        conn.commit()
+        conn.close()
+        print("Pelican Workbench self-test: PASS (DB + real hooks + display + web)")
         return 0
     except Exception as exc:
         print(f"Pelican Workbench self-test: FAIL: {exc}")
         return 1
-
+    finally:
+        for listener in list(listener_refs):
+            with suppress(Exception):
+                listener.stop()
+        listener_refs.clear()
 
 
 def tracker() -> None:
