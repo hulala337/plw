@@ -1,0 +1,121 @@
+{
+  "version": "3.2.0",
+  "status_definition": {
+    "verified": "已有可靠来源支持的固定史实",
+    "needs_primary_source": "方向合理但课堂固定文本前仍需补一手材料",
+    "simulation_assumption": "只属于模型机制",
+    "teacher_interpretation": "教师复盘解释，不作为事件事实"
+  },
+  "events": [
+    {
+      "id": "e01",
+      "status": "verified",
+      "claim": "洋务运动通常以1861年前后为重要起点，但不是某一天由单一人物启动。"
+    },
+    {
+      "id": "e02",
+      "status": "needs_primary_source",
+      "claim": "军工、学校、留学和人才培养应以具体历史项目呈现，不宜做现代管理式二选一。"
+    },
+    {
+      "id": "e03",
+      "status": "verified",
+      "claim": "轮船招商局1872年成立；晚清电报事业随后发展。"
+    },
+    {
+      "id": "e04",
+      "status": "verified",
+      "claim": "中法战争为1884—1885年战争。"
+    },
+    {
+      "id": "e05",
+      "status": "verified",
+      "claim": "北洋水师1888年正式成军；舰艇数量不等于综合军事能力。"
+    },
+    {
+      "id": "e06",
+      "status": "verified",
+      "claim": "甲午战争发生于1894—1895年，信息应按战争进程释放。"
+    },
+    {
+      "id": "e07",
+      "status": "verified",
+      "claim": "1895年战后改革讨论扩大，但改革思想并非全部在1895年之后才出现。"
+    },
+    {
+      "id": "e08",
+      "status": "verified",
+      "claim": "戊戌变法核心改革行动集中于1898年6月至9月。"
+    },
+    {
+      "id": "e09",
+      "status": "verified",
+      "claim": "1900年义和团运动、列强军事干预和清廷政策选择构成重大危机。"
+    },
+    {
+      "id": "e10",
+      "status": "verified",
+      "claim": "1901年后清政府展开新政，应拆分教育、军事、行政、经济等方面。"
+    },
+    {
+      "id": "e11",
+      "status": "verified",
+      "claim": "清廷于1905年废除科举，并推进新式教育。"
+    },
+    {
+      "id": "e12",
+      "status": "verified",
+      "claim": "1908年清廷公布预备立宪安排并颁布《钦定宪法大纲》。"
+    },
+    {
+      "id": "e13",
+      "status": "verified",
+      "claim": "1911年武昌起义后，多省政治局势迅速变化。"
+    },
+    {
+      "id": "e14",
+      "status": "verified",
+      "claim": "中华民国于1912年建立，清帝退位并形成南北政治安排。"
+    },
+    {
+      "id": "e15",
+      "status": "verified",
+      "claim": "1913年宋教仁遇刺后政治危机加深，随后发生二次革命；具体责任判断需注明证据和争议。"
+    },
+    {
+      "id": "e16",
+      "status": "verified",
+      "claim": "1915年袁世凯帝制计划引发反对，护国运动兴起。"
+    },
+    {
+      "id": "e17",
+      "status": "verified",
+      "claim": "《青年杂志》1915年创刊，后改名《新青年》；新文化论争随后发展。"
+    },
+    {
+      "id": "e18",
+      "status": "verified",
+      "claim": "1919年5月4日北京学生示威与巴黎和会山东问题密切相关，随后运动扩展。"
+    },
+    {
+      "id": "e19",
+      "status": "needs_primary_source",
+      "claim": "1920年前后工人、学生、知识界组织和马克思主义传播均有发展，需要使用当时报刊与组织材料。"
+    },
+    {
+      "id": "e20",
+      "status": "verified",
+      "claim": "中国共产党第一次全国代表大会于1921年召开，应展示其成立前的思想和组织背景。"
+    },
+    {
+      "id": "e21",
+      "status": "needs_primary_source",
+      "claim": "地方社会力量参与具有地区差异，需要地区案例支撑。"
+    },
+    {
+      "id": "e22",
+      "status": "teacher_interpretation",
+      "claim": "总结节点不是单一历史事件，只允许依据截至1921年已解锁材料进行反思。"
+    }
+  ]
+}
