@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5efe2"/><stop offset="1" stop-color="#e8ddc9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".18"/>
+    </filter>
+    <style>
+      .title{font:700 42px "Noto Serif SC","Songti SC",serif;fill:#25231f}
+      .subtitle{font:400 19px "Noto Serif SC","Songti SC",serif;fill:#6b6256}
+      .label{font:600 24px "Noto Serif SC","Songti SC",serif;fill:#302c26}
+      .small{font:400 17px "Noto Serif SC","Songti SC",serif;fill:#665d52}
+      .tiny{font:400 14px "Noto Serif SC","Songti SC",serif;fill:#756c60}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#paper)"/>
+  <rect x="55" y="48" width="1490" height="904" rx="20" fill="#fbf8f0" stroke="#c9bda9" stroke-width="2" filter="url(#shadow)"/>
+  <text x="105" y="115" class="title">1919：五四运动的空间展开</text>
+  <text x="105" y="151" class="subtitle">从巴黎和会与山东问题，到北京学生运动，再到上海等地的社会响应</text>
+
+  <!-- schematic world-to-China map -->
+  <path d="M170 280 C255 220 380 230 465 285 C520 320 548 385 528 452 C500 540 426 616 334 650 C254 680 190 635 164 570 C137 502 123 370 170 280Z"
+        fill="#dfe3dc" stroke="#aaa99f" stroke-width="3"/>
+  <text x="230" y="355" class="label">欧洲</text>
+  <text x="205" y="390" class="small">巴黎和会</text>
+  <circle cx="315" cy="430" r="13" fill="#8a3f32"/>
+  <text x="338" y="438" class="small">巴黎</text>
+
+  <!-- China schematic coastline -->
+  <path d="M650 205
+           C745 185 855 195 948 238
+           C1010 266 1058 318 1115 337
+           C1150 349 1175 376 1161 407
+           C1147 438 1115 448 1126 482
+           C1139 522 1109 554 1078 579
+           C1050 601 1024 632 1002 675
+           C975 731 933 766 879 795
+           C824 825 752 839 697 819
+           C654 803 617 775 594 742
+           C568 705 552 664 558 620
+           C564 577 548 537 561 500
+           C577 456 611 433 632 396
+           C654 358 638 327 645 296
+           C651 265 660 235 650 205Z"
+        fill="#e7e0d1" stroke="#928879" stroke-width="4"/>
+  <!-- inland water / regional texture -->
+  <path d="M690 290 C770 350 820 420 846 505 C870 585 846 680 785 760" fill="none" stroke="#c8c0b2" stroke-width="3" stroke-dasharray="8 10"/>
+  <path d="M780 240 C855 315 925 360 1010 390" fill="none" stroke="#c8c0b2" stroke-width="3" stroke-dasharray="8 10"/>
+  <text x="760" y="875" class="small">中国（1919年空间关系示意）</text>
+
+  <!-- route from Paris -->
+  <path d="M328 430 C470 350 555 315 704 300" fill="none" stroke="#8a3f32" stroke-width="5" stroke-dasharray="12 10"/>
+  <text x="438" y="340" class="tiny">巴黎和会信息 / 山东问题</text>
+
+  <!-- key places -->
+  <g>
+    <circle cx="735" cy="318" r="14" fill="#8a3f32"/><circle cx="735" cy="318" r="25" fill="none" stroke="#8a3f32" stroke-opacity=".35" stroke-width="3"/>
+    <text x="760" y="310" class="label">北京</text><text x="760" y="337" class="small">5月4日学生示威</text>
+  </g>
+  <g>
+    <circle cx="900" cy="395" r="11" fill="#6b6256"/>
+    <text x="922" y="390" class="label">天津</text>
+  </g>
+  <g>
+    <circle cx="930" cy="470" r="14" fill="#a66b32"/><circle cx="930" cy="470" r="25" fill="none" stroke="#a66b32" stroke-opacity=".35" stroke-width="3"/>
+    <text x="954" y="463" class="label">济南</text><text x="954" y="489" class="small">山东省内关键节点</text>
+  </g>
+  <g>
+    <circle cx="1005" cy="430" r="14" fill="#a66b32"/>
+    <text x="1028" y="424" class="label">青岛</text><text x="1028" y="450" class="small">德国在山东权益相关</text>
+  </g>
+  <g>
+    <circle cx="1010" cy="650" r="14" fill="#8a3f32"/><circle cx="1010" cy="650" r="25" fill="none" stroke="#8a3f32" stroke-opacity=".35" stroke-width="3"/>
+    <text x="1035" y="644" class="label">上海</text><text x="1035" y="671" class="small">工人、商界等社会力量响应</text>
+  </g>
+  <g>
+    <circle cx="790" cy="610" r="11" fill="#6b6256"/>
+    <text x="813" y="604" class="label">武汉</text>
+  </g>
+  <g>
+    <circle cx="675" cy="735" r="11" fill="#6b6256"/>
+    <text x="698" y="729" class="label">广州</text>
+  </g>
+
+  <!-- spread arrows -->
+  <path d="M735 338 C800 390 865 430 910 460" fill="none" stroke="#8a3f32" stroke-width="4"/>
+  <path d="M742 340 C825 445 920 565 996 635" fill="none" stroke="#8a3f32" stroke-width="5"/>
+  <path d="M728 340 C744 420 770 505 786 598" fill="none" stroke="#8a3f32" stroke-width="4"/>
+  <path d="M718 344 C700 475 685 610 675 720" fill="none" stroke="#8a3f32" stroke-width="4"/>
+  <polygon points="910,460 894,454 900,470" fill="#8a3f32"/>
+  <polygon points="996,635 980,630 990,645" fill="#8a3f32"/>
+  <polygon points="786,598 777,583 793,588" fill="#8a3f32"/>
+  <polygon points="675,720 666,704 682,709" fill="#8a3f32"/>
+
+  <!-- timeline strip -->
+  <rect x="105" y="765" width="430" height="135" rx="14" fill="#f1eadc" stroke="#c9bda9"/>
+  <text x="130" y="800" class="label">空间传播的课堂提示</text>
+  <text x="130" y="831" class="small">① 北京：学生首先集中行动</text>
+  <text x="130" y="858" class="small">② 上海：社会力量进一步卷入</text>
+  <text x="130" y="885" class="small">③ 运动向其他城市扩散</text>
+
+  <rect x="560" y="765" width="925" height="135" rx="14" fill="#f8f3e9" stroke="#c9bda9"/>
+  <text x="590" y="800" class="label">地图读图问题</text>
+  <text x="590" y="831" class="small">为什么“巴黎—山东—北京—上海”会形成同一条历史因果链？</text>
+  <text x="590" y="860" class="small">哪些信息是当时的人能够知道的？哪些属于后见之明？</text>
+  <text x="590" y="889" class="tiny">注：本图为教学用空间关系示意图，不作为1919年精确疆域、道路或行政边界地图。</text>
+
+  <text x="105" y="930" class="tiny">历史场景复原 / 教学示意图 · V3.2 · 依据公开教学史料整理</text>
+</svg>
