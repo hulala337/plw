@@ -1,0 +1,25 @@
+{
+  "version": "3.1.0",
+  "v31_layers": {
+    "decision_capacity": [
+      "information",
+      "resources",
+      "political_room",
+      "execution_capacity"
+    ],
+    "causal_feedback": [
+      "delayed_effect",
+      "path_dependence",
+      "actor_response",
+      "unintended_consequence"
+    ],
+    "assessment": [
+      "historical_context",
+      "evidence_use",
+      "causal_reasoning",
+      "tradeoff_awareness",
+      "uncertainty_awareness"
+    ]
+  },
+  "scoring_policy": "不计算历史路线优劣分数；最终报告聚焦证据、因果链、权衡、历史语境和反思。"
+}
