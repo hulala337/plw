@@ -1,0 +1,97 @@
+{
+  "version": "3.2.0",
+  "sources": [
+    {
+      "id": "S01",
+      "institution": "Columbia University Asia for Educators",
+      "title": "Self-Strengthening and Learning from the West",
+      "url": "https://afe.easia.columbia.edu/tps/1750_cn.htm",
+      "covers": [
+        "e01",
+        "e02",
+        "e03",
+        "e07"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S02",
+      "institution": "Chinese Text Project",
+      "title": "清史稿·志八十二",
+      "url": "https://ctext.org/wiki.pl?chapter=876950&if=en&remap=gb",
+      "covers": [
+        "e11"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S03",
+      "institution": "Library of Congress",
+      "title": "Xing jun zhi yao",
+      "url": "https://www.loc.gov/item/2021666472/",
+      "covers": [
+        "e01",
+        "e02",
+        "e05"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S04",
+      "institution": "Columbia University Asia for Educators",
+      "title": "China 1900s / May Fourth primary sources",
+      "url": "https://afe.easia.columbia.edu/tps/1900_cn.htm",
+      "covers": [
+        "e17",
+        "e18",
+        "e19",
+        "e20"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S05",
+      "institution": "Columbia University Asia for Educators",
+      "title": "Our Final Awakening (1916)",
+      "url": "https://afe.easia.columbia.edu/main_pop/ps/ps_china-chen-duxiu-final-awakening.htm",
+      "covers": [
+        "e17",
+        "e18"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S06",
+      "institution": "Columbia University Asia for Educators",
+      "title": "Our Attitude toward Modern Western Civilization",
+      "url": "https://afe.easia.columbia.edu/main_pop/ps/ps_china-hushi-western-civ.htm",
+      "covers": [
+        "e17",
+        "e18"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S07",
+      "institution": "Columbia University Asia for Educators",
+      "title": "The Three Stages of Revolution (1918)",
+      "url": "https://afe.easia.columbia.edu/main_pop/ps/ps_china-sun-yatsen-revolution.htm",
+      "covers": [
+        "e19",
+        "e20"
+      ],
+      "type": "external_source"
+    },
+    {
+      "id": "S08",
+      "institution": "Columbia University Asia for Educators",
+      "title": "Global May Fourth teaching guide",
+      "url": "https://video.afe.easia.columbia.edu/teaching-guides/global-may-4th-china-in-1919-teaching-guide/",
+      "covers": [
+        "e18",
+        "e19"
+      ],
+      "type": "external_source"
+    }
+  ]
+}
