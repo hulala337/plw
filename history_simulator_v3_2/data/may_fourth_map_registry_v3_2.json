@@ -1,0 +1,26 @@
+{
+  "id": "map_may_fourth_1919",
+  "title": "1919年五四运动空间关系图",
+  "type": "reconstruction_map",
+  "label": "历史场景复原 / 教学示意图",
+  "accuracy_note": "用于呈现巴黎和会、山东问题、北京学生运动及上海等地社会响应的空间关系，不作为1919年精确疆域、道路或行政边界地图。",
+  "key_points": [
+    "巴黎",
+    "北京",
+    "天津",
+    "济南",
+    "青岛",
+    "上海",
+    "武汉",
+    "广州"
+  ],
+  "basis": [
+    "Columbia University Asia for Educators, Global May 4th: China and the World in 1919",
+    "Columbia University Asia for Educators, The May Fourth Movement primary-source teaching materials"
+  ],
+  "source_urls": [
+    "https://video.afe.easia.columbia.edu/teaching-guides/global-may-4th-china-in-1919-teaching-guide/",
+    "https://afe.easia.columbia.edu/main_pop/ps/ps_china.htm"
+  ],
+  "version": "3.2.0"
+}
