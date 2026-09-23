@@ -37,6 +37,40 @@ web/assets/generated-art
 - 自动 QA 是门禁，不替代人工审美判断。
 - 最终角色/场景必须是原创插画，不以几何 SVG 作为最终美术。
 
+## 跨账号 / 跨平台 / 跨电脑资产同步
+
+资产文件现在有统一的 GitHub 同步机制：
+
+- 详细规范：根目录 `ART_SYNC_GUIDE.md`
+- 资产根目录：`art-assets/`
+- 候选：`art-assets/<ASSET_ID>/candidates/`
+- 人工批准版本：`art-assets/<ASSET_ID>/approved/`
+- 风格锚点：`art-assets/B01/master/`
+- 人工审核记录：`art-assets/<ASSET_ID>/review.json`
+- 候选命名：`<ASSET_ID>_vNN.<ext>`
+- GitHub `main` 是跨环境同步基准
+- 每次切换环境先 `git pull origin main`
+- 每个候选生成/上传后必须 commit + push
+- 不允许同名覆盖其他平台已有候选
+
+### 标准接力
+
+```text
+账号/平台 A
+   ↓ 生成
+art-assets/B04/candidates/B04_v01.png
+   ↓ commit + push
+GitHub main
+   ↓ git pull
+账号/平台 B
+   ↓ 读取 STATE + 候选
+继续审核 / 生成 B04_v02
+   ↓ commit + push
+GitHub main
+```
+
+**只有候选、QA、审核记录和 STATE 已持久化并 push 后，才允许进入下一个资产。**
+
 ## Windows 快速开始
 
 在仓库根目录：
@@ -104,26 +138,6 @@ art-work/
 - `OPENAI_BASE_URL`（可选）
 - `OPENAI_IMAGE_MODEL`，默认 `gpt-image-2`
 
-因此 ChatGPT 会员和 API 用量是两套计费/额度体系；没有 ChatGPT Plus 也可以单独使用 API，只要 API 账户有可用余额/额度。
-
-## 推荐生产顺序
-
-第一批只做风格锚点，不要一次生成全部资产：
-
-1. B01 pelican_master
-2. B02 neutral
-3. B03 working
-4. B04 typing
-5. B07 focused
-6. B11 drinking_coffee
-7. C01 office_master_day
-8. C02 office_master_evening
-9. C03 office_master_night
-10. E01 dashboard_hero
-
-这 10 项通过人工审核后，再批量放大到 P0/P1。
-
-
 ## V3：AI Vision Art Director
 
 V3 在传统技术 QA 和颜色统计检查之上增加视觉语义审稿层：
@@ -148,26 +162,6 @@ human review
       ↓
 integrate
 
-### 运行
-
-```powershell
-python art-pipeline\vision_art_director.py --ids B01,B02,B03,C01
-python art-pipeline\production_report.py --ids B01,B02,B03,C01
-```
-
-或直接运行 V3 批处理：
-
-```powershell
-python art-pipeline\batch_v3.py --ids B01,B02,B03,B04,B07,B11,C01,C02,C03,E01
-```
-
-默认视觉审稿模型：
-
-- `OPENAI_REVIEW_MODEL=gpt-5.6-luna`
-- 可用 `--review-model gpt-5.6-sol` 切换更高能力模型
-- `OPENAI_API_KEY` 必须通过环境变量提供
-- `OPENAI_BASE_URL` 可选；使用官方 OpenAI API 时保持为空即可
-
 V3 的 `PASS_TO_HUMAN` **不是批准**，只表示 AI 认为候选达到了人工审稿入口标准。P0/P1 仍必须人工决定。
 
 AI 审稿结果写入：
@@ -177,45 +171,22 @@ art-work/qa/vision-review/<ASSET_ID>.json
 art-work/reports/v3-production-report.json
 ```
 
-规则文件：
-
-`art-production-spec/ART_REVIEW_SCHEMA.json`
-
-### V3 硬门禁
-
-以下情况直接进入 `REWORK`：
-
-- Character Bible 中明确的角色身份硬失败
-- 明显人类手臂/多余肢体/重复身体部件
-- 明显错误的喙、眼睛、头身比例
-- 明显塑料 3D 或摄影写实偏离
-- 明显乱码或不需要的文字
-- 明显破坏核心场景连续性的结构
-
 AI 只负责“发现问题 + 分流”，不负责替代最终美术决策。
 
+## 接力文档关系
 
-## 跨账号 / 跨平台 / 跨电脑接力
-
-统一使用仓库根目录的 `ART_HANDOFF.md` 作为**唯一 Markdown 接力入口与完整接力协议**。
-
-持久化状态分工：
-
-- `ART_HANDOFF.md`：快速入口、强制接力规则、执行协议
-- `art-production-spec/ART_PRODUCTION_STATE.json`：当前进度的唯一机器真相源
+- `ART_HANDOFF.md`：唯一接力入口、当前任务和强制生产规则
+- `ART_SYNC_GUIDE.md`：资产文件如何跨账号/平台/电脑同步
+- `art-production-spec/ART_PRODUCTION_STATE.json`：当前进度唯一机器真相源
 - `art-production-spec/ART_ASSET_MANIFEST.json`：资产身份、规格、顺序与规则
-- `art-production-spec/CHARACTER_BIBLE.md`：角色规范
-- `art-production-spec/ART_DIRECTION.md`：美术方向
-- `art-production-spec/PRODUCTION_RULES.md`：生产规则
+- `art-production-spec/HUMAN_REVIEW_GUIDE.md`：人工审核与 APPROVED 规则
 
-`ART_PRODUCTION_HANDOFF.md` 已废弃并删除，不再存在第二份 Markdown 接力状态/协议文件。
+`ART_PRODUCTION_HANDOFF.md` 已废弃并删除。
 
 新环境先运行：
 
 ```powershell
-python art-pipeline\\handoff_check.py
+python art-pipeline\handoff_check.py
 ```
-
-通过后严格从 STATE 的 `current_asset` 继续。不要依据聊天记录重新猜测进度，不要重复生成已有候选，不得绕过人工审核。
 
 当前断点：**B04 / pelican_thinking / READY / GENERATE**。
