@@ -1,26 +1,102 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>如果我是他们 · V3.2</title>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>如果我是他们 · V3.2</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f1ede4;color:#302b25;font-family:"Microsoft YaHei",system-ui,sans-serif}header{padding:16px 24px;background:#292621;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:5}.tabs button,button{border:0;border-radius:8px;padding:8px 12px;cursor:pointer}.tabs button{background:#4a443c;color:#fff;margin-left:5px}.layout{display:grid;grid-template-columns:250px minmax(0,1fr) 310px;min-height:calc(100vh - 64px)}aside,.right{padding:16px;background:#e8e0d2;border-right:1px solid #d0c5b4}.right{border-left:1px solid #d0c5b4;border-right:0}.timeline{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 110px);overflow:auto}.node{width:100%;text-align:left;background:#f7f2e9;border:1px solid #d1c5b2}.node.active{background:#d8c6a4}.main{padding:24px;max-width:1050px;width:100%;margin:auto}.card{background:#fffaf2;border:1px solid #d8cdbb;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 5px 18px #00000008}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#e6dece;font-size:12px;margin:2px}.fact{border-left:4px solid #75664f;padding-left:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice{display:block;width:100%;text-align:left;padding:14px;margin:8px 0;border:1px solid #cfc3b0;border-radius:10px;background:#fff}.choice:hover{background:#eee5d7}.bar{height:9px;background:#ddd5c8;border-radius:9px;overflow:hidden}.fill{height:100%;background:#75664f}.state{display:grid;grid-template-columns:92px 1fr 28px;gap:6px;align-items:center;margin:7px 0;font-size:12px}.muted{color:#756d63;font-size:13px}.map{width:100%;border:1px solid #d0c5b4;border-radius:10px}.actor{padding:8px;border-bottom:1px solid #ddd3c4}.report{white-space:pre-wrap;background:#f7f1e7;padding:12px;border-radius:8px}.warn{background:#f3e4cf;border:1px solid #d4b98f;padding:10px;border-radius:9px}@media(max-width:1000px){.layout{grid-template-columns:1fr}.right,aside{display:none}.main{padding:14px}}
-</style></head><body>
-<header><div><strong>如果我是他们</strong> <span>V3.2</span> <small>史实与史料校准层 · 不评分历史路线</small></div><div class="tabs"><button onclick="setMode('student')">学生</button><button onclick="setMode('teacher')">教师驾驶舱</button><button onclick="makeReport()">我的报告</button></div></header>
-<div class="layout"><aside><h3>22个历史节点</h3><div id="timeline" class="timeline"></div></aside><main class="main"><div id="app"></div><div id="report" class="card" style="display:none"></div></main><section class="right"><h3>证据与来源</h3><div id="sources"></div><h3>当前状态</h3><div id="states"></div></section></div>
+*{box-sizing:border-box}body{margin:0;background:#eee8dc;color:#302b25;font-family:"Microsoft YaHei",system-ui,sans-serif}
+header{height:66px;padding:0 22px;background:#292621;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:14px;position:sticky;top:0;z-index:10;box-shadow:0 3px 14px #0003}
+.tabs button,button{border:0;border-radius:8px;padding:8px 12px;cursor:pointer}.tabs button{background:#4a443c;color:#fff;margin-left:5px}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr) 335px;min-height:calc(100vh - 66px)}
+aside,.right{padding:16px;background:#e3dbcd;border-right:1px solid #cfc3b1}.right{border-left:1px solid #cfc3b1;border-right:0}
+.timeline{display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 104px);overflow:auto}.node{width:100%;text-align:left;background:#f7f2e9;border:1px solid #d1c5b2}.node.active{background:#cbb68f;font-weight:700}.node.done{opacity:.68}
+.main{padding:24px;max-width:1180px;width:100%;margin:auto}.card{background:#fffaf2;border:1px solid #d8cdbb;border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 7px 22px #0000000b}
+.hero{padding:0;overflow:hidden;background:#2f2a25;color:#fff}.heroText{padding:24px}.heroYear{font-size:14px;letter-spacing:2px;opacity:.75}.hero h1{font-size:30px;margin:8px 0}.heroQuestion{font-size:18px;line-height:1.7;color:#eadfca}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#e6dece;color:#4c4439;font-size:12px;margin:2px}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px}.sectionTitle h2{margin:0}.muted{color:#756d63;font-size:13px;line-height:1.7}.fact{border-left:4px solid #75664f;padding-left:14px;line-height:1.8}
+.contextGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.contextBox{background:#f6f0e6;border-radius:11px;padding:15px}.contextBox h3{margin:0 0 8px}.contextBox p{line-height:1.8;margin:0}
+.actorGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.actorCard{background:#f7f1e7;border:1px solid #ddd1bf;border-radius:11px;padding:14px}.actorName{font-weight:700}.actorStance{margin-top:7px;line-height:1.7;font-size:13px}
+.visualGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.visual{background:#f7f1e7;border-radius:11px;overflow:hidden;border:1px solid #d9cdbb}.visual img{width:100%;height:170px;object-fit:cover;display:block;background:#ddd}.visualBody{padding:11px}.visualBody b{display:block;margin-bottom:5px}.recon{padding:14px;background:#e8dfd0;text-align:center;font-weight:700}.map{width:100%;border:1px solid #d0c5b4;border-radius:10px}
+.choice{display:block;width:100%;text-align:left;padding:16px;margin:9px 0;border:1px solid #cfc3b0;border-radius:11px;background:#fff;transition:.15s}.choice:hover{background:#eee5d7;transform:translateY(-1px)}.choice:disabled{cursor:default;opacity:.7}.choice b{font-size:16px}.choice small{display:block;color:#756d63;margin-top:5px}
+.feedback{border-top:1px solid #ddd2c1;margin-top:15px;padding-top:15px}.reaction{padding:10px 12px;border-bottom:1px solid #e1d7c7}.reaction:last-child{border-bottom:0}.reaction .name{font-weight:700}.reaction .stance{color:#756d63;font-size:12px;margin-left:5px}
+.nextBar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px;padding:13px;background:#f0e7d9;border-radius:10px}.nextBtn{background:#39332c;color:#fff;padding:11px 16px}
+.state{display:grid;grid-template-columns:92px 1fr 28px;gap:6px;align-items:center;margin:7px 0;font-size:12px}.bar{height:9px;background:#ddd5c8;border-radius:9px;overflow:hidden}.fill{height:100%;background:#75664f}
+.source{padding:10px 0;border-bottom:1px solid #d5c9b8}.source:last-child{border-bottom:0}.source a{display:inline-block;margin-top:6px;color:#68583e}
+.boundary{background:#f3e4cf;border:1px solid #d4b98f;padding:12px;border-radius:10px;line-height:1.7}.report{white-space:pre-wrap;background:#f7f1e7;padding:14px;border-radius:9px;line-height:1.7}
+.auto{font-size:12px;color:#756d63}.status{font-size:12px;padding:5px 8px;border-radius:99px;background:#e8dfd1}
+@media(max-width:1100px){.layout{grid-template-columns:210px minmax(0,1fr)}.right{display:none}.actorGrid,.visualGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.layout aside{display:none}.main{padding:12px}.contextGrid,.actorGrid,.visualGrid{grid-template-columns:1fr}.hero h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+<div><strong>如果我是他们</strong> <span>V3.2</span> <small>史实与史料校准层 · 不评分历史路线</small></div>
+<div class="tabs"><button onclick="setMode('student')">学生</button><button onclick="setMode('teacher')">教师驾驶舱</button><button onclick="makeReport()">我的报告</button></div>
+</header>
+<div class="layout">
+<aside><h3>22个历史节点</h3><div id="timeline" class="timeline"></div></aside>
+<main class="main"><div id="app"></div><div id="report" class="card" style="display:none"></div></main>
+<section class="right"><h3>当前国家状态</h3><div id="states"></div><h3>史料与资产</h3><div id="sources"></div></section>
+</div>
 <script>
-let scenario,facts,sources,boundary,rules,current=0,mode="student",state={},choiceLog=[];
+let scenario,facts,sources,boundary,rules,context,visuals,current=0,mode="student",state={},choiceLog=[],advanceTimer=null;
 const get=async u=>(await fetch(u)).json();
 const esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
-async function init(){[scenario,facts,sources,boundary,rules]=await Promise.all(["/api/scenario","/api/fact-check","/api/source-registry","/api/information-boundary","/api/simulation-rules"].map(get));state={...rules.state_initial};render(0)}
+async function init(){
+ [scenario,facts,sources,boundary,rules,context,visuals]=await Promise.all([
+ "/api/scenario","/api/fact-check","/api/source-registry","/api/information-boundary",
+ "/api/simulation-rules","/api/historical-context","/api/node-visuals"].map(get));
+ state={...rules.state_initial};render(0);
+}
 function setMode(m){mode=m;render(current)}
-function renderTimeline(){timeline.innerHTML=scenario.events.map((e,i)=>'<button class="node '+(i===current?'active':'')+'" onclick="render('+i+')">'+e.id+' · '+e.year+' · '+esc(e.title)+'</button>').join("")}
-function renderStates(){states.innerHTML=Object.entries(rules.state_labels).map(([k,l])=>'<div class="state"><span>'+l+'</span><div class="bar"><div class="fill" style="width:'+state[k]+'%"></div></div><span>'+state[k]+'</span></div>').join("")}
-function renderSources(id){const ss=sources.sources.filter(x=>(x.covers||[]).includes(id));sourcesEl=document.getElementById("sources");sourcesEl.innerHTML=ss.length?ss.map(s=>'<div class="actor"><b>'+esc(s.id)+' · '+esc(s.title)+'</b><div class="muted">'+esc(s.type||"source")+'</div><a target="_blank" rel="noopener" href="'+esc(s.url)+'">查看来源</a></div>').join(""):'<p class="muted">本节点暂未登记来源。</p>'}
-async function render(i){current=i;renderTimeline();renderStates();const e=scenario.events[i],f=facts.events.find(x=>x.event_id===e.id),choices=rules.event_choices[e.id]||[];renderSources(e.id);
-let extra=e.id==="e18"?'<div class="card"><h2>1919 五四：空间展开</h2><img class="map" src="/assets/maps/may_fourth_1919_spatial_map.svg"><p class="muted">历史场景复原 / 教学示意图，不作为精确疆域、道路或行政边界地图。</p></div>':"";
-app.innerHTML='<div class="card"><span class="tag">史实节点</span><span class="tag">当时信息边界</span><span class="tag">'+esc(f?.status||"待校准")+'</span><h1>'+e.year+' · '+esc(e.title)+'</h1><p>进入这个节点时，只能使用当时已经合理可获得的信息。</p><div class="fact"><b>史实校准</b><p>'+esc(f?.note||"暂无说明")+'</p></div></div>'+
-'<div class="card"><h3>当时信息边界</h3><div class="warn">'+esc(boundary.rules?.[0]||"只使用节点日期或此前可获得的信息。")+'</div><div class="grid"><div><b>可以使用</b><p class="muted">当时公开消息、制度资源、文书报刊、人物行动和已经发生的事件。</p></div><div><b>不能倒灌</b><p class="muted">后来发生的结果、现代教材式结论、未经证据支持的动机判断。</p></div></div></div>'+
-'<div class="card"><h2>你的决策</h2><p class="muted">没有标准答案。选择用于观察约束、代价、路径依赖和多方回应。</p><div id="choices">'+choices.map(c=>'<button class="choice" onclick="choose(\''+e.id+'\',\''+c.id+'\')"><b>'+c.id+' · '+esc(c.text)+'</b></button>').join("")+'</div><div id="feedback"></div></div>'+
-(mode==="teacher"?'<div class="card"><h2>教师驾驶舱</h2><div class="grid"><div><b>当前节点</b><p>'+e.year+' · '+esc(e.title)+'</p></div><div><b>课堂追问</b><p>你掌握了哪些证据？主要约束是什么？主动承担了什么代价？哪个后果原本无法预见？</p></div></div><p class="muted">不统计“正确率”，比较学生的证据使用、约束识别、因果推理和不确定性意识。</p></div>':"")+extra}
-async function choose(eid,cid){const r=await fetch("/api/simulate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_id:eid,choice_id:cid,state})});const d=await r.json();if(d.error)return;state=d.after;choiceLog.push({event_id:eid,choice_id:cid,choice_text:d.choice_text,delta:d.delta});renderStates();document.getElementById("feedback").innerHTML='<div class="card"><b>模拟反馈</b><p>'+esc(d.choice_text)+'</p><p>'+Object.entries(d.delta).map(([k,v])=>esc(rules.state_labels[k])+': '+(v>0?"+":"")+v).join(" · ")+'</p><h4>多方回应</h4>'+d.actor_response.map(a=>'<div class="actor"><b>'+esc(a.actor)+'</b>：'+esc(a.response)+'</div>').join("")+'<p class="muted">这是模拟机制反馈，不是历史事实，也不是路线评分。</p></div>'}
-function makeReport(){report.style.display="block";report.innerHTML='<h2>我的历史决策报告</h2><div class="report">'+esc(choiceLog.map((x,i)=>(i+1)+". "+x.event_id+" · "+x.choice_text+"\n状态变化："+Object.entries(x.delta).map(([k,v])=>rules.state_labels[k]+" "+(v>0?"+":"")+v).join("、")).join("\n\n")||"尚未做出选择。")+'\n\n当前状态：'+Object.entries(state).map(([k,v])=>rules.state_labels[k]+" "+v).join(" · ")+'\n\n重新解释：把当时证据、资源约束、多方回应和未预见后果放进同一条因果链，而不是用后来发生的结果倒推当时的选择必然正确或错误。</div>'}
+function renderTimeline(){
+ timeline.innerHTML=scenario.events.map((e,i)=>'<button class="node '+(i===current?'active ':'')+(choiceLog.some(x=>x.event_id===e.id)?'done':'')+'" onclick="render('+i+')">'+e.id+' · '+e.year+' · '+esc(e.title)+'</button>').join("");
+}
+function renderStates(){
+ states.innerHTML=Object.entries(rules.state_labels).map(([k,l])=>'<div class="state"><span>'+esc(l)+'</span><div class="bar"><div class="fill" style="width:'+state[k]+'%"></div></div><span>'+state[k]+'</span></div>').join("");
+}
+function renderSources(id){
+ const ss=sources.sources.filter(x=>(x.covers||[]).includes(id));
+ const vs=visuals.items.filter(x=>(x.events||[]).includes(id));
+ sourcesEl=document.getElementById("sources");
+ sourcesEl.innerHTML=(ss.length?ss.map(s=>'<div class="source"><b>'+esc(s.id)+' · '+esc(s.title)+'</b><div class="muted">'+esc(s.institution)+'</div><a target="_blank" rel="noopener" href="'+esc(s.url)+'">查看原始史料 ↗</a></div>').join(""):'')+
+ (vs.length?'<div class="source"><b>页面内嵌资产 '+vs.length+' 件</b><div class="muted">历史照片、复原图或教学示意图已进入本节点。</div></div>':'');
+}
+function visualHtml(id){
+ const vs=visuals.items.filter(x=>(x.events||[]).includes(id));
+ if(!vs.length)return "";
+ return '<div class="card"><div class="sectionTitle"><h2>历史现场 / 视觉证据</h2><span class="status">页面内嵌</span></div><div class="visualGrid">'+vs.map(v=>{
+   if(v.type==="reconstruction_map") return '<div class="visual"><img src="'+esc(v.url)+'" alt="'+esc(v.title)+'"><div class="visualBody"><b>'+esc(v.title)+'</b><div class="muted">'+esc(v.caption)+'</div></div></div>';
+   return '<div class="visual"><img src="'+esc(v.url)+'" alt="'+esc(v.title)+'" onerror="this.style.display=\'none\'"><div class="visualBody"><b>'+esc(v.title)+'</b><div class="muted">'+esc(v.caption)+'</div><div class="muted">'+esc(v.source)+' · '+esc(v.license)+'</div></div></div>';
+ }).join("")+'</div></div>';
+}
+function actorHtml(ctx){
+ return '<div class="card"><div class="sectionTitle"><h2>当时的人怎么看？</h2><span class="status">不是事后评价</span></div><p class="muted">以下呈现的是当时不同参与者可能依据的利益、立场和现实约束。它们不是“谁对谁错”的裁判。</p><div class="actorGrid">'+ctx.actors.map(a=>'<div class="actorCard"><div class="actorName">'+esc(a.actor)+'</div><div class="actorStance">'+esc(a.stance)+'</div></div>').join("")+'</div></div>';
+}
+async function render(i){
+ clearTimeout(advanceTimer);current=i;renderTimeline();renderStates();
+ const e=scenario.events[i],f=facts.events.find(x=>x.event_id===e.id),ctx=context.events.find(x=>x.id===e.id),choices=rules.event_choices[e.id]||[];
+ renderSources(e.id);
+ app.innerHTML=
+ '<div class="card hero"><div class="heroText"><div class="heroYear">'+e.year+' · '+esc(e.id.toUpperCase())+'</div><h1>'+esc(e.title)+'</h1><div class="heroQuestion">'+esc(ctx?.background||"进入这一历史节点。")+'</div><div><span class="tag">当时信息边界</span><span class="tag">'+esc(f?.status||"待校准")+'</span><span class="tag">不是历史知识竞赛</span></div></div></div>'+
+ '<div class="card"><div class="sectionTitle"><h2>此刻的中国：你面对的现实</h2><span class="status">只看当时</span></div><div class="contextGrid"><div class="contextBox"><h3>国情与局面</h3><p>'+esc(ctx?.background||"暂无")+'</p></div><div class="contextBox"><h3>内忧外患</h3><p>'+esc(ctx?.crisis||"暂无")+'</p></div></div></div>'+
+ actorHtml(ctx)+visualHtml(e.id)+
+ '<div class="card"><div class="sectionTitle"><h2>轮到你作出选择</h2><span class="auto">选择后约2秒自动进入下一节点</span></div><p class="muted">不要用后来发生的结果判断现在。先根据你此刻拥有的信息、资源和对手反应作决定。</p><div id="choices">'+choices.map(c=>'<button class="choice" id="choice-'+c.id+'" onclick="choose(\''+e.id+'\',\''+c.id+'\')"><b>'+c.id+' · '+esc(c.text)+'</b><small>你正在改变：'+Object.entries(c.effects).map(([k,v])=>esc(rules.state_labels[k])+' '+(v>0?"+":"")+v).join("、")+'</small></button>').join("")+'</div><div id="feedback"></div></div>'+
+ '<div class="card"><h3>信息边界</h3><div class="boundary">'+esc(boundary.rules?.[0]||"只使用节点日期或此前可获得的信息。")+'</div></div>'+
+ (mode==="teacher"?'<div class="card"><h2>教师驾驶舱</h2><div class="contextGrid"><div><b>课堂追问</b><p class="muted">你掌握了哪些证据？最大的约束是什么？谁会反对你？谁可能支持你？你的选择会让谁获得或失去什么？</p></div><div><b>历史思维</b><p class="muted">比较“选择本身”和“选择后的系统反馈”，不要把模拟反馈直接当作史实。</p></div></div></div>':"");
+}
+async function choose(eid,cid){
+ const btn=document.getElementById("choice-"+cid);if(btn&&btn.disabled)return;
+ document.querySelectorAll(".choice").forEach(x=>x.disabled=true);
+ const r=await fetch("/api/simulate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({event_id:eid,choice_id:cid,state})});
+ const d=await r.json();if(!r.ok){alert(d.detail||"模拟失败");return}
+ state=d.after;choiceLog.push({event_id:eid,choice_id:cid,choice_text:d.choice_text,delta:d.delta});
+ renderStates();renderTimeline();
+ const fb=document.getElementById("feedback");
+ fb.innerHTML='<div class="feedback"><h3>选择后的第一波反馈</h3><p><b>'+esc(d.choice_text)+'</b></p><p>'+Object.entries(d.delta).map(([k,v])=>esc(rules.state_labels[k])+': '+(v>0?"+":"")+v).join(" · ")+'</p><h3>其他行动者如何回应？</h3>'+d.actor_response.map(a=>'<div class="reaction"><span class="name">'+esc(a.actor)+'</span><span class="stance">'+esc(a.stance)+'</span><div>'+esc(a.response)+'</div></div>').join("")+'<div class="nextBar"><span>模拟反馈不是历史事实；真正的历史后果仍取决于下一轮选择与其他行动者。</span><button class="nextBtn" onclick="nextNode()">进入下一节点 →</button></div></div>';
+ advanceTimer=setTimeout(nextNode,2100);
+}
+function nextNode(){clearTimeout(advanceTimer);if(current<scenario.events.length-1)render(current+1);else makeReport()}
+function makeReport(){report.style.display="block";report.scrollIntoView({behavior:"smooth"});report.innerHTML='<h2>我的历史决策报告</h2><div class="report">'+esc(choiceLog.map((x,i)=>(i+1)+". "+x.event_id+" · "+x.choice_text+"\n状态变化："+Object.entries(x.delta).map(([k,v])=>rules.state_labels[k]+" "+(v>0?"+":"")+v).join("、")).join("\n\n")||"尚未做出选择。")+'\n\n当前状态：'+Object.entries(state).map(([k,v])=>rules.state_labels[k]+" "+v).join(" · ")+'\n\n解释任务：把当时证据、国情、内忧外患、行动者反应、资源约束和未预见后果组织成一条因果链，而不是用后来发生的结果倒推当时选择。 </div>'}
 init();
-</script></body></html>
+</script>
+</body></html>
