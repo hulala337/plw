@@ -17,6 +17,10 @@ visual_qa
         ↓
 consistency_check
         ↓
+vision_art_director（V3 AI视觉审稿）
+        ↓
+production_report
+        ↓
 review_server（人工审核）
         ↓
 integrate
@@ -118,3 +122,74 @@ art-work/
 10. E01 dashboard_hero
 
 这 10 项通过人工审核后，再批量放大到 P0/P1。
+
+
+## V3：AI Vision Art Director
+
+V3 在传统技术 QA 和颜色统计检查之上增加视觉语义审稿层：
+
+candidate image
+      ↓
+technical QA
+      ↓
+heuristic consistency
+      ↓
+AI Vision Art Director
+  ├─ brief compliance
+  ├─ character identity
+  ├─ style consistency
+  ├─ composition
+  ├─ artifact detection
+  └─ originality guard
+      ↓
+PASS_TO_HUMAN / REWORK / HOLD
+      ↓
+human review
+      ↓
+integrate
+
+### 运行
+
+```powershell
+python art-pipeline\vision_art_director.py --ids B01,B02,B03,C01
+python art-pipeline\production_report.py --ids B01,B02,B03,C01
+```
+
+或直接运行 V3 批处理：
+
+```powershell
+python art-pipeline\batch_v3.py --ids B01,B02,B03,B04,B07,B11,C01,C02,C03,E01
+```
+
+默认视觉审稿模型：
+
+- `OPENAI_REVIEW_MODEL=gpt-5.6-luna`
+- 可用 `--review-model gpt-5.6-sol` 切换更高能力模型
+- `OPENAI_API_KEY` 必须通过环境变量提供
+- `OPENAI_BASE_URL` 可选；使用官方 OpenAI API 时保持为空即可
+
+V3 的 `PASS_TO_HUMAN` **不是批准**，只表示 AI 认为候选达到了人工审稿入口标准。P0/P1 仍必须人工决定。
+
+AI 审稿结果写入：
+
+```text
+art-work/qa/vision-review/<ASSET_ID>.json
+art-work/reports/v3-production-report.json
+```
+
+规则文件：
+
+`art-production-spec/ART_REVIEW_SCHEMA.json`
+
+### V3 硬门禁
+
+以下情况直接进入 `REWORK`：
+
+- Character Bible 中明确的角色身份硬失败
+- 明显人类手臂/多余肢体/重复身体部件
+- 明显错误的喙、眼睛、头身比例
+- 明显塑料 3D 或摄影写实偏离
+- 明显乱码或不需要的文字
+- 明显破坏核心场景连续性的结构
+
+AI 只负责“发现问题 + 分流”，不负责替代最终美术决策。
