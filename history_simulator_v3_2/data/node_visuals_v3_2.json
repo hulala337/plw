@@ -1,0 +1,60 @@
+{
+  "version": "3.2.0",
+  "items": [
+    {
+      "id": "v-li-hongzhang",
+      "events": [
+        "e01",
+        "e02",
+        "e03",
+        "e04",
+        "e05",
+        "e06",
+        "e07",
+        "e10"
+      ],
+      "title": "李鸿章肖像",
+      "type": "historical_image",
+      "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Portrait_of_Li_Hongzhang.jpg",
+      "source": "Wikimedia Commons",
+      "license": "Public domain",
+      "caption": "李鸿章肖像，原图页面标注不晚于1901年。"
+    },
+    {
+      "id": "v-may-fourth",
+      "events": [
+        "e18"
+      ],
+      "title": "五四运动学生影像",
+      "type": "historical_image",
+      "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/May_Fourth_Movement_students.jpg",
+      "source": "Wikimedia Commons",
+      "license": "Public domain",
+      "caption": "1919年前后五四运动相关学生影像；页面标注为公共领域。"
+    },
+    {
+      "id": "v-may-fourth-protest",
+      "events": [
+        "e18"
+      ],
+      "title": "1919年5月4日北京学生抗议",
+      "type": "historical_image",
+      "url": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Beijing_students_protesting_the_Treaty_of_Versailles_(May_4,_1919).jpg",
+      "source": "Wikimedia Commons",
+      "license": "按原页面许可信息使用",
+      "caption": "1919年5月4日北京学生抗议影像，涉及山东问题与巴黎和会。"
+    },
+    {
+      "id": "v-map",
+      "events": [
+        "e18"
+      ],
+      "title": "1919五四空间关系图",
+      "type": "reconstruction_map",
+      "url": "/assets/maps/may_fourth_1919_spatial_map.svg",
+      "source": "本项目教学示意图",
+      "license": "Project asset",
+      "caption": "历史场景复原 / 教学示意图，不作为精确疆域、道路或行政边界地图。"
+    }
+  ]
+}
