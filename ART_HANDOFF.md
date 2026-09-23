@@ -166,11 +166,11 @@ PLANNED → READY → GENERATING → GENERATED/CANDIDATE
 
 后续生产顺序由 STATE/Manifest 决定。当前不要从 B01 重新开始，也不要跳过 B02/B03 的人工审核。
 
-## 8. 新账号 / 新平台可直接粘贴的接力指令
+## 8. 无 GitHub / 无本地仓库环境\n\n如果当前 AI 平台不能接入 GitHub，使用 `ART_OFFLINE_HANDOFF_GUIDE.md`。该文件定义 Handoff Package → 离线生产 → Return Package → GitHub 回传的完整流程。Return Package 可由 `art-pipeline\\asset_intake.py` 自动导出并通过 SHA-256 校验。\n\n9. 新账号 / 新平台可直接粘贴的接力指令
 
 > 请接手 Pelican Workbench 美术资产生产。先读取仓库根目录 ART_HANDOFF.md，再读取 art-production-spec/ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md 和 ART_SYNC_GUIDE.md，运行 python art-pipeline\handoff_check.py。严格从检查结果的 current_asset 继续，不重复已经存在的候选，不跳过人工审核；如果 current_status=READY 且 next_action=GENERATE，就直接执行当前资产的生成任务，并将候选按 ART_SYNC_GUIDE.md 保存到 art-assets/<ASSET_ID>/candidates/，完成 Git commit + push 后再进入下一步。
 
-## 9. 检查命令
+## 10. 检查命令
 
 ```powershell
 python art-pipeline\handoff_check.py
