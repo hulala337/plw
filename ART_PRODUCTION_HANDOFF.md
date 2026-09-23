@@ -1,184 +1,100 @@
-# Pelican Workbench 美术资产生产接力记录
+# Pelican Workbench 美术资产生产接力协议
 
-项目：
-Pelican Workbench
+## 1. 文件职责
 
-主仓库：
-https://github.com/hulala337/plw
+本文件是**长期有效的生产协议**，不是独立的进度数据库。
 
-美术规范：
-- art-production-spec/
-- art-pipeline/
+- 当前进度唯一机器真相源：art-production-spec/ART_PRODUCTION_STATE.json
+- 资产身份与规格：art-production-spec/ART_ASSET_MANIFEST.json
+- 快速接力入口：ART_HANDOFF.md
+- 角色规范：art-production-spec/CHARACTER_BIBLE.md
+- 美术方向：art-production-spec/ART_DIRECTION.md
+- 生产规则：art-production-spec/PRODUCTION_RULES.md
 
-> **任务事实来源**：GitHub 仓库中的 `art-production-spec/ART_PRODUCTION_STATE.json`、`art-production-spec/ART_ASSET_MANIFEST.json`、Character Bible、Style Direction、资产目录与审核记录。聊天记录、单个账号、单个平台均不是生产状态的唯一来源。
+因此，本文件中出现的“当前 B04”等文字只作为最近断点记录；如果与 STATE 冲突，以 STATE 为准。
 
-## 当前生产阶段
+## 2. 接力目标
 
-状态：**B04 等待生成**
+更换 ChatGPT 账号、AI 平台、中转平台、电脑或 VS Code/Codex 工作环境后，任务必须能够从 GitHub 恢复，而不依赖原聊天记录。
 
-当前资产：
-- asset_id：B04
-- key：pelican_thinking
-- 状态：READY
-- 下一步：生成
+核心原则：
+- 账号不是任务身份。
+- 平台不是任务身份。
+- 设备不是任务身份。
+- asset_id 是资产身份。
+- GitHub 持久化状态是任务事实来源。
+- 不保存 API Key、密码、Token、Cookie 或登录凭据。
+- 不因为聊天上下文丢失而重复生成已有候选。
 
-已完成 / 已进入生产：
+## 3. 新环境标准操作
 
-### B01
-- 类型：Style Anchor / Character Master
-- 用途：全局风格锚点
-- 状态：REFERENCE / STYLE ANCHOR
+```text
+拉取 main
+  ↓
+读取 ART_HANDOFF.md
+  ↓
+读取 ART_PRODUCTION_STATE.json
+  ↓
+读取 ART_ASSET_MANIFEST.json
+  ↓
+读取 CHARACTER_BIBLE / ART_DIRECTION / PRODUCTION_RULES
+  ↓
+运行 handoff_check.py
+  ↓
+读取 current_asset / current_key / current_status / next_action
+  ↓
+执行 next_action
+```
 
-### B02
-- key：pelican_working
-- 已生成
-- 有多个候选版本
-- 状态：GENERATED / HUMAN REVIEW REQUIRED
+如果检查失败，**先修复状态/文件一致性，不生成新资产**。
 
-### B03
-- key：pelican_typing
-- 已生成
-- 状态：GENERATED / HUMAN REVIEW REQUIRED
+## 4. 美术生成规则
 
-## 下一资产
+B01 pelican_master 是唯一主风格锚点。后续角色必须保持同一角色身份、比例、视觉语言、完成度和主要色彩体系。
 
-### B04
-- key：pelican_thinking
-- 状态：READY
-- 下一步：生成
-
-随后：
-
-### B07
-- key：pelican_drinking_coffee
-
-### C01
-- key：office_master
-
-### C02
-- key：office_day
-
-### C03
-- key：office_night
-
-### E01
-- key：dashboard_hero
-
-## B01 主风格锚点
-
-B01 是唯一主风格锚点。
-
-后续角色资产必须保持：
-- 同一角色身份
-- 同一比例
-- 同一视觉语言
-- 同一绘制完成度
-- 同一主要色彩体系
-- 同一角色设定
-
-角色硬约束：
+硬约束：
 - 白色/浅灰羽毛
 - 黄色/橙黄色嘴和脚
 - 大而有表现力的眼睛
 - 深蓝色 hoodie
 - 温暖、精致、现代数字插画
+- 最终美术必须是高质量原创插画
+- 不使用几何 SVG 伪造最终角色/场景美术
+- 不生成随机角色
+- 不随意改变鹈鹕比例
+- 不加入无意义文字或 AI 乱码
 
-最终美术必须是高质量原创插画；**不使用几何 SVG 伪造最终美术**。
+## 5. 状态规则
 
-## 强制接力规则
-
-新账号 / 新平台 / 新电脑：
-
-1. 拉取 GitHub 最新仓库
-2. 读取 `ART_PRODUCTION_HANDOFF.md`
-3. 读取 `ART_HANDOFF.md`
-4. 读取 `art-production-spec/ART_PRODUCTION_STATE.json`
-5. 读取 `art-production-spec/ART_ASSET_MANIFEST.json`
-6. 读取 `art-production-spec/CHARACTER_BIBLE.md`
-7. 读取 `art-production-spec/ART_DIRECTION.md`
-8. 读取 `art-production-spec/PRODUCTION_RULES.md`
-9. 检查当前资产目录、候选目录、QA 与人工审核记录
-10. 从 `current_asset` 继续
-11. 不重新设计流程
-12. 不跳过人工审核
-13. 必须保持 B01 的角色身份一致
-14. 白色/浅灰羽毛
-15. 黄色/橙黄色嘴和脚
-16. 大而有表现力的眼睛
-17. 深蓝色 hoodie
-18. 温暖、精致、现代数字插画
-19. 不使用几何 SVG 伪造最终美术
-20. 不生成随机角色
-21. 不改变鹈鹕比例
-22. 不加入无意义文字
-23. 不加入 AI 乱码
-24. 每个生成资产使用 manifest 中的 asset_id 命名
-25. 生成后保存到资料库/项目约定的资产存储位置
-26. 生成资产默认属于 `GENERATED / CANDIDATE`
-27. 未经人工审核不得标记 `APPROVED` / `FROZEN`
-
-## 跨账号 / 跨平台原则
-
-- 账号不是任务身份。
-- 平台不是任务身份。
-- 设备不是任务身份。
-- **asset_id 才是资产身份；GitHub 持久化状态才是任务事实来源。**
-- 不保存任何 API Key、密码、Token、Cookie 或登录凭据。
-- 可以记录平台/账号别名用于生产日志，但不能记录认证信息。
-- 更换账号后不得因为聊天上下文不存在而重复生成已经存在的候选。
-- 先检查状态，再执行动作。
-- 如果状态为 `HUMAN REVIEW REQUIRED`，必须进入人工审核，不得自动生成新版本覆盖它。
-- 如果状态为 `APPROVED` 或 `FROZEN`，默认禁止重新生成，除非明确创建 REWORK/新版本记录。
-
-## 接力恢复命令
-
-在仓库根目录执行：
-
-```powershell
-python art-pipeline\handoff_check.py
+```text
+PLANNED → READY → GENERATING → GENERATED/CANDIDATE
+→ QA → REVIEW → HUMAN REVIEW REQUIRED
+→ APPROVED → INTEGRATING → FROZEN
+                         ↘ REWORK
 ```
 
-通过后再继续当前资产。
+- 新生成资产默认 GENERATED / CANDIDATE。
+- HUMAN REVIEW REQUIRED 不得自动批准。
+- APPROVED/FROZEN 不得无记录覆盖；返工时建立明确的 REWORK/版本记录。
+- 人工审核结论必须持久化到仓库后再切换任务。
 
-也可以：
+## 6. 生成后的接力动作
 
-```powershell
-python art-pipeline\handoff_check.py --json
-```
+每个资产完成一次生成后，应保存：
+1. 原始生成图/候选图
+2. 按 Manifest 的 asset_id 命名的项目资产
+3. 必要的候选/版本信息
+4. QA/人工审核结果
+5. 更新 ART_PRODUCTION_STATE.json
+6. 更新 Manifest 中对应状态（若项目流程要求）
+7. Git commit + push
 
-用于机器读取接力状态。
+然后才进入下一个资产。
 
-## 状态机
+## 7. 最近断点
 
-```
-PLANNED
-  ↓
-READY
-  ↓
-GENERATING
-  ↓
-GENERATED / CANDIDATE
-  ↓
-QA
-  ↓
-REVIEW
-  ↓
-HUMAN REVIEW REQUIRED
-  ├─ PASS → APPROVED
-  ├─ REGENERATE → REWORK
-  └─ MINOR_EDIT → REVIEW
-  ↓
-INTEGRATING
-  ↓
-FROZEN
-```
+最近一次持久化断点为 B04 / pelican_thinking / READY / GENERATE；新环境必须先运行 handoff checker，以 STATE 的实际内容为准。
 
-任何 AI 自动审查都不能替代人工最终决定。
-
-## 当前接力结论
-
-**RESUME FROM B04**
-
-不要从 B01 重新开始，不要跳过 B02/B03 的人工审核，不要把 B04 标记为 APPROVED/FROZEN。
+**不要从 B01 重新开始。不要跳过 B02/B03 的人工审核。**
 
 最后更新：2026-09-23
