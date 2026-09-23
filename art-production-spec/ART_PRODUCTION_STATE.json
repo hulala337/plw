@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "project": "Pelican Workbench",
   "repository": "https://github.com/hulala337/plw",
-  "handoff_document": "ART_PRODUCTION_HANDOFF.md",
+  "handoff_document": "ART_HANDOFF.md",
   "canonical_state": "art-production-spec/ART_PRODUCTION_STATE.json",
   "manifest": "art-production-spec/ART_ASSET_MANIFEST.json",
   "style_anchor": "B01",
