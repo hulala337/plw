@@ -18,6 +18,9 @@ print("FastAPI import: PASS")
 assert module.health()["version"] == "3.2.0"
 assert module.health()["events"] == 22
 assert len(module.timeline["events"]) == 22
+assert len(module.context["events"]) == 22
+assert all(len(x["actors"]) == 3 for x in module.context["events"])
+assert len(module.visuals["items"]) >= 4
 
 rules = module.sim
 assert set(rules["state_initial"]) == set(rules["state_labels"])
@@ -40,5 +43,8 @@ for event in module.timeline["events"]:
 
 assert (ROOT / "assets" / "maps" / "may_fourth_1919_spatial_map.svg").is_file()
 print("Simulation validation: PASS (22 events × 3 choices)")
+assert any(x["id"] == "e18" and x["type"] == "reconstruction_map" for x in module.visuals["items"])
+print("Historical context: PASS (22 events × 3 actor perspectives)")
+print("Embedded visual registry: PASS")
 print("May Fourth map: PASS")
 print("V3.2 validation: PASS")
