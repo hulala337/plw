@@ -131,11 +131,25 @@ def simulate(payload: dict = Body(...)):
     actor_response = []
     ctx = next((x for x in context["events"] if x["id"] == event_id), None)
     if ctx:
+        label_map = {
+            "military": "军事能力",
+            "industry": "产业与技术",
+            "finance": "财政与资源",
+            "education": "教育与人才",
+            "political": "政治制度",
+            "stability": "社会与政局稳定",
+            "nationalism": "民族认同",
+            "foreign_pressure": "外部压力",
+            "resistance": "制度与社会阻力",
+            "mobilization": "社会动员",
+        }
+        focus = [label_map[k] for k, v in picked["effects"].items() if v]
+        focus_text = "、".join(focus[:3]) or "国家整体资源配置"
         for actor in ctx["actors"]:
             actor_response.append({
                 "actor": actor["actor"],
                 "stance": actor["stance"],
-                "response": f"选择“{picked['text']}”后，需要重新权衡其既有立场、资源和政治利益。",
+                "response": f"模拟反馈：该选择首先改变{focus_text}，因此这一行动者会围绕自身立场、资源和利益重新评估支持、观望或施压的方式。这里展示的是模拟中的行动者反应，不是已发生的历史事实。",
                 "direction": "contextual"
             })
     if state["resistance"] > 60:
