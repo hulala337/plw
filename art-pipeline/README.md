@@ -71,6 +71,30 @@ GitHub main
 
 **只有候选、QA、审核记录和 STATE 已持久化并 push 后，才允许进入下一个资产。**
 
+## 外部平台资产导入（asset_intake.py）
+
+如果图片是在 ChatGPT、其他 AI 平台或其他电脑生成后下载到本机，不要手工猜目录和版本号。使用：
+
+```powershell
+python art-pipeline\\asset_intake.py "C:\\Users\\你的用户名\\Downloads\\生成图片.png"
+```
+
+工具默认读取 `ART_PRODUCTION_STATE.json` 的 `current_asset`，校验该 ID 是否存在于 Manifest，并自动选择候选目录中的下一个版本号。例如当前是 B04 时会得到：
+
+```text
+art-assets/B04/candidates/B04_v01.png
+art-assets/B04/candidates/B04_v02.png
+...
+```
+
+也可以明确指定资产并先预览：
+
+```powershell
+python art-pipeline\\asset_intake.py "D:\\incoming\\pelican.png" --asset-id B04 --dry-run
+```
+
+规则：自动复制而不删除源文件；默认禁止覆盖；候选始终保持 `GENERATED / HUMAN REVIEW REQUIRED`，不会自动 APPROVED、FROZEN 或推进 STATE。支持 PNG/JPG/JPEG/WebP/GIF/PSD/SVG。导入后仍需按 `ART_SYNC_GUIDE.md` 完成 QA、人工审核（如适用）以及 commit + push。
+
 ## Windows 快速开始
 
 在仓库根目录：
