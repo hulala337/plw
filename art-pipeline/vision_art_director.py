@@ -133,10 +133,10 @@ def main() -> None:
     wanted = set(read_ids(args.ids) or assets.keys())
     QA.mkdir(parents=True, exist_ok=True)
 
-    refs = []
-    for root in [ROOT / "art-work" / "references" / "pelican", ROOT / "art-work" / "references" / "office"]:
-        if root.exists():
-            refs.extend(sorted(p for p in root.iterdir() if p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}))
+    pelican_refs = sorted((ROOT / "art-work" / "references" / "pelican").glob("*.*")) if (ROOT / "art-work" / "references" / "pelican").exists() else []
+    office_refs = sorted((ROOT / "art-work" / "references" / "office").glob("*.*")) if (ROOT / "art-work" / "references" / "office").exists() else []
+    pelican_refs = [p for p in pelican_refs if p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}]
+    office_refs = [p for p in office_refs if p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}]
 
     for asset_id in sorted(wanted):
         asset = assets.get(asset_id)
@@ -145,6 +145,8 @@ def main() -> None:
             print(f"SKIP {asset_id}: candidate missing")
             continue
         try:
+            category = asset.get("category", "")
+            refs = pelican_refs if category == "character" or asset_id.startswith("B") else office_refs if category in {"environment", "weather"} or asset_id.startswith("C") else []
             result = review_one(client, asset, image, refs, args.model)
             out = QA / f"{asset_id}.json"
             out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
