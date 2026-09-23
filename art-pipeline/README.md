@@ -197,21 +197,25 @@ AI 只负责“发现问题 + 分流”，不负责替代最终美术决策。
 
 ## 跨账号 / 跨平台 / 跨电脑接力
 
-美术生产状态不依赖 ChatGPT 对话历史、账号或具体平台。仓库中的：
+统一使用仓库根目录的 `ART_HANDOFF.md` 作为**唯一 Markdown 接力入口与完整接力协议**。
 
-- `ART_PRODUCTION_HANDOFF.md`
-- `ART_HANDOFF.md`
-- `art-production-spec/ART_PRODUCTION_STATE.json`
-- `art-production-spec/ART_ASSET_MANIFEST.json`
+持久化状态分工：
 
-共同构成持久化接力状态。
+- `ART_HANDOFF.md`：快速入口、强制接力规则、执行协议
+- `art-production-spec/ART_PRODUCTION_STATE.json`：当前进度的唯一机器真相源
+- `art-production-spec/ART_ASSET_MANIFEST.json`：资产身份、规格、顺序与规则
+- `art-production-spec/CHARACTER_BIBLE.md`：角色规范
+- `art-production-spec/ART_DIRECTION.md`：美术方向
+- `art-production-spec/PRODUCTION_RULES.md`：生产规则
+
+`ART_PRODUCTION_HANDOFF.md` 已废弃并删除，不再存在第二份 Markdown 接力状态/协议文件。
 
 新环境先运行：
 
 ```powershell
-python art-pipeline\handoff_check.py
+python art-pipeline\\handoff_check.py
 ```
 
-通过后从 state 文件的 `current_asset` 继续。不要依据聊天记录重新猜测进度，不要重复生成已有候选，不得绕过人工审核。
+通过后严格从 STATE 的 `current_asset` 继续。不要依据聊天记录重新猜测进度，不要重复生成已有候选，不得绕过人工审核。
 
 当前断点：**B04 / pelican_thinking / READY / GENERATE**。
