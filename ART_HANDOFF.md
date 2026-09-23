@@ -12,11 +12,11 @@
 4. 读取 `art-production-spec/ART_ASSET_MANIFEST.json`。
 5. 读取 `CHARACTER_BIBLE.md`、`ART_DIRECTION.md`、`PRODUCTION_RULES.md`。
 6. 运行 `python art-pipeline\handoff_check.py`。
-7. **只按检查结果中的 `current_asset / current_key / current_status / next_action` 继续。**
-8. 若 `READY + GENERATE`，直接执行当前资产生成任务；不要重新规划、不要从 B01 重来。
-9. 按 Manifest 的 `asset_id` 命名并保存候选。
-10. 候选默认不得自动 `APPROVED/FROZEN`；必须人工审核。
-11. 持久化审核和状态、commit + push 后，才进入下一个资产。
+8. **只按检查结果中的 `current_asset / current_key / current_status / next_action` 继续。**
+9. 若 `READY + GENERATE`，直接执行当前资产生成任务；不要重新规划、不要从 B01 重来。
+10. 按 Manifest 的 `asset_id` 命名并保存候选。
+11. 候选默认不得自动 `APPROVED/FROZEN`；必须人工审核。
+12. 持久化审核和状态、commit + push 后，才进入下一个资产。
 
 ## 2. 接力目标与核心原则
 
