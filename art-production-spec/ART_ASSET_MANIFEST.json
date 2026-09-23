@@ -192,7 +192,7 @@
     },
     {
       "id": "C01",
-      "key": "office_master_day",
+      "key": "office_master",
       "category": "environment",
       "priority": "P0",
       "type": "scene",
@@ -200,7 +200,7 @@
     },
     {
       "id": "C02",
-      "key": "office_master_evening",
+      "key": "office_day",
       "category": "environment",
       "priority": "P1",
       "type": "scene",
@@ -208,7 +208,7 @@
     },
     {
       "id": "C03",
-      "key": "office_master_night",
+      "key": "office_night",
       "category": "environment",
       "priority": "P1",
       "type": "scene",
