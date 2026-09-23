@@ -1,0 +1,41 @@
+name: Auto Build Art Handoff Package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ART_HANDOFF.md"
+      - "ART_OFFLINE_HANDOFF_GUIDE.md"
+      - "ART_SYNC_GUIDE.md"
+      - "HUMAN_REVIEW_GUIDE.md"
+      - "REFERENCE_ASSET_MAP.json"
+      - "art-production-spec/**"
+      - "art-assets/**"
+      - "art-pipeline/create_handoff_package.py"
+      - "art-pipeline/handoff_check.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-handoff-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Build and validate Handoff Package
+        run: |
+          python3 art-pipeline/create_handoff_package.py --output handoff-package.zip
+          python3 art-pipeline/create_handoff_package.py --validate handoff-package.zip
+
+      - name: Upload latest Handoff Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: PelicanWorkBench-Art-Handoff-Latest
+          path: handoff-package.zip
+          if-no-files-found: error
+          retention-days: 30
