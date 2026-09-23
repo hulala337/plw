@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>如果我是他们 · V3.2</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3efe6;color:#2d2924;font-family:"Microsoft YaHei",system-ui,sans-serif}header{padding:20px 28px;background:#292621;color:#fff;display:flex;justify-content:space-between;align-items:center}header small{opacity:.7}.layout{display:grid;grid-template-columns:260px 1fr 320px;min-height:calc(100vh - 76px)}aside,.right{padding:18px;background:#e9e2d5;border-right:1px solid #d0c7b7}.right{border-left:1px solid #d0c7b7;border-right:0}.timeline{display:flex;flex-direction:column;gap:7px}.node{border:1px solid #cfc5b4;background:#f8f4ec;padding:9px;border-radius:8px;text-align:left;cursor:pointer}.node.active{background:#d8c7a7}.main{padding:28px;max-width:1100px;width:100%;margin:auto}.card{background:#fffaf2;border:1px solid #d8cdbb;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #00000008}.tag{display:inline-block;padding:4px 8px;border-radius:99px;background:#e7dfd1;font-size:12px;margin:3px}.fact{border-left:4px solid #70634f;padding-left:12px}.choice{padding:13px;margin:8px 0;border:1px solid #cfc5b4;border-radius:9px;background:#fff;cursor:pointer}.choice:hover{background:#f1eadf}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.map{width:100%;background:#f6f0e4;border:1px solid #d0c7b7;border-radius:10px}.muted{color:#756d63;font-size:13px}button{padding:8px 12px;border:0;border-radius:8px;background:#4d463d;color:white;cursor:pointer}@media(max-width:1000px){.layout{grid-template-columns:1fr}.right,aside{display:none}.main{padding:16px}}
+</style></head>
+<body><header><div><strong>如果我是他们</strong> <span>V3.2</span></div><small>史实与史料校准层 · 不评分历史路线</small></header>
+<div class="layout"><aside><h3>22个历史节点</h3><div id="timeline" class="timeline"></div></aside><main class="main"><div id="app"></div></main><section class="right"><h3>证据与边界</h3><div id="sources"></div></section></div>
+<script>
+let scenario,facts,sources,boundary,registry,current=0;
+const get=async u=>(await fetch(u)).json();
+async function init(){[scenario,facts,sources,boundary,registry]=await Promise.all(["/api/scenario","/api/fact-check","/api/source-registry","/api/information-boundary","/api/map/may-fourth"].map(get));renderTimeline();render(0)}
+function renderTimeline(){timeline.innerHTML=scenario.events.map((e,i)=>`<button class="node ${i===current?"active":""}" onclick="render(${i})">${e.id} · ${e.year} · ${e.title}</button>`).join("")}
+function render(i){current=i;renderTimeline();const e=scenario.events[i],f=facts.events.find(x=>x.event_id===e.id);const src=sources.sources.filter(x=>(x.events||[]).includes(e.id));app.innerHTML=`
+<div class="card"><span class="tag">史实节点</span><span class="tag">当时信息边界</span><h1>${e.year} · ${e.title}</h1><p>${e.description||""}</p><div class="fact"><b>史实校准</b><p>${f?.status||"待核"}：${f?.note||""}</p></div></div>
+<div class="card"><h3>当时你能知道什么？</h3><p>${boundary.rule||"只使用该时点及以前可获得的信息；后来的总结不能冒充当时信息。"}</p><div class="grid"><div><b>可使用</b><p class="muted">当时公开消息、已有制度与资源、可获得的文书/报刊/人物行动。</p></div><div><b>不可倒灌</b><p class="muted">后来的历史结果、现代教材式结论、未经当时证据支持的动机判断。</p></div></div></div>
+<div class="card"><h3>如果你在这个位置，你会先处理什么？</h3><div class="choice" onclick="choose('A')">A · 优先投入有限资源解决当前最紧迫问题</div><div class="choice" onclick="choose('B')">B · 调整制度与组织，让执行能力先发生变化</div><div class="choice" onclick="choose('C')">C · 争取更多社会力量与外部空间，再推进方案</div><p id="feedback" class="muted">这里没有标准答案；选择只用于观察约束、代价和多方回应。</p></div>
+${e.id==="e18"?'<div class="card"><h3>1919 五四：空间展开</h3><img class="map" src="/assets/maps/may_fourth_1919_spatial_map.svg"><p class="muted">教学示意图，不作为精确疆域、道路或行政边界地图。</p></div>':""}`;}
+function choose(x){feedback.textContent="已记录选择 "+x+"。模拟反馈应与史实、资源约束和多方行动分开解释，不把历史结果倒推成选择时的“必然答案”。"}
+init()
+</script></body></html>
