@@ -99,11 +99,30 @@ git push origin main
 
 ### B. ChatGPT / 其他平台生成后需要下载
 
+推荐不要手工判断目录和版本号，而是在仓库根目录运行：
+
+```powershell
+python art-pipeline\\asset_intake.py "D:\\incoming\\generated.png"
+```
+
+工具会读取 STATE 的 `current_asset`，校验 Manifest，并自动把文件复制到：
+
+```text
+art-assets/<ASSET_ID>/candidates/<ASSET_ID>_vNN.<ext>
+```
+
+如需明确指定资产：
+
+```powershell
+python art-pipeline\\asset_intake.py "D:\\incoming\\generated.png" --asset-id B04
+```
+
+导入工具默认不覆盖已有候选、不删除源文件，也不会自动批准或推进生产状态。
+
 1. 下载图片到本机。
-2. 放入 `art-assets/<ASSET_ID>/candidates/`。
-3. 按 `<ASSET_ID>_vNN.ext` 命名。
-4. 检查是否与远端最新 main 同步。
-5. Git commit + push。
+2. 用 `asset_intake.py` 导入候选目录。
+3. 检查是否与远端最新 main 同步。
+4. Git commit + push。
 
 ### C. 无法使用 Git 的电脑
 
