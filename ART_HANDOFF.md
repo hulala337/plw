@@ -12,10 +12,11 @@
 4. 读取 `art-production-spec/ART_ASSET_MANIFEST.json`。
 5. 读取 `CHARACTER_BIBLE.md`、`ART_DIRECTION.md`、`PRODUCTION_RULES.md`。
 6. 运行 `python art-pipeline\handoff_check.py`。
-8. **只按检查结果中的 `current_asset / current_key / current_status / next_action` 继续。**
-9. 若 `READY + GENERATE`，直接执行当前资产生成任务；不要重新规划、不要从 B01 重来。
-10. 按 Manifest 的 `asset_id` 命名并保存候选。
-11. 候选默认不得自动 `APPROVED/FROZEN`；必须人工审核。
+7. 读取 `current_asset / current_key / current_status / next_action`。
+8. 若 `READY + GENERATE`，直接执行当前资产生成任务；不要重新规划、不要从 B01 重来。
+9. 按 Manifest 的 `asset_id` 命名并保存候选到 `art-assets/<ASSET_ID>/candidates/`。
+10. 候选默认不得自动 `APPROVED/FROZEN`；必须人工审核。
+11. 按 `ART_SYNC_GUIDE.md` 完成 GitHub 同步。
 12. 持久化审核和状态、commit + push 后，才进入下一个资产。
 
 ## 2. 接力目标与核心原则
@@ -29,6 +30,8 @@
 - GitHub 持久化状态是任务事实来源。
 - **`ART_PRODUCTION_STATE.json` 是当前进度的唯一机器真相源。**
 - `ART_ASSET_MANIFEST.json` 定义资产身份、规格、顺序与规则。
+- `ART_SYNC_GUIDE.md` 定义资产文件跨环境同步方式。
+- `art-assets/` 是候选与批准资产的统一仓库目录。
 - 不保存 API Key、密码、Token、Cookie 或登录凭据。
 - 不因聊天上下文丢失而重复生成已有候选。
 - 检查失败时先修复一致性，不得继续生成。
@@ -52,7 +55,11 @@
   ↓
 读取 current_asset / current_key / current_status / next_action
   ↓
+按 ART_SYNC_GUIDE 确认资产目录与版本
+  ↓
 执行 next_action
+  ↓
+候选/审核/状态 commit + push
 ```
 
 如果检查失败，先修复状态/文件一致性；不得绕过检查继续生产。
@@ -74,12 +81,15 @@
 
 1. `READY + GENERATE` 才进入当前资产生成动作。
 2. 新生成结果默认 `GENERATED / CANDIDATE`。
-3. 生成失败不得标记为 `APPROVED`。
-4. 不得用几何 SVG、简单形状拼接等方式伪造最终角色/场景美术。
-5. 最终角色/场景必须是高质量原创插画。
-6. 必须使用 Manifest 的 `asset_id` 命名。
-7. 不得随意改变 B01 主角色身份、比例、视觉语言、完成度或主要色彩体系。
-8. 不得加入无意义文字、AI 乱码、随机角色或与 brief 无关的元素。
+3. 候选统一保存到 `art-assets/<ASSET_ID>/candidates/`。
+4. 候选文件必须使用唯一版本名：`<ASSET_ID>_vNN.<ext>`。
+5. 禁止用同名文件覆盖其他账号/平台已经产生的候选。
+6. 生成失败不得标记为 `APPROVED`。
+7. 不得用几何 SVG、简单形状拼接等方式伪造最终角色/场景美术。
+8. 最终角色/场景必须是高质量原创插画。
+9. 必须使用 Manifest 的 `asset_id` 命名。
+10. 不得随意改变 B01 主角色身份、比例、视觉语言、完成度或主要色彩体系。
+11. 不得加入无意义文字、AI 乱码、随机角色或与 brief 无关的元素。
 
 ### 4.3 人工审核规则
 
@@ -88,7 +98,9 @@
 3. AI 的 `PASS_TO_HUMAN` 只是进入人工审稿入口，**不是批准**。
 4. P0/P1 必须人工审核后才能进入 `APPROVED`。
 5. 人工审核结论必须持久化到仓库后，再切换任务。
-6. `APPROVED/FROZEN` 不得无记录覆盖。
+6. 批准版本进入 `art-assets/<ASSET_ID>/approved/`。
+7. `review.json` 记录选中的候选和人工审核结论。
+8. `APPROVED/FROZEN` 不得无记录覆盖。
 
 ### 4.4 跨账号 / 跨平台规则
 
@@ -96,9 +108,12 @@
 2. AI 平台或中转平台只是执行环境，不是任务状态来源。
 3. 家用电脑、单位电脑等只是执行环境，不是任务状态来源。
 4. GitHub `main` 是跨环境持久化接力基准。
-5. 平台切换必须先 `git pull`，再检查 STATE。
-6. 不得把 API Key、密码、Token、Cookie 或登录凭据写入仓库。
-7. 当前平台不能执行某一步时，应保留当前状态并把明确的下一动作写回 STATE，不得擅自改变生产顺序。
+5. 平台切换必须先 `git checkout main` + `git pull origin main`。
+6. 生成或上传前必须确认本地没有落后于远端的提交。
+7. 生成后立即把候选同步到 `art-assets/<ASSET_ID>/candidates/` 并提交。
+8. 不同环境不得同时修改同一个候选文件；需要新版本时递增 `vNN`。
+9. 不得把 API Key、密码、Token、Cookie 或登录凭据写入仓库。
+10. 当前平台不能执行某一步时，应保留当前状态并把明确的下一动作写回 STATE，不得擅自改变生产顺序。
 
 ### 4.5 资产完成后的强制动作
 
@@ -108,9 +123,10 @@
 2. 按 Manifest `asset_id` 命名的项目资产
 3. 必要的候选/版本信息
 4. 技术 QA / 视觉 QA / 人工审核结果
-5. `ART_PRODUCTION_STATE.json` 更新
-6. Manifest 对应状态更新（若流程要求）
-7. Git commit + push
+5. `review.json`（如已人工审核）
+6. `ART_PRODUCTION_STATE.json` 更新
+7. Manifest 对应状态更新（若流程要求）
+8. Git commit + push
 
 **只有完成以上持久化，才允许进入下一个资产。**
 
@@ -151,7 +167,7 @@ PLANNED → READY → GENERATING → GENERATED/CANDIDATE
 
 ## 8. 新账号 / 新平台可直接粘贴的接力指令
 
-> 请接手 Pelican Workbench 美术资产生产。先读取仓库根目录 ART_HANDOFF.md，再读取 art-production-spec/ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md，运行 python art-pipeline\\handoff_check.py。严格从检查结果的 current_asset 继续，不重复已经存在的候选，不跳过人工审核；如果 current_status=READY 且 next_action=GENERATE，就直接执行当前资产的生成任务。
+> 请接手 Pelican Workbench 美术资产生产。先读取仓库根目录 ART_HANDOFF.md，再读取 art-production-spec/ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md 和 ART_SYNC_GUIDE.md，运行 python art-pipeline\handoff_check.py。严格从检查结果的 current_asset 继续，不重复已经存在的候选，不跳过人工审核；如果 current_status=READY 且 next_action=GENERATE，就直接执行当前资产的生成任务，并将候选按 ART_SYNC_GUIDE.md 保存到 art-assets/<ASSET_ID>/candidates/，完成 Git commit + push 后再进入下一步。
 
 ## 9. 检查命令
 
