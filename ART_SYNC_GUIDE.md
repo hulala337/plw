@@ -45,7 +45,7 @@ art-assets/<ASSET_ID>/candidates/<ASSET_ID>_vNN.<ext>
 
 导入不会自动批准或推进 STATE。
 
-## 5. Return Package
+## 5. 自动 Handoff Package\n\n仓库已配置 GitHub Actions：每次 `main` 的美术资产/状态/规范发生变化后，会自动从最新提交重新生成并校验 Handoff Package。工作流产物名称为 `PelicanWorkBench-Art-Handoff-Latest`，因此每次你上传新资产并 push 后，下一次工作流完成时拿到的就是最新快照。\n\n自动包包含当前资产状态、生产规范、接力协议、B01 风格锚点资源（仓库中存在时）以及当前资产候选，并带 SHA-256 校验。Handoff Package 是运输快照，不替代 GitHub `main`。\n\n如果某个 AI 平台无法访问 GitHub，只需要在一个能访问 GitHub 的环境下载最新工作流产物，再把 ZIP 交给该平台；之后平台无需 GitHub 权限即可继续生产。\n\n## 6. Return Package
 
 如果生成环境没有 GitHub，可使用 ART_OFFLINE_HANDOFF_GUIDE.md。
 
@@ -63,7 +63,7 @@ python art-pipeline\asset_intake.py --validate-return-package "D:\Return\Pelican
 
 Return Package 不等于 APPROVED。
 
-## 6. 防止多账号 / 多平台互相覆盖
+## 7. 防止多账号 / 多平台互相覆盖
 
 禁止：
 - 同一资产使用重复版本号。
@@ -81,11 +81,11 @@ Return Package 不等于 APPROVED。
 - 审核和 STATE 一起提交。
 - 进入下一个资产前完成 push。
 
-## 7. 大型二进制文件
+## 8. 大型二进制文件
 
 美术候选体积增长后，应考虑 Git LFS。无论是否使用 Git LFS，资产状态、命名、审核记录和 STATE 都必须遵守本规范。
 
-## 8. 文档关系
+## 9. 文档关系
 
 - ART_HANDOFF.md：现在生产什么、何时切换
 - ART_OFFLINE_HANDOFF_GUIDE.md：无 GitHub / 无仓库环境如何接力
