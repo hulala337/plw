@@ -1,0 +1,710 @@
+{
+  "version": "3.2.0",
+  "state_initial": {
+    "military": 35,
+    "industry": 30,
+    "finance": 32,
+    "education": 28,
+    "political": 25,
+    "stability": 45,
+    "nationalism": 20,
+    "foreign_pressure": 30,
+    "resistance": 25,
+    "mobilization": 18
+  },
+  "state_labels": {
+    "military": "军事能力",
+    "industry": "工业能力",
+    "finance": "财政能力",
+    "education": "教育能力",
+    "political": "政治整合",
+    "stability": "政治稳定",
+    "nationalism": "民族意识",
+    "foreign_pressure": "外部压力",
+    "resistance": "体制阻力",
+    "mobilization": "社会动员"
+  },
+  "actors": [
+    "清廷中枢",
+    "洋务派",
+    "守旧势力",
+    "维新派",
+    "革命派",
+    "日本",
+    "列强与国际力量",
+    "士绅、商人、工人和民众",
+    "新式知识青年"
+  ],
+  "event_choices": {
+    "e01": [
+      [
+        "A",
+        "优先建设近代军工与防务能力",
+        {
+          "military": 7,
+          "industry": 4,
+          "finance": -5,
+          "resistance": 3
+        }
+      ],
+      [
+        "B",
+        "优先建立新式学校与翻译、人才体系",
+        {
+          "education": 8,
+          "military": 2,
+          "finance": -4,
+          "resistance": 2
+        }
+      ],
+      [
+        "C",
+        "先调整财政与行政组织，再投入新事业",
+        {
+          "finance": 5,
+          "political": 5,
+          "stability": 2,
+          "resistance": 4
+        }
+      ]
+    ],
+    "e02": [
+      [
+        "A",
+        "继续扩大军事工业",
+        {
+          "military": 6,
+          "industry": 5,
+          "finance": -6,
+          "resistance": 3
+        }
+      ],
+      [
+        "B",
+        "扩大新式教育与技术人才培养",
+        {
+          "education": 7,
+          "industry": 3,
+          "finance": -4,
+          "resistance": 2
+        }
+      ],
+      [
+        "C",
+        "两线推进但控制规模",
+        {
+          "industry": 3,
+          "education": 3,
+          "finance": -2,
+          "stability": 2
+        }
+      ]
+    ],
+    "e03": [
+      [
+        "A",
+        "扩大官督商办等新式企业",
+        {
+          "industry": 6,
+          "finance": 3,
+          "political": -1,
+          "resistance": 2
+        }
+      ],
+      [
+        "B",
+        "更多交给商人和市场经营",
+        {
+          "industry": 5,
+          "finance": 5,
+          "political": -2,
+          "resistance": 1
+        }
+      ],
+      [
+        "C",
+        "由国家直接控制关键通信交通",
+        {
+          "industry": 4,
+          "finance": -3,
+          "political": 4,
+          "stability": 2
+        }
+      ]
+    ],
+    "e04": [
+      [
+        "A",
+        "集中资源强化海军",
+        {
+          "military": 6,
+          "finance": -6,
+          "foreign_pressure": -2
+        }
+      ],
+      [
+        "B",
+        "补强陆军与沿边防务",
+        {
+          "military": 5,
+          "finance": -5,
+          "stability": 2
+        }
+      ],
+      [
+        "C",
+        "争取外交与列强制衡空间",
+        {
+          "foreign_pressure": -5,
+          "finance": 2,
+          "political": 2
+        }
+      ]
+    ],
+    "e05": [
+      [
+        "A",
+        "继续扩充舰队规模",
+        {
+          "military": 5,
+          "finance": -6,
+          "industry": 2
+        }
+      ],
+      [
+        "B",
+        "优先建立训练、后勤和维修体系",
+        {
+          "military": 4,
+          "industry": 4,
+          "finance": -4
+        }
+      ],
+      [
+        "C",
+        "把军力建设与财政、工业一起调整",
+        {
+          "military": 3,
+          "industry": 3,
+          "finance": 3,
+          "political": 3
+        }
+      ]
+    ],
+    "e06": [
+      [
+        "A",
+        "立即集中军事资源应战",
+        {
+          "military": 5,
+          "finance": -6,
+          "stability": -3
+        }
+      ],
+      [
+        "B",
+        "同时争取外交与后勤时间",
+        {
+          "foreign_pressure": -3,
+          "finance": -2,
+          "stability": 2
+        }
+      ],
+      [
+        "C",
+        "先调查战况并重组指挥体系",
+        {
+          "political": 5,
+          "military": 2,
+          "stability": 1,
+          "mobilization": 2
+        }
+      ]
+    ],
+    "e07": [
+      [
+        "A",
+        "把问题主要归因于军事技术不足",
+        {
+          "military": 4,
+          "industry": 4,
+          "political": -1
+        }
+      ],
+      [
+        "B",
+        "从财政、工业、教育的系统能力检讨",
+        {
+          "finance": 3,
+          "industry": 3,
+          "education": 4,
+          "political": 3
+        }
+      ],
+      [
+        "C",
+        "进一步追问制度与政治组织问题",
+        {
+          "political": 7,
+          "education": 3,
+          "resistance": 5,
+          "stability": -2
+        }
+      ]
+    ],
+    "e08": [
+      [
+        "A",
+        "先推教育、人才和行政改革",
+        {
+          "education": 6,
+          "political": 5,
+          "resistance": 5
+        }
+      ],
+      [
+        "B",
+        "同步推进制度、经济与军事改革",
+        {
+          "political": 7,
+          "industry": 3,
+          "military": 2,
+          "resistance": 7,
+          "stability": -4
+        }
+      ],
+      [
+        "C",
+        "控制改革速度，优先维持政治稳定",
+        {
+          "stability": 5,
+          "political": 2,
+          "resistance": -2,
+          "education": 2
+        }
+      ]
+    ],
+    "e09": [
+      [
+        "A",
+        "优先恢复秩序与安全",
+        {
+          "stability": 7,
+          "military": 3,
+          "political": -2
+        }
+      ],
+      [
+        "B",
+        "尽量争取外交缓冲与谈判空间",
+        {
+          "foreign_pressure": -5,
+          "finance": 2,
+          "stability": 2
+        }
+      ],
+      [
+        "C",
+        "扩大地方与社会动员应对危机",
+        {
+          "mobilization": 7,
+          "nationalism": 4,
+          "stability": -3,
+          "resistance": -2
+        }
+      ]
+    ],
+    "e10": [
+      [
+        "A",
+        "重点改革军政与行政体系",
+        {
+          "military": 4,
+          "political": 6,
+          "stability": 2
+        }
+      ],
+      [
+        "B",
+        "重点发展教育、经济与新式学校",
+        {
+          "education": 7,
+          "industry": 4,
+          "finance": -3
+        }
+      ],
+      [
+        "C",
+        "逐步扩大政治参与和制度改革",
+        {
+          "political": 7,
+          "mobilization": 4,
+          "resistance": 5,
+          "stability": -2
+        }
+      ]
+    ],
+    "e11": [
+      [
+        "A",
+        "快速废除旧考试并扩建新式学校",
+        {
+          "education": 8,
+          "political": 3,
+          "resistance": 5,
+          "stability": -2
+        }
+      ],
+      [
+        "B",
+        "分阶段过渡，减少社会冲击",
+        {
+          "education": 5,
+          "stability": 5,
+          "resistance": 2
+        }
+      ],
+      [
+        "C",
+        "把新式教育与人才任用同步改革",
+        {
+          "education": 7,
+          "political": 5,
+          "mobilization": 2,
+          "finance": -3
+        }
+      ]
+    ],
+    "e12": [
+      [
+        "A",
+        "严格按既定时间表推进",
+        {
+          "political": 6,
+          "stability": -2,
+          "resistance": 5
+        }
+      ],
+      [
+        "B",
+        "先扩大地方参与和制度准备",
+        {
+          "political": 7,
+          "mobilization": 4,
+          "stability": 2
+        }
+      ],
+      [
+        "C",
+        "放慢制度改革，优先巩固秩序",
+        {
+          "stability": 6,
+          "political": -1,
+          "resistance": -2
+        }
+      ]
+    ],
+    "e13": [
+      [
+        "A",
+        "军事镇压并迅速恢复中央控制",
+        {
+          "military": 5,
+          "stability": -5,
+          "resistance": 5,
+          "mobilization": -2
+        }
+      ],
+      [
+        "B",
+        "谈判、让步并争取政治整合",
+        {
+          "political": 6,
+          "stability": 4,
+          "resistance": -2
+        }
+      ],
+      [
+        "C",
+        "承认地方政治力量并重新组织国家",
+        {
+          "political": 8,
+          "mobilization": 6,
+          "stability": -4
+        }
+      ]
+    ],
+    "e14": [
+      [
+        "A",
+        "强化中央行政体系",
+        {
+          "political": 7,
+          "stability": 4,
+          "resistance": 3
+        }
+      ],
+      [
+        "B",
+        "建立议会与宪政制度框架",
+        {
+          "political": 8,
+          "education": 3,
+          "mobilization": 4,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "优先解决财政、军队和地方关系",
+        {
+          "finance": 5,
+          "military": 4,
+          "political": 5
+        }
+      ]
+    ],
+    "e15": [
+      [
+        "A",
+        "优先恢复中央秩序",
+        {
+          "stability": 6,
+          "political": 4,
+          "mobilization": -3
+        }
+      ],
+      [
+        "B",
+        "坚持议会和法律程序",
+        {
+          "political": 7,
+          "education": 3,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "寻求地方与社会力量妥协",
+        {
+          "mobilization": 5,
+          "political": 4,
+          "stability": 3
+        }
+      ]
+    ],
+    "e16": [
+      [
+        "A",
+        "支持帝制以换取秩序",
+        {
+          "stability": 5,
+          "political": -7,
+          "resistance": -2,
+          "mobilization": -3
+        }
+      ],
+      [
+        "B",
+        "维护共和制度",
+        {
+          "political": 7,
+          "mobilization": 5,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "推动重新谈判政治结构",
+        {
+          "political": 5,
+          "education": 3,
+          "mobilization": 4,
+          "stability": -1
+        }
+      ]
+    ],
+    "e17": [
+      [
+        "A",
+        "强化传统秩序与文化连续性",
+        {
+          "stability": 4,
+          "resistance": 5,
+          "education": 1
+        }
+      ],
+      [
+        "B",
+        "扩大新文化与新式教育空间",
+        {
+          "education": 7,
+          "nationalism": 4,
+          "mobilization": 5,
+          "resistance": 3
+        }
+      ],
+      [
+        "C",
+        "把文化讨论转向具体国家制度问题",
+        {
+          "political": 5,
+          "education": 4,
+          "mobilization": 3
+        }
+      ]
+    ],
+    "e18": [
+      [
+        "A",
+        "优先恢复社会秩序",
+        {
+          "stability": 5,
+          "mobilization": -2,
+          "political": 2
+        }
+      ],
+      [
+        "B",
+        "回应青年与社会诉求，扩大公共讨论",
+        {
+          "mobilization": 7,
+          "nationalism": 5,
+          "political": 4,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "以外交与国家权益问题为中心组织回应",
+        {
+          "nationalism": 6,
+          "foreign_pressure": -3,
+          "political": 5
+        }
+      ]
+    ],
+    "e19": [
+      [
+        "A",
+        "以学校和知识界为主要组织节点",
+        {
+          "education": 5,
+          "mobilization": 5,
+          "political": 2
+        }
+      ],
+      [
+        "B",
+        "连接知识青年与工人、城市社会力量",
+        {
+          "mobilization": 9,
+          "nationalism": 4,
+          "political": 3,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "优先建立稳定的制度化组织",
+        {
+          "political": 6,
+          "mobilization": 4,
+          "stability": 3
+        }
+      ]
+    ],
+    "e20": [
+      [
+        "A",
+        "继续寻找制度改良空间",
+        {
+          "political": 5,
+          "education": 4,
+          "mobilization": 2
+        }
+      ],
+      [
+        "B",
+        "建立新的政治与社会组织道路",
+        {
+          "mobilization": 8,
+          "political": 6,
+          "nationalism": 4,
+          "stability": -2
+        }
+      ],
+      [
+        "C",
+        "优先发展教育、经济与基层社会能力",
+        {
+          "education": 6,
+          "industry": 4,
+          "finance": 3,
+          "mobilization": 3
+        }
+      ]
+    ],
+    "e21": [
+      [
+        "A",
+        "加强中央对地方的直接控制",
+        {
+          "political": 6,
+          "stability": 4,
+          "mobilization": -2
+        }
+      ],
+      [
+        "B",
+        "吸纳地方、商人和社会组织进入公共治理",
+        {
+          "mobilization": 7,
+          "finance": 4,
+          "political": 5,
+          "stability": 2
+        }
+      ],
+      [
+        "C",
+        "允许地方保留较大自主空间",
+        {
+          "mobilization": 5,
+          "political": 2,
+          "stability": 3,
+          "resistance": -2
+        }
+      ]
+    ],
+    "e22": [
+      [
+        "A",
+        "从资源与制度能力解释一路变化",
+        {
+          "political": 4,
+          "education": 3,
+          "finance": 3
+        }
+      ],
+      [
+        "B",
+        "从不同群体的行动与回应解释",
+        {
+          "mobilization": 5,
+          "nationalism": 4,
+          "political": 3
+        }
+      ],
+      [
+        "C",
+        "把多重因素放进同一因果链重新解释",
+        {
+          "political": 5,
+          "education": 4,
+          "mobilization": 4,
+          "nationalism": 3
+        }
+      ]
+    ]
+  }
+}
