@@ -22,6 +22,8 @@ boundary = load("information_boundary_v3_2.json")
 integrity = load("model_integrity_rules_v3_2.json")
 map_registry = load("may_fourth_map_registry_v3_2.json")
 sim = load("simulation_rules_v3_2.json")
+context = load("historical_context_v3_2.json")
+visuals = load("node_visuals_v3_2.json")
 
 app = FastAPI(title="如果我是他们 V3.2", version="3.2.0")
 app.mount("/assets", StaticFiles(directory=ASSETS), name="assets")
@@ -75,6 +77,14 @@ def event(event_id: str):
     ]
     return {"event": ev, "fact_check": fact, "sources": linked_sources}
 
+@app.get("/api/historical-context")
+def historical_context():
+    return context
+
+@app.get("/api/node-visuals")
+def node_visuals():
+    return visuals
+
 @app.get("/api/simulation-rules")
 def simulation_rules():
     return {
@@ -119,16 +129,21 @@ def simulate(payload: dict = Body(...)):
 
     delta = {k: state[k] - before[k] for k in state if state[k] != before[k]}
     actor_response = []
+    ctx = next((x for x in context["events"] if x["id"] == event_id), None)
+    if ctx:
+        for actor in ctx["actors"]:
+            actor_response.append({
+                "actor": actor["actor"],
+                "stance": actor["stance"],
+                "response": f"选择“{picked['text']}”后，需要重新权衡其既有立场、资源和政治利益。",
+                "direction": "contextual"
+            })
     if state["resistance"] > 60:
-        actor_response.append({"actor": "守旧势力", "response": "阻力上升，执行成本增加", "direction": "negative"})
+        actor_response.append({"actor": "系统反馈", "stance": "模拟机制", "response": "制度/社会阻力较高，执行成本增加。", "direction": "negative"})
     if state["mobilization"] > 55:
-        actor_response.append({"actor": "士绅、商人、工人和民众", "response": "社会参与扩大，但协调成本增加", "direction": "mixed"})
-    if state["education"] > 50:
-        actor_response.append({"actor": "新式知识青年", "response": "新式知识与公共讨论空间扩大", "direction": "positive"})
-    if state["political"] > 55:
-        actor_response.append({"actor": "清廷中枢", "response": "制度整合能力发生变化，地方关系需要重新协调", "direction": "mixed"})
+        actor_response.append({"actor": "系统反馈", "stance": "模拟机制", "response": "社会动员较高，参与扩大但协调成本也增加。", "direction": "mixed"})
     if state["foreign_pressure"] > 60:
-        actor_response.append({"actor": "列强与国际力量", "response": "外部约束持续，财政与外交空间承压", "direction": "negative"})
+        actor_response.append({"actor": "系统反馈", "stance": "模拟机制", "response": "外部压力较高，财政与外交空间承压。", "direction": "negative"})
 
     return {
         "event_id": event_id,
