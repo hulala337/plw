@@ -43,7 +43,7 @@ for event in module.timeline["events"]:
 
 assert (ROOT / "assets" / "maps" / "may_fourth_1919_spatial_map.svg").is_file()
 print("Simulation validation: PASS (22 events × 3 choices)")
-assert any(x["id"] == "e18" and x["type"] == "reconstruction_map" for x in module.visuals["items"])
+assert any(x["type"] == "reconstruction_map" and "e18" in x.get("events", []) for x in module.visuals["items"])
 print("Historical context: PASS (22 events × 3 actor perspectives)")
 print("Embedded visual registry: PASS")
 print("May Fourth map: PASS")
