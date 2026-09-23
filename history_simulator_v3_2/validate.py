@@ -4,11 +4,24 @@ import importlib.util
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
+ASSETS = ROOT / "assets"
 
 json_files = sorted(DATA.glob("*.json"))
 for p in json_files:
     json.loads(p.read_text(encoding="utf-8"))
 print(f"JSON validation: PASS ({len(json_files)} files)")
+
+asset_registry = json.loads(
+    (DATA / "history_asset_registry_v3_2.json").read_text(encoding="utf-8")
+)
+assert asset_registry["assets"], "historical asset registry is empty"
+for asset in asset_registry["assets"]:
+    path = ROOT / asset["local_path"]
+    assert path.is_file(), f"Missing historical asset: {asset['local_path']}"
+    assert path.stat().st_size >= int(asset.get("min_bytes", 1)), (
+        f"Historical asset too small: {asset['local_path']}"
+    )
+print(f"Historical asset files: PASS ({len(asset_registry['assets'])} files)")
 
 spec = importlib.util.spec_from_file_location("history_server", ROOT / "app" / "server.py")
 module = importlib.util.module_from_spec(spec)
@@ -34,17 +47,32 @@ for event in module.timeline["events"]:
         assert isinstance(choice["text"], str) and choice["text"]
         assert all(k in rules["state_initial"] for k in choice["effects"])
 
-# Exercise every simulation branch once.
+for visual in module.visuals["items"]:
+    if visual["type"] == "historical_image":
+        assert visual["url"].startswith("/assets/"), (
+            f"Historical image must use a local browser path: {visual['id']}"
+        )
+        local = ROOT / visual["url"].lstrip("/")
+        assert local.is_file(), f"Visual file missing: {visual['url']}"
+
 for event in module.timeline["events"]:
     for choice in module.sim["event_choices"][event["id"]]:
-        result = module.simulate({"event_id": event["id"], "choice_id": choice["id"], "state": module.sim["state_initial"]})
+        result = module.simulate({
+            "event_id": event["id"],
+            "choice_id": choice["id"],
+            "state": module.sim["state_initial"],
+        })
         assert len(result["after"]) == len(module.sim["state_initial"])
         assert all(0 <= v <= 100 for v in result["after"].values())
 
 assert (ROOT / "assets" / "maps" / "may_fourth_1919_spatial_map.svg").is_file()
 print("Simulation validation: PASS (22 events × 3 choices)")
-assert any(x["type"] == "reconstruction_map" and "e18" in x.get("events", []) for x in module.visuals["items"])
+assert any(
+    x["type"] == "reconstruction_map" and "e18" in x.get("events", [])
+    for x in module.visuals["items"]
+)
 print("Historical context: PASS (22 events × 3 actor perspectives)")
 print("Embedded visual registry: PASS")
+print("Historical image localization: PASS")
 print("May Fourth map: PASS")
 print("V3.2 validation: PASS")
