@@ -1,0 +1,51 @@
+{
+  "version": "3.2.1",
+  "assets": [
+    {
+      "id": "v-li-hongzhang",
+      "event_ids": [
+        "e01",
+        "e02",
+        "e03",
+        "e04",
+        "e05",
+        "e06",
+        "e07",
+        "e10"
+      ],
+      "filename": "li_hongzhang_portrait.jpg",
+      "local_path": "assets/history/li_hongzhang_portrait.jpg",
+      "browser_path": "/assets/history/li_hongzhang_portrait.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Portrait_of_Li_Hongzhang.jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/d/da/Portrait_of_Li_Hongzhang.jpg",
+      "license": "Public domain in the United States according to Wikimedia Commons; verify jurisdiction before redistribution.",
+      "min_bytes": 100000
+    },
+    {
+      "id": "v-may-fourth",
+      "event_ids": [
+        "e18"
+      ],
+      "filename": "may_fourth_movement_students.jpg",
+      "local_path": "assets/history/may_fourth_movement_students.jpg",
+      "browser_path": "/assets/history/may_fourth_movement_students.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:May_Fourth_Movement_students.jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/May_Fourth_Movement_students.jpg",
+      "license": "Public domain according to Wikimedia Commons.",
+      "min_bytes": 500000
+    },
+    {
+      "id": "v-may-fourth-protest",
+      "event_ids": [
+        "e18"
+      ],
+      "filename": "beijing_students_protesting_versailles_1919.jpg",
+      "local_path": "assets/history/beijing_students_protesting_versailles_1919.jpg",
+      "browser_path": "/assets/history/beijing_students_protesting_versailles_1919.jpg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Beijing_students_protesting_the_Treaty_of_Versailles_(May_4,_1919).jpg",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Beijing_students_protesting_the_Treaty_of_Versailles_%28May_4%2C_1919%29.jpg",
+      "license": "Public domain according to Wikimedia Commons.",
+      "min_bytes": 30000
+    }
+  ]
+}
