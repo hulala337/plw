@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Machine-readable V3 AI art-director review contract",
+  "principles": {
+    "ai_is_a_gate_not_final_art_director": true,
+    "p0_p1_human_review_required": true,
+    "auto_approval_forbidden": true,
+    "rework_on_hard_failure": true
+  },
+  "dimensions": [
+    "technical_qa",
+    "brief_compliance",
+    "character_identity",
+    "style_consistency",
+    "composition",
+    "artifact_detection",
+    "originality_guard"
+  ],
+  "overall_gate_values": [
+    "PASS_TO_HUMAN",
+    "REWORK",
+    "HOLD"
+  ],
+  "recommended_action_values": [
+    "HUMAN_REVIEW",
+    "REGENERATE",
+    "MINOR_EDIT",
+    "HOLD_FOR_REFERENCE"
+  ]
+}
