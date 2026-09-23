@@ -10,7 +10,7 @@ https://github.com/hulala337/plw
 - art-production-spec/
 - art-pipeline/
 
-> **任务事实来源**：GitHub 仓库中的 `ART_PRODUCTION_STATE.json`、`ART_ASSET_MANIFEST.json`、Character Bible、Style Direction、资产目录与审核记录。聊天记录、单个账号、单个平台均不是生产状态的唯一来源。
+> **任务事实来源**：GitHub 仓库中的 `art-production-spec/ART_PRODUCTION_STATE.json`、`art-production-spec/ART_ASSET_MANIFEST.json`、Character Bible、Style Direction、资产目录与审核记录。聊天记录、单个账号、单个平台均不是生产状态的唯一来源。
 
 ## 当前生产阶段
 
