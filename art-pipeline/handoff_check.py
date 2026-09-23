@@ -9,7 +9,6 @@ ROOT = Path(__file__).resolve().parents[1]
 STATE_PATH = ROOT / "art-production-spec" / "ART_PRODUCTION_STATE.json"
 MANIFEST_PATH = ROOT / "art-production-spec" / "ART_ASSET_MANIFEST.json"
 REQUIRED = [
-    ROOT / "ART_PRODUCTION_HANDOFF.md",
     ROOT / "ART_HANDOFF.md",
     STATE_PATH,
     MANIFEST_PATH,
@@ -50,6 +49,9 @@ def main() -> int:
     assets = {item.get("id"): item for item in manifest.get("assets", [])}
     current = state.get("current_asset")
     current_key = state.get("current_key")
+
+    if state.get("handoff_document") != "ART_HANDOFF.md":
+        errors.append("HANDOFF DOCUMENT: state.handoff_document must be ART_HANDOFF.md.")
 
     if state.get("style_anchor") != "B01":
         errors.append("STYLE ANCHOR: current style_anchor must be B01.")
