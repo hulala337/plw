@@ -1,0 +1,25 @@
+name: History Simulator V3.2 Portable
+on:
+  workflow_dispatch:
+  push:
+    branches: [history-simulator-v3.2]
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: history_simulator_v3_2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install pyinstaller
+      - run: python validate.py
+      - run: python -m PyInstaller --noconfirm --clean --onedir --name RuowoshiTamenV32 --add-data "data;data" --add-data "assets;assets" --add-data "app;app" launcher.py
+      - run: Compress-Archive -Path dist/RuowoshiTamenV32/* -DestinationPath RuowoshiTamenV32-windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RuowoshiTamenV32-windows
+          path: history_simulator_v3_2/RuowoshiTamenV32-windows.zip
