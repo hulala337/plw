@@ -34,7 +34,7 @@ PelicanWorkBench_Art_Handoff_YYYYMMDD_<ASSET_ID>.zip
 - art-pipeline/asset_intake.py
 - checksums.json
 
-平台不需要访问 GitHub，只要能读取这些文件并生成图片即可。
+平台不需要访问 GitHub，只要能读取这些文件并生成图片即可。\n\n**自动更新机制：**每次 `main` 发生与美术生产相关的提交（包括新候选、QA、审核记录、STATE 或规范变化），GitHub Actions 会自动从最新仓库状态重新生成一份 Handoff Package，并上传为 `PelicanWorkBench-Art-Handoff-Latest` 工作流产物。你不需要手工维护 ZIP。
 
 ### 2.2 Return Package：离线环境 → GitHub 环境
 
