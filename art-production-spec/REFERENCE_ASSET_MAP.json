@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "reference_root": "art-work/references",
+  "groups": {
+    "pelican": {"primary": "B01", "secondary": ["B02", "B03", "B04", "B07", "B11"], "folder": "pelican"},
+    "office": {"primary": "C01", "secondary": ["C02", "C03"], "folder": "office"}
+  },
+  "policy": {"identity_reference": true, "preserve_originality": true, "human_review_required": true}
+}
