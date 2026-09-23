@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "project": "Pelican Workbench",
+  "repository": "https://github.com/hulala337/plw",
+  "handoff_document": "ART_PRODUCTION_HANDOFF.md",
+  "canonical_state": "art-production-spec/ART_PRODUCTION_STATE.json",
+  "manifest": "art-production-spec/ART_ASSET_MANIFEST.json",
+  "style_anchor": "B01",
+  "current_asset": "B04",
+  "current_key": "pelican_thinking",
+  "current_status": "READY",
+  "next_action": "GENERATE",
+  "production_sequence": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B07",
+    "C01",
+    "C02",
+    "C03",
+    "E01"
+  ],
+  "assets": {
+    "B01": {
+      "key": "pelican_master",
+      "status": "REFERENCE / STYLE ANCHOR",
+      "review_required": false
+    },
+    "B02": {
+      "key": "pelican_working",
+      "status": "GENERATED / HUMAN REVIEW REQUIRED",
+      "review_required": true,
+      "candidates": "multiple"
+    },
+    "B03": {
+      "key": "pelican_typing",
+      "status": "GENERATED / HUMAN REVIEW REQUIRED",
+      "review_required": true
+    },
+    "B04": {
+      "key": "pelican_thinking",
+      "status": "READY",
+      "review_required": true
+    },
+    "B07": {
+      "key": "pelican_drinking_coffee",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "C01": {
+      "key": "office_master",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "C02": {
+      "key": "office_day",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "C03": {
+      "key": "office_night",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "E01": {
+      "key": "dashboard_hero",
+      "status": "PLANNED",
+      "review_required": true
+    }
+  },
+  "handoff_policy": {
+    "chat_history_is_not_source_of_truth": true,
+    "repository_state_is_source_of_truth": true,
+    "credentials_must_never_be_stored": true,
+    "platform_and_account_are_execution_context_only": true,
+    "generated_assets_default_to_candidate": true,
+    "human_review_required_before_approval": true
+  },
+  "last_updated": "2026-09-23"
+}

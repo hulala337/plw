@@ -46,21 +46,21 @@
 - 要求：建立唯一 Character Bible 基准
 - 这是所有角色变体的 source of truth
 
-### B02 pelican_neutral
+### B02 pelican_working
 - 默认状态
 - relaxed、友好、轻微微笑
 
-### B03 pelican_working
+### B03 pelican_typing
 - 坐在工作位
 - 面向电脑
 - 专注但不紧张
 
-### B04 pelican_typing
+### B04 pelican_thinking
 - 双翅/翅膀动作体现输入
 - 可配 typing marks
 - 不改变身体比例
 
-### B05 pelican_thinking
+### B05 pelican_neutral
 - 轻微抬头/思考
 - 眼神有方向
 
@@ -68,23 +68,23 @@
 - 开心完成工作
 - 表情明显但自然
 
-### B07 pelican_focused
+### B07 pelican_drinking_coffee
 - 高专注状态
 - 视觉重点在眼神和姿态
 
-### B08 pelican_tired
+### B08 pelican_focused
 - 长时间工作后的疲惫
 - 不做夸张负面表情
 
-### B09 pelican_resting
+### B09 pelican_tired
 - 放松/休息
 - 可用于低活动状态
 
-### B10 pelican_sleeping
+### B10 pelican_resting
 - 夜间/离开状态
 - 柔和低对比
 
-### B11 pelican_drinking_coffee
+### B11 pelican_sleeping
 - 手持/翅膀持杯
 - 咖啡杯必须与场景体系一致
 
@@ -106,18 +106,18 @@
 
 ## C. 核心办公室场景
 
-### C01 office_master_day
+### C01 office_master
 - 用途：Dashboard Hero 主场景
 - 内容：Pelican + desk + monitor/laptop + chair + plant + coffee + lamp + window + city/water
 - 横向宽画幅
 - 主体位于视觉焦点区域
 - 预留 UI overlay 安全区
 
-### C02 office_master_evening
+### C02 office_day
 - 同一空间、傍晚光线
 - 不允许改变家具布局
 
-### C03 office_master_night
+### C03 office_night
 - 同一空间、夜景
 - 窗外低亮度
 - 室内灯光成为主光源
@@ -548,3 +548,8 @@
 - thumbnail
 
 禁止通过极端放大低分辨率图片作为最终资源。
+
+
+## 接力生产命名约定
+
+B01 为唯一主风格锚点。B02/B03/B04/B07 与 C01/C02/C03 是当前首批接力生产序列，资产 ID 与 key 必须以 manifest 为准。历史文件名如与当前 manifest 不一致，不得据此创建新的 asset_id；应通过状态文件和人工审核记录完成迁移。

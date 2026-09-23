@@ -193,3 +193,25 @@ art-work/reports/v3-production-report.json
 - 明显破坏核心场景连续性的结构
 
 AI 只负责“发现问题 + 分流”，不负责替代最终美术决策。
+
+
+## 跨账号 / 跨平台 / 跨电脑接力
+
+美术生产状态不依赖 ChatGPT 对话历史、账号或具体平台。仓库中的：
+
+- `ART_PRODUCTION_HANDOFF.md`
+- `ART_HANDOFF.md`
+- `art-production-spec/ART_PRODUCTION_STATE.json`
+- `art-production-spec/ART_ASSET_MANIFEST.json`
+
+共同构成持久化接力状态。
+
+新环境先运行：
+
+```powershell
+python art-pipeline\handoff_check.py
+```
+
+通过后从 state 文件的 `current_asset` 继续。不要依据聊天记录重新猜测进度，不要重复生成已有候选，不得绕过人工审核。
+
+当前断点：**B04 / pelican_thinking / READY / GENERATE**。
