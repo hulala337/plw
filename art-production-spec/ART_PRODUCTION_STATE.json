@@ -47,5 +47,20 @@
     "no_overwrite": true,
     "github_is_cross_environment_sync_source": true
   },
-  "last_updated": "2026-09-23"
+  "execution_handoff": {
+    "asset_id": "B04",
+    "checked_on": "2026-09-25",
+    "source_main_commit": "e6002a904e41429ad5f60d3dbf8b23704dcd3457",
+    "handoff_check": "PASS",
+    "generation_attempted": false,
+    "candidate_created": false,
+    "blocker": "This session has no built-in image generation tool. The imagegen skill requires explicit user selection of CLI/API fallback before an API generation call.",
+    "next_action_detail": "Keep B04 READY / GENERATE. Resume in an environment with built-in image generation, or obtain explicit user selection of CLI/API fallback. Pull origin main and run handoff_check.py before production. Use the B01 image from main as identity/style reference; generate B04 only, intake under a unique B04_vNN filename, complete technical and visual QA, persist HUMAN REVIEW REQUIRED and commit + push. Do not approve or advance without a persisted human decision.",
+    "reference_note": "Local B01_v01.png has the same Git blob as main art-assets/B01/master/B01_v01.png.png (348223cf9936ab305c941df6b7b07436a6c9ce38). The pre-existing local rename was not included in this handoff commit.",
+    "spec_notes": [
+      "Manifest statuses remain PLANNED while STATE records production progress; STATE is the canonical progress source. handoff_check.py does not validate status agreement.",
+      "Catalog B04 pose text describes typing, whereas the canonical key pelican_thinking and higher-priority Character Bible specify thoughtful posture. Follow the documented reference hierarchy; do not rename or reorder assets."
+    ]
+  },
+  "last_updated": "2026-09-25"
 }
