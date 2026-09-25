@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 const fmtSec=s=>{s=Math.max(0,Math.round(s||0));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m`;};
 const fmtNum=n=>Number(n||0).toLocaleString('en-US');
 const clock=()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('zh-CN',{hour12:false});$('date').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});}; setInterval(clock,1000); clock();
-async function getData(range='today'){try{const r=await fetch(`/api/dashboard?range=${range}`);if(!r.ok)throw new Error(`dashboard ${r.status}`);state.data=await r.json();renderAll();}catch(e){const live=$('liveStatus');if(live)live.textContent='数据连接异常';console.error(e);}}
+async function getData(range='today'){try{const r=await fetch(`/api/dashboard?range=${range}`);if(!r.ok)throw new Error(`dashboard ${r.status}`);state.data=await r.json();try{const wr=await fetch('/api/world');if(wr.ok)state.data.world=await wr.json();}catch(_e){}renderAll();}catch(e){const live=$('liveStatus');if(live)live.textContent='数据连接异常';console.error(e);}}
 async function getGrowth(){try{const r=await fetch('/api/growth');if(!r.ok)throw new Error(`growth ${r.status}`);state.growth=await r.json();renderGrowth();}catch(e){console.error(e);}}
 function setView(view){
   const target=$(`view-${view}`);
