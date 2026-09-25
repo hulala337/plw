@@ -1,5 +1,5 @@
 const CAT={document:['文档编辑','#3d8de2'],web:['网页检索','#42b99a'],excel:['Excel','#5dbb71'],ppt:['PPT','#ef9e46'],wechat:['微信','#8a73d7'],meeting:['会议','#dd6e77'],focus:['其他工作','#6ca6bf'],idle:['发呆 / 离开','#b7c2ca']};
-const state={data:null,growth:null,range:'today',zoom:1,replayTimer:null};
+const state={data:null,growth:null,range:'today',zoom:1,replayTimer:null,dataRequestId:0,growthRequestId:0,weatherRequestId:0,weatherController:null};
 window.state=state;
 window.CAT=CAT;
 let weatherEnabled=true;
@@ -7,8 +7,22 @@ const $=id=>document.getElementById(id);
 const fmtSec=s=>{s=Math.max(0,Math.round(s||0));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m}m`;};
 const fmtNum=n=>Number(n||0).toLocaleString('en-US');
 const clock=()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('zh-CN',{hour12:false});$('date').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'short'});}; setInterval(clock,1000); clock();
-async function getData(range='today'){try{const r=await fetch(`/api/dashboard?range=${range}`);if(!r.ok)throw new Error(`dashboard ${r.status}`);state.data=await r.json();try{const wr=await fetch('/api/world');if(wr.ok)state.data.world=await wr.json();}catch(_e){}renderAll();}catch(e){const live=$('liveStatus');if(live)live.textContent='数据连接异常';console.error(e);}}
-async function getGrowth(){try{const r=await fetch('/api/growth');if(!r.ok)throw new Error(`growth ${r.status}`);state.growth=await r.json();renderGrowth();}catch(e){console.error(e);}}
+async function getData(range='today'){
+  const requestId=++state.dataRequestId;
+  try{
+    const r=await fetch(`/api/dashboard?range=${range}`);
+    if(!r.ok)throw new Error(`dashboard ${r.status}`);
+    const data=await r.json();
+    if(requestId!==state.dataRequestId)return;
+    try{const wr=await fetch('/api/world');if(wr.ok)data.world=await wr.json();}catch(_e){}
+    if(requestId!==state.dataRequestId)return;
+    state.data=data; renderAll();
+  }catch(e){if(requestId!==state.dataRequestId)return;const live=$('liveStatus');if(live)live.textContent='数据连接异常';console.error(e);}
+}
+async function getGrowth(){
+  const requestId=++state.growthRequestId;
+  try{const r=await fetch('/api/growth');if(!r.ok)throw new Error(`growth ${r.status}`);const data=await r.json();if(requestId!==state.growthRequestId)return;state.growth=data;renderGrowth();}catch(e){if(requestId===state.growthRequestId)console.error(e);}
+}
 function setView(view){
   const target=$(`view-${view}`);
   if(!target)return;
@@ -55,7 +69,8 @@ on('forgetToday','click',async()=>{if(!confirm('删除今天的统计与时间�
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.range=b.dataset.range;getData(state.range);});
 function setupDonation(){const modal=$('donateModal'),btn=$('donateBtn'),img=$('wechatQr'),fallback=$('qrFallback'),close=$('donateClose'),backdrop=$('donateBackdrop');if(!modal||!btn)return;if(img)img.onerror=()=>{img.style.display='none';if(fallback)fallback.style.display='block'};btn.addEventListener('click',()=>{modal.classList.remove('hidden');document.body.classList.add('modal-open')});if(close)close.addEventListener('click',()=>{modal.classList.add('hidden');document.body.classList.remove('modal-open')});if(backdrop)backdrop.addEventListener('click',()=>{if(close)close.click();});}
 async function renderWeather(){
-  const scene=$('scene'), cacheKey='pelican.weather.v1', cacheMaxAge=30*60*1000;
+  const scene=$('scene'), cacheKey='pelican.weather.v1', cacheMaxAge=30*60*1000, requestId=++state.weatherRequestId;
+  if(state.weatherController){try{state.weatherController.abort();}catch(_e){}state.weatherController=null;}
   const show=(x,source)=>{
     if(!x)return;
     if($('weather')){$('weather').textContent=x.icon+' '+x.temperature+'°C · '+x.label;$('weather').title=source==='cache'?'使用最近一次天气缓存':'实时天气';}
@@ -79,9 +94,12 @@ async function renderWeather(){
   try{
     if(!('geolocation' in navigator))throw new Error('geolocation unavailable');
     navigator.geolocation.getCurrentPosition(async pos=>{
+      if(requestId!==state.weatherRequestId||!weatherEnabled)return;
+      const controller=new AbortController(); state.weatherController=controller;
       try{
-        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+        const timer=setTimeout(()=>controller.abort(),5000);
         try{
+          if(requestId!==state.weatherRequestId||!weatherEnabled)return;
           const lat=pos.coords.latitude,lon=pos.coords.longitude;
           const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code&timezone=auto';
           const r=await fetch(url,{signal:controller.signal});
