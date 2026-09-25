@@ -274,10 +274,11 @@ def init_db() -> None:
     if "activity_events" not in daily_cols:
         conn.execute("ALTER TABLE daily ADD COLUMN activity_events INTEGER NOT NULL DEFAULT 0")
     if "monitor_switches" not in daily_cols:
+        conn.execute("ALTER TABLE daily ADD COLUMN monitor_switches INTEGER NOT NULL DEFAULT 0")
     todo_cols = {r[1] for r in conn.execute("PRAGMA table_info(todos)").fetchall()}
     if "completion_count" not in todo_cols:
         conn.execute("ALTER TABLE todos ADD COLUMN completion_count INTEGER NOT NULL DEFAULT 0")
-        conn.execute("ALTER TABLE daily ADD COLUMN monitor_switches INTEGER NOT NULL DEFAULT 0")
+
 
     # MVP compatibility: migrate an older one-column primary key if present.
     cols = conn.execute("PRAGMA table_info(activity_slices)").fetchall()
@@ -720,6 +721,11 @@ def tracker() -> None:
             STOP.wait(TRACK_INTERVAL)
             continue
         try:
+            # Carry any successfully persisted/queued active seconds into the
+            # current Session even if the database recovers on an idle tick.
+            active_credit=0.0
+            with pending_lock:
+                active_credit=pending_time["active_seconds"]
             if active:
                 if session_id is None:
                     conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)",(datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
@@ -728,7 +734,10 @@ def tracker() -> None:
                 if category not in categories: categories.append(category)
             else:
                 if session_id and session_last_active and now-session_last_active>FOCUS_BREAK_SECONDS:
+                    session_active += active_credit
                     _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
+                    with pending_lock:
+                        pending_time["active_seconds"]=0.0
                     session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
         except Exception:
             prev=now
@@ -1245,8 +1254,6 @@ def forget_today():
             pending[key]=0
         pending_time["active_seconds"]=0.0
         pending_time["idle_seconds"]=0.0
-        for key in pending:
-            pending[key]=0
     last_input_ts=0.0
     last_xy=None; last_monitor_index=None; tracker_reset_seq += 1
     conn=db()
