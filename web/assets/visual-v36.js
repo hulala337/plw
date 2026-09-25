@@ -4,7 +4,7 @@
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const sync=()=>{
     const c=scene.classList;
-    const state=c.contains('resting')||c.contains('rest-mode')?'resting':c.contains('tired')?'tired':c.contains('high-intensity')?'busy':c.contains('focus-mode')?'focus':c.contains('working')?'working':'idle';
+    const state=c.contains('celebrating')?'celebrating':c.contains('coffee')?'coffee':c.contains('thinking')?'thinking':c.contains('resting')||c.contains('rest-mode')?'resting':c.contains('tired')?'tired':c.contains('high-intensity')?'busy':c.contains('focus-mode')||c.contains('focused')?'focus':c.contains('working')?'working':'idle';
     scene.dataset.artState=state;
     scene.dataset.artMood=(document.getElementById('sceneHint')?.textContent||'').trim();
   };
