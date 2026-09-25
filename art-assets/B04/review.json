@@ -1,0 +1,10 @@
+{
+  "asset_id": "B04",
+  "status": "APPROVED",
+  "review_type": "HUMAN",
+  "reviewed_on": "2026-09-25",
+  "selected_candidate": "art-assets/B04/candidates/B04_v01.jpg",
+  "decision": "APPROVE",
+  "reviewer_decision_source": "User explicit approval in current conversation",
+  "notes": "Human review completed. The selected B04 candidate is approved for production use."
+}
