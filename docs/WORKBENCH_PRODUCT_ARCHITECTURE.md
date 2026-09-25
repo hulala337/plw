@@ -855,9 +855,9 @@ Self Test
 
 ## 22.1 当前已知实现与产品目标之间的边界
 
-当前 V3.6 已具备 Growth 数据模型、Unlock、Achievement、Equipment API/DB 和 World projection；但前端仍主要展示 Collection/成长信息，尚未形成完整的装备选择工作流。
+当前 V3.6 已具备 Growth 数据模型、Unlock、Achievement、Equipment API/DB，并已在成长中心提供装备选择工作流；当前剩余重点是运行时持久化、锁定/非法输入和多装饰共存的验收。
 
-当前已有 weather 设置和 Scene weather 字段，但这不等于已经完成“真实天气服务”。真实天气属于后续能力，必须明确数据源、刷新策略、离线 fallback 和隐私边界。
+当前已有 weather 设置、Scene weather 字段和本地天气视觉桥接，但这不等于已经完成“真实天气服务”。真实天气属于后续能力，必须明确数据源、刷新策略、离线 fallback 和隐私边界。
 
 当前已有 Tray、开机自启动、本地 WebView、导出和资源完整性链路；这些属于产品能力，不应被遗漏在“统计工具”定义之外。
 
