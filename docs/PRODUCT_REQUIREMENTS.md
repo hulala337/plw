@@ -42,9 +42,9 @@ Pelican Workbench（鹈鹕工作台）是一款 Windows 本地工作伴侣应用
 | Growth | XP/Level | 已实现 | 已接入 | 完整成长闭环 |
 | Growth | Achievement | 已实现 | 已接入 | 扩展成就目录 |
 | Growth | Unlock | 已实现 | 已接入 | 扩展内容目录 |
-| Collection | Pelican/Outfit/Accessory/Scene/Decoration/Effect | 已实现数据层 | 已展示列表 | 增加真正装备交互 |
-| Equipment | 装备持久化与校验 | 已实现 API/DB | **缺少完整 UI** | 完整装备界面 |
-| World | Scene/Pelican/Outfit/Decoration/Effect 投影 | 已实现 | Today 已消费部分状态 | 完整动态世界 |
+| Collection | Pelican/Outfit/Accessory/Scene/Decoration/Effect | 已实现数据层 | 已接入装备交互 | 完整装备闭环验收 |
+| Equipment | 装备持久化与校验 | 已实现 API/DB | 已接入成长中心选择 | Windows 重启/异常路径验收 |
+| World | Scene/Pelican/Outfit/Decoration/Effect 投影 | 已实现 | Today 已消费 | 完整动态世界验收 |
 | Weather | 设置开关 | 已实现 | 已接入 | 真实天气/收藏天气需单独定义 |
 | Time | Day/Dusk/Night | 部分数据模型 | 视觉层可消费 | 完整环境状态机 |
 | Visual | 角色/办公室分层资产 | 已有 V3.6 资产体系 | 已接入 | 最终原创插画资产 |
@@ -52,7 +52,7 @@ Pelican Workbench（鹈鹕工作台）是一款 Windows 本地工作伴侣应用
 | Tray | Windows Tray | 已实现 | 系统级 | 完善菜单与状态 |
 | Startup | Windows 开机自启动 | 已实现 | Settings | 稳定 |
 | Privacy | 不保存实际输入/窗口标题/URL | 已实现边界 | Settings 已说明 | 持续保持 |
-| Health | Listener/Tracker/DB/Web 健康 | 已实现 | 目前主要为状态指示 | 独立可诊断面板 |
+| Health | Listener/Tracker/DB/Web 健康 | 已实现 | Settings 已有诊断面板 | Windows runtime 验收 |
 | Self Test | DB + hooks + display + web | 已实现 | 命令行 | 发布前自动门禁 |
 | Security | Ed25519 资源完整性 | 构建链已设计 | 不展示 | 发布链稳定 |
 | Release | PyInstaller/Inno Setup | 已实现 | 安装包 | 完整发布验收 |
@@ -314,7 +314,7 @@ Equipment 必须支持：
 - 重启后装备保持
 - World 使用 Equipment 生成当前世界投影
 
-**当前缺口：后端已有 Equipment API/DB，但 V3.6 前端没有完整的装备选择界面。该项必须列为产品功能，而不是假定 Collection 列表已经等价于 Equipment。**
+**当前状态：Equipment 已接入成长中心的可操作选择界面，并通过 `/api/equipment` 持久化；仍需完成 Windows 重启、锁定项、未知 ID、多装饰共存等运行时验收。**
 
 ## 10. World：动态工作世界
 
@@ -340,7 +340,7 @@ World 由数据组合，而不是一张不可变背景：
 1. **真实天气数据**
 2. **可收藏/可装备的视觉天气**
 
-当前代码已有 weather_enabled 设置和 Scene weather 字段，但这不等于已经完成真实天气服务。未来接入真实天气时必须定义：
+当前代码已有 weather_enabled 设置、Scene weather 字段，以及本地天气视觉桥接；这仍不等于已经完成真实天气服务。未来接入真实天气时必须定义：
 - 数据源
 - 更新频率
 - 离线 fallback
