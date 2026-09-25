@@ -27,3 +27,43 @@
 5. 同一批次出现连续风格漂移时必须停止批量生产并重新校准。
 6. 资产文件名、ID、尺寸、透明度和引用路径必须稳定。
 7. 已批准资产禁止无版本号覆盖；所有重绘都产生新版本。
+
+
+## 与产品功能基线的关系
+
+美术资产必须服务于完整产品，而不是独立的“插画包”。产品功能与视觉资产的对应关系以：
+
+- `docs/PRODUCT_REQUIREMENTS.md`
+- `docs/WORKBENCH_PRODUCT_ARCHITECTURE.md`
+- `docs/P0_ACCEPTANCE_MATRIX.md`
+- `docs/P1_ACCEPTANCE_MATRIX.md`
+- `docs/P2_ACCEPTANCE_MATRIX.md`
+
+为准。
+
+### 资产库存与生产顺序
+
+- `ART_ASSET_CATALOG.md`：完整资产库存，描述产品长期需要的角色、场景、状态、Dashboard、Timeline、Analytics、Achievement、Settings、Empty/Error、Weather、Decoration、Marketing、Tray 等资产。
+- `ART_ASSET_MANIFEST.json`：机器可读资产身份与规格。
+- `ART_PRODUCTION_STATE.json.production_sequence`：当前阶段实际生产顺序，不代表整个产品只需要这些资产。
+
+因此，“当前只生产 B01/B02/B03/B04……”不代表其它资产被取消；只是当前阶段尚未进入生产。
+
+### 资产必须覆盖的产品能力
+
+长期资产系统应能够覆盖：
+
+1. Pelican 核心状态与动作
+2. Office 环境与时间状态
+3. 单/双/多显示器
+4. Todo/工作状态
+5. Dashboard / Today
+6. Timeline / Replay
+7. Analytics / Stats
+8. Growth / Achievement / Unlock
+9. Scene / Collection / Equipment
+10. Settings / Privacy / Empty / Error
+11. Weather / Environment Effects
+12. Tray / Marketing / Onboarding 等非核心视觉
+
+如果代码新增用户可见状态而 Manifest/Asset Catalog 没有对应资产定义，应先补齐规格再进入批量生产。
