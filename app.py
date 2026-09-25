@@ -686,6 +686,59 @@ def self_test() -> int:
         conn.commit()
         conn.close()
 
+        # Verify pending input survives a transient database failure and is
+        # flushed after recovery. This tests the failure path without changing
+        # the user's durable daily totals.
+        before_pending = before
+        original_db = db
+        failure = {"armed": True}
+        def fail_once_db():
+            if failure["armed"]:
+                failure["armed"] = False
+                raise RuntimeError("self-test simulated database outage")
+            return original_db()
+        queue_input(keys=1)
+        globals()["db"] = fail_once_db
+        try:
+            try:
+                persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
+            except RuntimeError:
+                pass
+            else:
+                raise RuntimeError("pending recovery failure was not simulated")
+        finally:
+            globals()["db"] = original_db
+        with pending_lock:
+            if pending["keys"] != 1:
+                raise RuntimeError("pending input was lost during database failure")
+        persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
+        with pending_lock:
+            if pending["keys"] != 0:
+                raise RuntimeError("pending input was not cleared after recovery")
+        conn = db()
+        recovered = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
+        columns = [key for key in before_pending if key != "day"]
+        assignments = ", ".join("%s=?" % key for key in columns)
+        conn.execute("UPDATE daily SET %s WHERE day=?" % assignments, [before_pending[key] for key in columns] + [day])
+        conn.commit()
+        conn.close()
+
+        # Verify stale Session recovery independently of a full process restart:
+        # an open durable Session must be closed with a recovery reason.
+        conn = db()
+        cur = conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)", ((datetime.now()-timedelta(hours=1)).isoformat(timespec="seconds"),))
+        stale_id = cur.lastrowid
+        conn.commit()
+        conn.close()
+        recover_stale_sessions()
+        conn = db()
+        stale = conn.execute("SELECT ended_at,ended_reason FROM focus_sessions WHERE id=?", (stale_id,)).fetchone()
+        conn.execute("DELETE FROM focus_sessions WHERE id=?", (stale_id,))
+        conn.commit()
+        conn.close()
+        if not stale or not stale["ended_at"] or stale["ended_reason"] != "recovered":
+            raise RuntimeError("stale Session recovery failed")
+
         # Exercise the real HTTP boundary, not only route registration. The
         # packaged self-test must prove Web -> API -> SQLite wiring.
         threading.Thread(target=tracker, daemon=True, name="self-test-tracker").start()
