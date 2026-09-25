@@ -63,6 +63,7 @@ async function renderWeather(){
     document.body.dataset.weather=x.kind;
   };
   if(!weatherEnabled){
+    try{localStorage.removeItem('pelican.weather.v1');}catch(_e){}
     if($('weather')){$('weather').textContent='本地天气未启用';$('weather').title='未请求位置或天气服务';}
     if(scene){delete scene.dataset.weather;scene.classList.remove('raining');}
     delete document.body.dataset.weather;
