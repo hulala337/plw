@@ -54,6 +54,36 @@ function setupDonation(){const modal=$('donateModal'),btn=$('donateBtn'),img=$('
 async function renderWeather(){const scene=$('scene');if(!weatherEnabled){if($('weather'))$('weather').textContent='本地天气未启用';if(scene){delete scene.dataset.weather;scene.classList.remove('raining');}delete document.body.dataset.weather;return;}try{if(!('geolocation' in navigator))throw 0;navigator.geolocation.getCurrentPosition(async pos=>{try{const lat=pos.coords.latitude,lon=pos.coords.longitude;const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);const j=await r.json(),c=j.current;const map={0:['晴天','☀️','clear'],1:['晴间多云','🌤️','cloud'],2:['多云','⛅','cloud'],3:['阴天','☁️','cloud'],45:['雾','🌫️','mist'],48:['雾','🌫️','mist'],51:['毛毛雨','🌦️','rain'],53:['毛毛雨','🌦️','rain'],55:['毛毛雨','🌦️','rain'],61:['下雨','🌧️','rain'],63:['中雨','🌧️','rain'],65:['大雨','🌧️','rain'],71:['下雪','❄️','snow'],73:['下雪','❄️','snow'],75:['大雪','❄️','snow'],80:['阵雨','🌦️','rain'],81:['阵雨','🌦️','rain'],82:['强阵雨','🌧️','rain'],95:['雷雨','⛈️','rain'],96:['雷雨','⛈️','rain'],99:['雷雨','⛈️','rain']};const x=map[c.weather_code]||['天气','🌤️','clear'];if($('weather'))$('weather').textContent=`${x[1]} ${c.temperature_2m}°C · ${x[0]}`;if(scene){scene.dataset.weather=x[2];scene.classList.toggle('raining',x[2]==='rain');}document.body.dataset.weather=x[2];}catch(e){if($('weather'))$('weather').textContent='本地天气未启用';}} ,()=>{if($('weather'))$('weather').textContent='本地天气未启用';});}catch(e){if($('weather'))$('weather').textContent='本地天气未启用';}}
 function renderGrowth(){const g=state.growth||{},p=g.profile||{},pct=Number(p.progress_pct||0),eq=Object.fromEntries((g.equipment||[]).filter(x=>!x.slot.startsWith('decoration:')).map(x=>[x.slot,x.item_id])),decorEq=new Set((g.equipment||[]).filter(x=>x.item_type==='decoration').map(x=>x.item_id));const report=$('growthReport');if(report)report.innerHTML=[['等级',p.level||1],['XP',fmtNum(p.xp||0)],['本级进度',fmtNum(p.xp_into_level||0)+' / '+fmtNum(Math.max(0,(p.next_level_xp||0)-(p.level_xp_start||0)))],['累计工作',fmtSec((p.active_hours||0)*3600)],['已解锁',(g.unlocks||[]).length],['成就',(g.achievements||[]).length]].map(x=>'<div><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'<div class="growth-xp"><small>'+(p.level>=12?'最高等级':'距下一级 '+fmtNum(p.xp_to_next_level||0)+' XP')+'</small><i style="width:'+pct+'%"></i></div>';const achLabels={first_session:'第一次 Session',ten_hours:'累计 10 小时',hundred_hours:'累计 100 小时',multi_monitor:'多显示器',seven_day_streak:'连续 7 天'};const ae=$('growthAchievements');if(ae)ae.innerHTML=(g.achievement_catalog||[]).map(x=>'<span>'+(x.unlocked?'🏆 ':'🔒 ')+(achLabels[x.id]||x.id)+(x.unlocked?'':' · '+x.condition)+'</span>').join('')||'<span>暂无成就。</span>';const labels={green_plant:'🌿 植物',lamp:'💡 台灯',coffee_machine:'☕ 咖啡机',fish_tank:'🐠 鱼缸',bookshelf:'📚 书架',dual_monitor_office:'🖥️ 双屏工作室',sunset_office:'🌇 黄昏工作室',coffee_pelican:'🐦 咖啡鹈鹕',coffee_outfit:'🧑‍🍳 咖啡围裙',headphones:'🎧 耳机',focus_sparkles:'✨ 专注星光'};const ue=$('growthUnlocks');if(ue)ue.innerHTML=(g.unlocks||[]).map(x=>'<span>'+(labels[x.item_id]||x.item_id)+'</span>').join('')||'<span>继续真实工作以解锁内容。</span>';[['scenes','growthScenes','scene'],['pelicans','growthPelicans','pelican'],['outfits','growthOutfits','outfit'],['accessories','growthAccessories','accessory'],['decorations','growthDecorations','decoration'],['effects','growthEffects','effect']].forEach(([key,id,slot])=>{const el=$(id);if(!el)return;el.innerHTML=(g.collection?.[key]||[]).map(x=>'<button type="button" class="growth-item '+(x.unlocked?'':'locked')+((slot==='decoration'?decorEq.has(x.id):eq[slot]===x.id)?' equipped':'')+'" data-equip-slot="'+slot+'" data-equip-id="'+x.id+'" '+(x.unlocked?'':'disabled')+'>'+((slot==='decoration'&&decorEq.has(x.id))?'✓ ':((eq[slot]===x.id)?'✓ ':(!x.unlocked?'🔒 ':' ')))+x.name+(x.unlocked?'':' · Lv.'+x.required_level)+'</button>').join('')||'<span>暂无内容。</span>';});document.querySelectorAll('[data-equip-slot]').forEach(b=>b.onclick=async()=>{const r=await fetch('/api/equipment',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({slot:b.dataset.equipSlot,item_id:b.dataset.equipId})});if(!r.ok){console.error('equip failed',r.status);return;}await getGrowth();await getData(state.range);});}
 function renderAll(){renderMetrics();renderPet();renderTimeline();renderSessions();renderTodos();renderApps();renderStats();}
-async function refreshHealth(){try{const h=await (await fetch('/api/health')).json();const live=$('liveStatus');if(live){live.textContent=h.status==='ok'?'监听中':(h.listeners?'监听恢复中':'监听异常');live.title=h.listener_error||'';live.dataset.health=h.status;}}catch(e){const live=$('liveStatus');if(live)live.textContent='连接异常';}}
+function healthLabel(ok){return ok?'正常':'异常';}
+function renderHealthPanel(h){
+  const box=$('healthChecks');
+  if(!box)return;
+  const checks=[
+    ['键盘监听',h.keyboard_listener],
+    ['鼠标监听',h.mouse_listener],
+    ['Tracker',h.tracker],
+    ['SQLite',h.database],
+    ['Web UI',h.web],
+    ['显示器检测',h.display]
+  ];
+  box.innerHTML=checks.map(([name,ok])=>'<span class="'+(ok?'ok':'bad')+'"><i></i>'+name+' · '+healthLabel(ok)+'</span>').join('');
+  box.dataset.status=h.status||'degraded';
+}
+async function refreshHealth(){
+  try{
+    const h=await (await fetch('/api/health')).json();
+    const live=$('liveStatus');
+    if(live){
+      live.textContent=h.status==='ok'?'监听中':(h.listeners?'监听恢复中':'监听异常');
+      live.title=h.listener_error||h.db_error||'';
+      live.dataset.health=h.status;
+    }
+    renderHealthPanel(h);
+  }catch(e){
+    const live=$('liveStatus');
+    if(live)live.textContent='连接异常';
+    renderHealthPanel({status:'degraded',keyboard_listener:false,mouse_listener:false,tracker:false,database:false,web:false,display:false});
+  }
+}
 window.patch=patch;
-loadSettings().then(renderWeather).catch(()=>{weatherEnabled=false;renderWeather();});getData();getGrowth();refreshHealth();setupDonation();setInterval(()=>{getData(state.range);getGrowth();},15000);setInterval(refreshHealth,5000);
+loadSettings().then(renderWeather).catch(()=>{weatherEnabled=false;renderWeather();});getData();getGrowth();refreshHealth();setupDonation();on('healthRefresh','click',refreshHealth);setInterval(()=>{getData(state.range);getGrowth();},15000);setInterval(refreshHealth,5000);
