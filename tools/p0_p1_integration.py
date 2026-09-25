@@ -21,7 +21,7 @@ P0_ROUTES = {
     "/api/forget-today", "/api/replay", "/api/export/csv",
     "/api/export/xlsx",
 }
-P1_ROUTES = {"/api/growth", "/api/equipment"}
+P1_ROUTES = {"/api/growth", "/api/equipment", "/api/world"}
 VIEWS = {"home", "replay", "timeline", "stats", "growth", "settings"}
 P1_TABLES = {
     "progress_profile", "progress_events", "unlocks", "achievements",
@@ -75,8 +75,8 @@ def main() -> int:
             raise RuntimeError("cross-layer backend token missing: " + token)
 
     required_js_tokens = (
-        "state.data?.world", "world.display_count", "world.scene",
-        "world.pelican", "/api/growth", "/api/equipment",
+        "d.world", "w.display_count", "w.scene",
+        "w.pelican", "/api/growth", "/api/equipment",
     )
     for token in required_js_tokens:
         if token not in js:
@@ -89,8 +89,8 @@ def main() -> int:
         raise RuntimeError("active-time -> lifetime progression persistence missing")
     if '"current_monitor_index": current_index' not in app:
         raise RuntimeError("current monitor is not exposed to the P0/P1 world boundary")
-    if '"status": "ok" if listeners_healthy() and' not in app:
-        raise RuntimeError("health status does not include tracker/database")
+    if '"status": "ok" if all(checks.values()) else "degraded"' not in app:
+        raise RuntimeError("health status does not include complete diagnostics")
 
     # Both acceptance checkers must remain present so the integration gate
     # complements, rather than replaces, the individual P0/P1 contracts.
