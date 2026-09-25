@@ -105,7 +105,16 @@
 }
 .pelican-working{opacity:1}
 .office-scene.tired .pelican-working,
-.office-scene.resting .pelican-working{opacity:0}
+.office-scene.resting .pelican-working,
+.office-scene.thinking .pelican-working,
+.office-scene.coffee .pelican-working{opacity:0}
+.office-scene.thinking .pelican-thinking-v36{opacity:1}
+.office-scene.coffee .pelican-coffee-v36{opacity:1}
+.office-scene.celebrating .pelican{animation:pelican-celebrate .8s ease-in-out 2}
+.office-scene.thinking .pelican{transform:translateY(-2px) rotate(-1deg)}
+.office-scene.coffee .pelican{transform:translateY(2px) rotate(-1deg)}
+.office-scene.celebrating .pelican-working{opacity:1}
+.office-scene.focused .pelican-working{opacity:1}
 .office-scene.tired .pelican-tired{opacity:1}
 .office-scene.resting .pelican-resting{opacity:1}
 .office-scene.working .pelican{animation:pelican-breathe 3.8s ease-in-out infinite}
@@ -119,6 +128,7 @@
 @keyframes pelican-working-shift{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(-2px) rotate(-.6deg)}55%{transform:translateY(0) rotate(.3deg)}}
 @keyframes pelican-tired-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
 @keyframes pelican-resting-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@keyframes pelican-celebrate{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-2deg)}}
 
 .desk-activity-glow{
   position:absolute;
