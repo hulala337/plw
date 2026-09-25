@@ -98,6 +98,7 @@ listener_last_keyboard_event = 0.0
 listener_last_mouse_event = 0.0
 pending_lock = threading.Lock()
 pending = {"keys":0,"text_chars":0,"backspace":0,"delete_count":0,"enter_count":0,"space_count":0,"left_click":0,"right_click":0,"middle_click":0,"scroll_events":0,"scroll_distance_px":0.0,"cursor_distance_px":0.0,"activity_events":0,"monitor_switches":0}
+pending_time = {"active_seconds":0.0,"idle_seconds":0.0}
 tray_icon = None
 webview_window = None
 
@@ -200,7 +201,8 @@ def init_db() -> None:
             title TEXT NOT NULL,
             done INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
-            completed_at TEXT
+            completed_at TEXT,
+            completion_count INTEGER NOT NULL DEFAULT 0
         );
         CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS progress_profile (
@@ -272,6 +274,9 @@ def init_db() -> None:
     if "activity_events" not in daily_cols:
         conn.execute("ALTER TABLE daily ADD COLUMN activity_events INTEGER NOT NULL DEFAULT 0")
     if "monitor_switches" not in daily_cols:
+    todo_cols = {r[1] for r in conn.execute("PRAGMA table_info(todos)").fetchall()}
+    if "completion_count" not in todo_cols:
+        conn.execute("ALTER TABLE todos ADD COLUMN completion_count INTEGER NOT NULL DEFAULT 0")
         conn.execute("ALTER TABLE daily ADD COLUMN monitor_switches INTEGER NOT NULL DEFAULT 0")
 
     # MVP compatibility: migrate an older one-column primary key if present.
@@ -700,34 +705,37 @@ def tracker() -> None:
         name,title=foreground_context(); category=classify_activity(name,title,active)
         with LOCK: current_seq=state["event_seq"]
         new_events=max(0,current_seq-last_seq); last_seq=current_seq
+        time_field="active_seconds" if active else "idle_seconds"
+        with pending_lock:
+            elapsed_to_persist=dt+pending_time[time_field]
         try:
             slice_key=datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes")
-            persist_tracker_tick(today_key(), slice_key, category, dt, new_events)
+            persist_tracker_tick(today_key(),slice_key,category,elapsed_to_persist,new_events)
+            with pending_lock:
+                pending_time[time_field]=0.0
         except Exception:
-            # A transient database failure must not kill the tracker thread.
-            # Pending input remains queued by flush_pending() for a later retry.
+            with pending_lock:
+                pending_time[time_field]+=dt
             prev=now
             STOP.wait(TRACK_INTERVAL)
             continue
         try:
             if active:
                 if session_id is None:
-                    conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)", (datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
+                    conn=db(); cur=conn.execute("INSERT INTO focus_sessions(started_at) VALUES(?)",(datetime.fromtimestamp(last_input_ts).isoformat(timespec="seconds"),)); session_id=cur.lastrowid; conn.commit(); conn.close()
                     session_started=last_input_ts; session_active=0; session_last_active=last_input_ts; session_events=0; categories=[]
-                session_active += dt; session_last_active=last_input_ts; session_events += new_events
+                session_active+=elapsed_to_persist; session_last_active=last_input_ts; session_events+=new_events
                 if category not in categories: categories.append(category)
             else:
-                if session_id and session_last_active and now-session_last_active > FOCUS_BREAK_SECONDS:
+                if session_id and session_last_active and now-session_last_active>FOCUS_BREAK_SECONDS:
                     _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"idle")
                     session_id=session_started=session_last_active=None; session_active=0; session_events=0; categories=[]
         except Exception:
-            # Session bookkeeping must never terminate the tracker.
             prev=now
             STOP.wait(TRACK_INTERVAL)
             continue
         prev=now; STOP.wait(TRACK_INTERVAL)
     if session_id: _close_focus_session(session_id,session_started,session_active,session_last_active,session_events,categories,"shutdown")
-
 
 def active_session() -> dict | None:
     conn=db(); row=conn.execute("SELECT * FROM focus_sessions WHERE ended_at IS NULL ORDER BY id DESC LIMIT 1").fetchone(); conn.close()
@@ -778,8 +786,8 @@ def sync_progression() -> dict:
             conn.execute("UPDATE progress_profile SET total_active_seconds=? WHERE id=1",(active,))
     chars=int(conn.execute("SELECT COALESCE(SUM(text_chars),0) AS chars FROM daily").fetchone()["chars"] or 0)
     now=datetime.now().isoformat(timespec="seconds")
-    for r in conn.execute("SELECT id,completed_at FROM todos WHERE done=1 AND completed_at IS NOT NULL").fetchall():
-        award_progress_event(conn,"todo:%s:completed"%r["id"],"todo",20,r["completed_at"] or now)
+    for r in conn.execute("SELECT id,completed_at,completion_count FROM todos WHERE done=1 AND completed_at IS NOT NULL AND completion_count>0").fetchall():
+        award_progress_event(conn,"todo:%s:completed:%s"%(r["id"],r["completion_count"]),"todo",20,r["completed_at"] or now)
     for ach in ACHIEVEMENT_CATALOG:
         ready=(ach["id"]=="first_session" and active>=60) or (ach["id"]=="ten_hours" and active>=36000) or (ach["id"]=="hundred_hours" and active>=360000) or (ach["id"]=="multi_monitor" and len(refresh_monitor_layout())>=2) or (ach["id"]=="seven_day_streak" and streak_days()>=7)
         if ready:
@@ -1204,10 +1212,22 @@ def add_todo(item: TodoIn):
 
 @api.patch("/api/todos/{todo_id}")
 def toggle_todo(todo_id:int,item:TodoPatch):
-    completed=datetime.now().isoformat(timespec="seconds") if item.done else None; conn=db(); cur=conn.execute("UPDATE todos SET done=?,completed_at=? WHERE id=?",(1 if item.done else 0,completed,todo_id)); conn.commit(); conn.close();
-    if not cur.rowcount: raise HTTPException(404,"任务不存在")
-    return {"ok":True}
-
+    conn=db()
+    try:
+        row=conn.execute("SELECT done,completion_count FROM todos WHERE id=?",(todo_id,)).fetchone()
+        if not row:
+            raise HTTPException(404,"任务不存在")
+        was_done=bool(row["done"])
+        now=datetime.now().isoformat(timespec="microseconds")
+        if item.done and not was_done:
+            count=int(row["completion_count"] or 0)+1
+            conn.execute("UPDATE todos SET done=1,completed_at=?,completion_count=? WHERE id=?",(now,count,todo_id))
+        elif not item.done:
+            conn.execute("UPDATE todos SET done=0,completed_at=NULL WHERE id=?",(todo_id,))
+        conn.commit()
+        return {"ok":True,"done":bool(item.done),"completion_count":int(row["completion_count"] or 0)+(1 if item.done and not was_done else 0)}
+    finally:
+        conn.close()
 @api.delete("/api/todos/{todo_id}")
 def delete_todo(todo_id:int):
     conn=db(); cur=conn.execute("DELETE FROM todos WHERE id=?",(todo_id,)); conn.commit(); conn.close();
@@ -1221,6 +1241,10 @@ def forget_today():
     start=target+"T00:00:00"
     end=(date.today()+timedelta(days=1)).isoformat()+"T00:00:00"
     with pending_lock:
+        for key in pending:
+            pending[key]=0
+        pending_time["active_seconds"]=0.0
+        pending_time["idle_seconds"]=0.0
         for key in pending:
             pending[key]=0
     last_input_ts=0.0
