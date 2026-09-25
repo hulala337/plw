@@ -23,7 +23,7 @@ document.querySelectorAll('.nav[data-view]').forEach(n=>n.addEventListener('clic
 document.querySelectorAll('[data-view-jump]').forEach(n=>n.addEventListener('click',e=>{e.preventDefault();setView(n.dataset.viewJump);}));
 function renderMetrics(){const d=state.data||{},s=d.summary||{};$('active').textContent=fmtSec(s.active_seconds);$('keys').textContent=fmtNum(s.keys);$('chars').textContent=fmtNum(s.text_chars);$('cursorDistance').textContent=fmtNum(Math.round(Number(s.cursor_distance_px||0))); if(d.display){const msg=d.display.count<=1?'已识别：单显示器 · 按虚拟桌面坐标统计':`已识别：${d.display.count} 个显示器 · 支持跨屏坐标（虚拟桌面）`;if($('displayInfo'))$('displayInfo').textContent=msg;if($('displayInfoSettings'))$('displayInfoSettings').textContent=msg;}$('ops').textContent=fmtNum((s.keys||0)+(s.left_click||0)+(s.right_click||0)+(s.middle_click||0)+(s.scroll_events||0));$('longest').textContent=fmtSec(d.longest_focus_seconds);$('rhythm').textContent=d.rhythm||0;$('rhythmBar').style.width=(d.rhythm||0)+'%';}
 function sceneState(){const d=state.data||{},s=d.summary||{},sess=d.active_session,w=d.world||{},active=Number(s.active_seconds||0);let cls='';const time=w.time_phase||(()=>{const h=new Date().getHours();return h>=19||h<6?'night':h>=17?'dusk':h<9?'morning':'day';})();if(time==='night')cls+='night ';let title='准备开工',hint='鹈鹕正在整理桌面。',speech='“今天准备做一件什么小事？”';if(w.work_state==='working'||sess){cls+='working';title='专注中';hint='已经连续工作 '+fmtSec(sess?.live_seconds||0);speech='“看起来状态不错。”';}else if(active>6*3600){cls+='tired';title='今天已经很努力了';hint='鹈鹕偷偷看了一眼空咖啡杯。';speech='“我们去窗边站两分钟？”';}else if(w.work_state==='active'||active>2*3600){cls+='steady';title='工作进行中';hint='鹈鹕的翅膀偶尔敲敲键盘。';speech='“一小段一小段地做，也很好。”';}else if(w.work_state==='resting'||(s.idle_seconds||0)>1800){cls+='resting';title='休息时间';hint='鹈鹕正在看窗外。';speech='“休息也算一天的一部分。”';}const el=$('scene');if(el){['night','working','tired','steady','resting','scene-dual','scene-sunset','scene-coffee'].forEach(k=>el.classList.remove(k));cls.trim().split(/\s+/).filter(Boolean).forEach(k=>el.classList.add(k));if(w.scene==='dual_monitor_office')el.classList.add('scene-dual');if(w.scene==='sunset_office')el.classList.add('scene-sunset');if(w.pelican==='coffee_pelican')el.classList.add('scene-coffee');el.dataset.time=time;el.dataset.monitors=String(Math.min(3,Math.max(1,Number(w.display_count||d.display?.count||1))));}if($('pelicanState'))$('pelicanState').textContent=title;if($('sceneHint'))$('sceneHint').textContent=hint;if($('petSpeech'))$('petSpeech').textContent=speech;if($('sceneBubble'))$('sceneBubble').textContent='🐦 '+speech.replaceAll('“','').replaceAll('”','');if($('petState'))$('petState').textContent=sess?'专注中':active>0?'工作过':'待命';if($('sideMood'))$('sideMood').textContent=title;if($('sidePetText'))$('sidePetText').textContent=hint;}
-function renderPet(){const l=state.data?.lifetime||{};$('level').textContent=l.level||1;$('streak').textContent=state.data?.streak||0;const pct=Math.min(100,((l.active_hours||0)%20)/20*100);$('levelBar').style.width=pct+'%';$('lifetimeText').textContent=`累计工作 ${fmtSec((l.active_hours||0)*3600)}`;const labels={green_plant:'🌿 植物',lamp:'💡 台灯',coffee_machine:'☕ 咖啡机',fish_tank:'🐠 鱼缸',bookshelf:'📚 书架',sunset_office:'🌇 黄昏工作室',dual_monitor_office:'🖥️ 双屏工作室',coffee_pelican:'🐦 咖啡鹈鹕'};const html=(l.unlocked||[]).map(x=>`<span>${labels[x]||x}</span>`).join('');$('unlocks').innerHTML=html;$('settingsUnlocks').innerHTML=html||'<span>继续真实工作以解锁办公室内容。</span>';$('growthText').textContent=`等级 ${l.level||1} · 累计 ${l.active_hours||0} 小时 · 已解锁 ${(l.unlocked||[]).length} 件内容。`;sceneState();}
+function renderPet(){const l=state.data?.lifetime||{};const petEnabled=state.data?.world?.desktop_pet!==false;const mainPet=$('pelican');if(mainPet)mainPet.style.display=petEnabled?'':'none';const sidePet=document.querySelector('.rail-pet');if(sidePet)sidePet.style.display=petEnabled?'':'none';$('level').textContent=l.level||1;$('streak').textContent=state.data?.streak||0;const pct=Math.min(100,((l.active_hours||0)%20)/20*100);$('levelBar').style.width=pct+'%';$('lifetimeText').textContent=`累计工作 ${fmtSec((l.active_hours||0)*3600)}`;const labels={green_plant:'🌿 植物',lamp:'💡 台灯',coffee_machine:'☕ 咖啡机',fish_tank:'🐠 鱼缸',bookshelf:'📚 书架',sunset_office:'🌇 黄昏工作室',dual_monitor_office:'🖥️ 双屏工作室',coffee_pelican:'🐦 咖啡鹈鹕'};const html=(l.unlocked||[]).map(x=>`<span>${labels[x]||x}</span>`).join('');$('unlocks').innerHTML=html;$('settingsUnlocks').innerHTML=html||'<span>继续真实工作以解锁办公室内容。</span>';$('growthText').textContent=`等级 ${l.level||1} · 累计 ${l.active_hours||0} 小时 · 已解锁 ${(l.unlocked||[]).length} 件内容。`;sceneState();}
 function renderSessions(){const list=state.data?.sessions||[];const active=state.data?.active_session;$('focusStatus').textContent=active?'专注中':'待命';$('focusLive').textContent=fmtSec(active?active.live_seconds:(list[0]?.active_seconds||0));$('focusHint').textContent=active?'当前 Session':'最近 Session';$('sessionList').innerHTML=list.slice(-6).reverse().map(x=>`<div class="session"><b>${fmtSec(x.active_seconds)}</b><span>${new Date(x.started_at).toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})} · ${(x.categories||'').split(',').map(k=>CAT[k]?.[0]||k).filter(Boolean).join(' → ')}</span></div>`).join('')||'<div class="empty">今天还没有完整 Session。</div>';}
 function mergeTimeline(tl){const events=[];for(const x of tl||[]){const t=x.slice_start;events.push({...x,minute:new Date(t.replace(' ','T')).getHours()*60+new Date(t.replace(' ','T')).getMinutes()});}return events;}
 function renderTimeline(){const tl=mergeTimeline(state.data?.timeline||[]), track=$('track'), seg=$('segments');track.style.minWidth=(Math.max(960,960*state.zoom))+'px';$('hours').innerHTML=Array.from({length:25},(_,i)=>`<span>${String(i).padStart(2,'0')}:00</span>`).join('');seg.innerHTML=tl.map(x=>{const left=x.minute/1440*100;const width=Math.max(.25,x.seconds/86400*100);const c=CAT[x.category]?.[1]||'#9aa';return `<div class="seg" data-min="${x.minute}" style="left:${left}%;width:${width}%;background:${c}"></div>`}).join('');$('legend').innerHTML=Object.entries(CAT).filter(([k])=>tl.some(x=>x.category===k)).map(([k,v])=>`<span><i style="background:${v[1]}"></i>${v[0]}</span>`).join('');setupScrubber($('track'),$('scrub'),$('scrubLabel'));}
@@ -55,37 +55,41 @@ async function renderWeather(){
   const scene=$('scene'), cacheKey='pelican.weather.v1', cacheMaxAge=30*60*1000;
   const show=(x,source)=>{
     if(!x)return;
-    if($('weather'))$('weather').textContent=x.icon+' '+x.temperature+'°C · '+x.label;
+    if($('weather')){$('weather').textContent=x.icon+' '+x.temperature+'°C · '+x.label;$('weather').title=source==='cache'?'使用最近一次天气缓存':'实时天气';}
     if(scene){scene.dataset.weather=x.kind;scene.classList.toggle('raining',x.kind==='rain');}
     document.body.dataset.weather=x.kind;
-    if(source==='cache' && $('weather'))$('weather').title='使用最近一次天气缓存';
   };
   if(!weatherEnabled){
-    if($('weather'))$('weather').textContent='本地天气未启用';
+    if($('weather')){$('weather').textContent='本地天气未启用';$('weather').title='未请求位置或天气服务';}
     if(scene){delete scene.dataset.weather;scene.classList.remove('raining');}
     delete document.body.dataset.weather;
     return;
   }
   let cached=null;
   try{cached=JSON.parse(localStorage.getItem(cacheKey)||'null');}catch(_e){}
-  if(cached && cached.savedAt && Date.now()-cached.savedAt<cacheMaxAge)show(cached.data,'cache');
+  if(cached?.data && cached.savedAt && Date.now()-cached.savedAt<cacheMaxAge){
+    show(cached.data,'cache');
+    return;
+  }
   const map={0:['晴天','☀️','clear'],1:['晴间多云','🌤️','cloud'],2:['多云','⛅','cloud'],3:['阴天','☁️','cloud'],45:['雾','🌫️','mist'],48:['雾','🌫️','mist'],51:['毛毛雨','🌦️','rain'],53:['毛毛雨','🌦️','rain'],55:['毛毛雨','🌦️','rain'],61:['下雨','🌧️','rain'],63:['中雨','🌧️','rain'],65:['大雨','🌧️','rain'],71:['下雪','❄️','snow'],73:['下雪','❄️','snow'],75:['大雪','❄️','snow'],80:['阵雨','🌦️','rain'],81:['阵雨','🌦️','rain'],82:['强阵雨','🌧️','rain'],95:['雷雨','⛈️','rain'],96:['雷雨','⛈️','rain'],99:['雷雨','⛈️','rain']};
   try{
     if(!('geolocation' in navigator))throw new Error('geolocation unavailable');
     navigator.geolocation.getCurrentPosition(async pos=>{
       try{
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
-        const lat=pos.coords.latitude,lon=pos.coords.longitude;
-        const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code&timezone=auto';
-        const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
-        if(!r.ok)throw new Error('weather '+r.status);
-        const j=await r.json(),c=j.current,x=map[c.weather_code]||['天气','🌤️','clear'];
-        const data={temperature:c.temperature_2m,label:x[0],icon:x[1],kind:x[2]};
-        show(data,'live');
-        try{localStorage.setItem(cacheKey,JSON.stringify({savedAt:Date.now(),data:data}));}catch(_e){}
-      }catch(e){if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';}
-    },()=>{if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';},{enableHighAccuracy:false,maximumAge:cacheMaxAge,timeout:5000});
-  }catch(e){if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';}
+        try{
+          const lat=pos.coords.latitude,lon=pos.coords.longitude;
+          const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code&timezone=auto';
+          const r=await fetch(url,{signal:controller.signal});
+          if(!r.ok)throw new Error('weather '+r.status);
+          const j=await r.json(),c=j.current,x=map[c.weather_code]||['天气','🌤️','clear'];
+          const data={temperature:c.temperature_2m,label:x[0],icon:x[1],kind:x[2]};
+          show(data,'live');
+          try{localStorage.setItem(cacheKey,JSON.stringify({savedAt:Date.now(),data}));}catch(_e){}
+        }finally{clearTimeout(timer);}
+      }catch(e){if(cached?.data)show(cached.data,'cache');else if($('weather'))$('weather').textContent='天气暂不可用';}
+    },()=>{if(cached?.data)show(cached.data,'cache');else if($('weather'))$('weather').textContent='天气暂不可用';},{enableHighAccuracy:false,maximumAge:cacheMaxAge,timeout:5000});
+  }catch(e){if(cached?.data)show(cached.data,'cache');else if($('weather'))$('weather').textContent='天气暂不可用';}
 }
 
 function renderGrowth(){const g=state.growth||{},p=g.profile||{},pct=Number(p.progress_pct||0),eq=Object.fromEntries((g.equipment||[]).filter(x=>!x.slot.startsWith('decoration:')).map(x=>[x.slot,x.item_id])),decorEq=new Set((g.equipment||[]).filter(x=>x.item_type==='decoration').map(x=>x.item_id));const report=$('growthReport');if(report)report.innerHTML=[['等级',p.level||1],['XP',fmtNum(p.xp||0)],['本级进度',fmtNum(p.xp_into_level||0)+' / '+fmtNum(Math.max(0,(p.next_level_xp||0)-(p.level_xp_start||0)))],['累计工作',fmtSec((p.active_hours||0)*3600)],['已解锁',(g.unlocks||[]).length],['成就',(g.achievements||[]).length]].map(x=>'<div><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'<div class="growth-xp"><small>'+(p.level>=12?'最高等级':'距下一级 '+fmtNum(p.xp_to_next_level||0)+' XP')+'</small><i style="width:'+pct+'%"></i></div>';const achLabels={first_session:'第一次 Session',ten_hours:'累计 10 小时',hundred_hours:'累计 100 小时',multi_monitor:'多显示器',seven_day_streak:'连续 7 天'};const ae=$('growthAchievements');if(ae)ae.innerHTML=(g.achievement_catalog||[]).map(x=>'<span>'+(x.unlocked?'🏆 ':'🔒 ')+(achLabels[x.id]||x.id)+(x.unlocked?'':' · '+x.condition)+'</span>').join('')||'<span>暂无成就。</span>';const labels={green_plant:'🌿 植物',lamp:'💡 台灯',coffee_machine:'☕ 咖啡机',fish_tank:'🐠 鱼缸',bookshelf:'📚 书架',dual_monitor_office:'🖥️ 双屏工作室',sunset_office:'🌇 黄昏工作室',coffee_pelican:'🐦 咖啡鹈鹕',coffee_outfit:'🧑‍🍳 咖啡围裙',headphones:'🎧 耳机',focus_sparkles:'✨ 专注星光'};const ue=$('growthUnlocks');if(ue)ue.innerHTML=(g.unlocks||[]).map(x=>'<span>'+(labels[x.item_id]||x.item_id)+'</span>').join('')||'<span>继续真实工作以解锁内容。</span>';[['scenes','growthScenes','scene'],['pelicans','growthPelicans','pelican'],['outfits','growthOutfits','outfit'],['accessories','growthAccessories','accessory'],['decorations','growthDecorations','decoration'],['effects','growthEffects','effect']].forEach(([key,id,slot])=>{const el=$(id);if(!el)return;el.innerHTML=(g.collection?.[key]||[]).map(x=>'<button type="button" class="growth-item '+(x.unlocked?'':'locked')+((slot==='decoration'?decorEq.has(x.id):eq[slot]===x.id)?' equipped':'')+'" data-equip-slot="'+slot+'" data-equip-id="'+x.id+'" '+(x.unlocked?'':'disabled')+'>'+((slot==='decoration'&&decorEq.has(x.id))?'✓ ':((eq[slot]===x.id)?'✓ ':(!x.unlocked?'🔒 ':' ')))+x.name+(x.unlocked?'':' · Lv.'+x.required_level)+'</button>').join('')||'<span>暂无内容。</span>';});document.querySelectorAll('[data-equip-slot]').forEach(b=>b.onclick=async()=>{const r=await fetch('/api/equipment',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({slot:b.dataset.equipSlot,item_id:b.dataset.equipId})});if(!r.ok){console.error('equip failed',r.status);return;}await getGrowth();await getData(state.range);});}
