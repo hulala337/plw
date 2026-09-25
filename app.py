@@ -688,6 +688,7 @@ def self_test() -> int:
 
         # Exercise the real HTTP boundary, not only route registration. The
         # packaged self-test must prove Web -> API -> SQLite wiring.
+        threading.Thread(target=tracker, daemon=True, name="self-test-tracker").start()
         run_server()
         if not wait_for_server():
             raise RuntimeError("local API server failed to start during self-test")
