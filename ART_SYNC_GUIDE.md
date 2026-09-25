@@ -92,7 +92,7 @@ Return Package 不等于 APPROVED。
 - ART_SYNC_GUIDE.md：资产文件如何同步
 - ART_PRODUCTION_STATE.json：当前进度唯一机器真相源
 - ART_ASSET_MANIFEST.json：资产身份、规格、顺序与规则
-- HUMAN_REVIEW_GUIDE.md：人工审核规则
+- art-production-spec/HUMAN_REVIEW_GUIDE.md：人工审核规则
 
 如果文件之间发生冲突，停止生产并修复一致性。
 
