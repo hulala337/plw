@@ -45,8 +45,8 @@ Pelican Workbench（鹈鹕工作台）是一款 Windows 本地工作伴侣应用
 | Collection | Pelican/Outfit/Accessory/Scene/Decoration/Effect | 已实现数据层 | 已接入装备交互 | 完整装备闭环验收 |
 | Equipment | 装备持久化与校验 | 已实现 API/DB | 已接入成长中心选择 | Windows 重启/异常路径验收 |
 | World | Scene/Pelican/Outfit/Decoration/Effect 投影 | 已实现 | Today 已消费 | 完整动态世界验收 |
-| Weather | 设置开关 | 已实现 | 已接入 | 真实天气/收藏天气需单独定义 |
-| Time | Day/Dusk/Night | 部分数据模型 | 视觉层可消费 | 完整环境状态机 |
+| Weather | 本地天气视觉 | 已实现前端 Open-Meteo | 已接入 | 缓存、离线 fallback、隐私提示与运行时验收 |
+| Time | Morning/Day/Dusk/Night | 已实现 World projection | Today 已消费 | 更完整环境状态机验收 |
 | Visual | 角色/办公室分层资产 | 已有 V3.6 资产体系 | 已接入 | 最终原创插画资产 |
 | Animation | 局部眼神/打字等微动画 | 已有 V3.6-E | 已接入 | 状态驱动动画系统 |
 | Tray | Windows Tray | 已实现 | 系统级 | 完善菜单与状态 |
@@ -340,7 +340,7 @@ World 由数据组合，而不是一张不可变背景：
 1. **真实天气数据**
 2. **可收藏/可装备的视觉天气**
 
-当前代码已有 weather_enabled 设置、Scene weather 字段，以及本地天气视觉桥接；这仍不等于已经完成真实天气服务。未来接入真实天气时必须定义：
+当前代码已通过浏览器地理定位调用 Open-Meteo 获取当前天气，仅用于视觉，不写入工作统计；天气关闭时不发起天气请求。仍需补齐缓存、离线 fallback、运行时验收。天气服务边界必须明确：
 - 数据源
 - 更新频率
 - 离线 fallback
@@ -475,7 +475,7 @@ Self Test 必须覆盖：
 
 ## 15. Privacy
 
-默认本地优先。
+默认本地优先。天气开启属于明确的可选外联能力。
 
 允许：
 - 按键数量
