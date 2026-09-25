@@ -21,7 +21,7 @@ REQUIRED_ROUTES = {
     "/", "/api/health", "/api/dashboard", "/api/display-info",
     "/api/settings", "/api/todos", "/api/todos/{todo_id}",
     "/api/forget-today", "/api/replay", "/api/export/csv",
-    "/api/export/xlsx", "/api/growth",
+    "/api/export/xlsx", "/api/growth", "/api/world",
 }
 REQUIRED_VIEWS = {"home", "replay", "timeline", "stats", "growth", "settings"}
 
