@@ -1311,25 +1311,30 @@ class EquipmentPatch(BaseModel):
 def patch_equipment(item: EquipmentPatch):
     slot=item.slot.strip().lower()
     allowed={"scene":"scenes","pelican":"pelicans","outfit":"outfits","accessory":"accessories","decoration":"decorations","effect":"effects"}
-    if slot not in allowed: raise HTTPException(400,"不支持的装备槽位")
+    if slot not in allowed:
+        raise HTTPException(400,"不支持的装备槽位")
     conn=db()
     try:
         row=conn.execute("SELECT id,required_level FROM "+allowed[slot]+" WHERE id=?",(item.item_id,)).fetchone()
-        if not row: raise HTTPException(404,"内容不存在")
-        profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone(); level=int(profile["level"] if profile else 1)
-    unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
-        if not unlocked and int(row["required_level"] or 1)>1: raise HTTPException(403,"内容尚未解锁")
-    if slot in {"pelican","outfit"}:
-        current_pelican = conn.execute("SELECT item_id FROM equipment WHERE slot='pelican'").fetchone()
-        target_pelican = item.item_id if slot=="pelican" else (current_pelican["item_id"] if current_pelican else "classic")
-        outfit = conn.execute("SELECT pelican_id FROM outfits WHERE id=(SELECT item_id FROM equipment WHERE slot='outfit')").fetchone()
-        target_outfit = conn.execute("SELECT pelican_id FROM outfits WHERE id=?",(item.item_id,)).fetchone() if slot=="outfit" else outfit
-        if target_outfit and target_outfit["pelican_id"] and target_outfit["pelican_id"]!=target_pelican:
-            raise HTTPException(409,"该鹈鹕与当前服装不匹配")
-    now=datetime.now().isoformat(timespec="seconds")
-    storage_slot=("decoration:"+item.item_id) if slot=="decoration" else slot
-    conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(storage_slot,slot,item.item_id,now))
-        conn.commit(); equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]
+        if not row:
+            raise HTTPException(404,"内容不存在")
+        profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone()
+        level=int(profile["level"] if profile else 1)
+        unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
+        if not unlocked and int(row["required_level"] or 1)>1:
+            raise HTTPException(403,"内容尚未解锁")
+        if slot in {"pelican","outfit"}:
+            current_pelican=conn.execute("SELECT item_id FROM equipment WHERE slot='pelican'").fetchone()
+            target_pelican=item.item_id if slot=="pelican" else (current_pelican["item_id"] if current_pelican else "classic")
+            outfit=conn.execute("SELECT pelican_id FROM outfits WHERE id=(SELECT item_id FROM equipment WHERE slot='outfit')").fetchone()
+            target_outfit=conn.execute("SELECT pelican_id FROM outfits WHERE id=?",(item.item_id,)).fetchone() if slot=="outfit" else outfit
+            if target_outfit and target_outfit["pelican_id"] and target_outfit["pelican_id"]!=target_pelican:
+                raise HTTPException(409,"该鹈鹕与当前服装不匹配")
+        now=datetime.now().isoformat(timespec="seconds")
+        storage_slot=("decoration:"+item.item_id) if slot=="decoration" else slot
+        conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(storage_slot,slot,item.item_id,now))
+        conn.commit()
+        equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]
         return {"ok":True,"equipment":equipment}
     finally:
         conn.close()
