@@ -41,3 +41,13 @@ main{min-width:0;padding:26px 34px 24px}.topbar{display:flex;align-items:flex-st
 
 /* P1 Growth progress component */
 .growth-xp{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px}.growth-xp i{display:block;height:8px;border-radius:99px;background:#e5edf1;position:relative;overflow:hidden}.growth-xp i:after{content:"";position:absolute;inset:0;background:#73ad8c;transform-origin:left;}
+
+.health-panel .setting-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.health-refresh{padding:7px 10px}
+.health-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.health-checks span{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:9px;background:rgba(20,40,55,.045);font-size:12px}
+.health-checks i{width:7px;height:7px;border-radius:50%;background:#9aa;flex:none}
+.health-checks .ok i{background:#43a86b}
+.health-checks .bad i{background:#d46a62}
+.health-checks[data-status="ok"]{opacity:.98}
+@media(max-width:720px){.health-checks{grid-template-columns:1fr}}
