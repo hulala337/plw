@@ -50,11 +50,11 @@
   "execution_handoff": {
     "asset_id": "B04",
     "checked_on": "2026-09-25",
-    "source_main_commit": "3ec07177fd9793d746ff2b336fc2d31505608b61",
+    "source_main_commit": "1a3bfb39d7435b29d572c6c6cc81e0b283d0286f",
     "handoff_check": "PASS",
     "generation_attempted": true,
     "candidate_created": false,
-    "blocker": "Third authorized generation attempt returned HTTP 401 invalid_api_key. OPENAI_BASE_URL remains absent in the generation process; the SDK used its default endpoint. No candidate was returned or saved.",
+    "blocker": "Fourth authorized generation attempt returned HTTP 401 invalid_api_key. OPENAI_BASE_URL remains absent in the generation process; the SDK used its default endpoint. No candidate was returned or saved.",
     "next_action_detail": "Configure a valid OPENAI_API_KEY locally and the matching OPENAI_BASE_URL if applicable; never store credentials in the repository. CLI/API fallback is already authorized. Pull origin main, run handoff_check.py, check for existing B04 candidates, then retry the saved B04 prompt with the B01 reference using gpt-image-2. Intake the result under the next unique candidate version, complete QA, persist HUMAN REVIEW REQUIRED, commit and push. Human approval is still required before advancing.",
     "reference_note": "Local B01_v01.png has the same Git blob as main art-assets/B01/master/B01_v01.png.png (348223cf9936ab305c941df6b7b07436a6c9ce38). The pre-existing local rename was not included in this handoff commit.",
     "spec_notes": [
@@ -62,7 +62,7 @@
       "Catalog B04 pose text describes typing, whereas the canonical key pelican_thinking and higher-priority Character Bible specify thoughtful posture. Follow the documented reference hierarchy; do not rename or reorder assets."
     ],
     "cli_fallback_authorized": true,
-    "generation_record": "art-assets/B04/qa/B04_generation_attempt_20260925_03.json"
+    "generation_record": "art-assets/B04/qa/B04_generation_attempt_20260925_04.json"
   },
   "last_updated": "2026-09-25"
 }
