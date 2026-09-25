@@ -10,7 +10,7 @@
 2. 阅读本文件。
 3. 读取 `art-production-spec/ART_PRODUCTION_STATE.json`。
 4. 读取 `art-production-spec/ART_ASSET_MANIFEST.json`。
-5. 读取 `CHARACTER_BIBLE.md`、`ART_DIRECTION.md`、`PRODUCTION_RULES.md`。
+5. 读取 `art-production-spec/CHARACTER_BIBLE.md`、`art-production-spec/ART_DIRECTION.md`、`art-production-spec/PRODUCTION_RULES.md`、`art-production-spec/HUMAN_REVIEW_GUIDE.md`。
 6. 运行 `python art-pipeline\handoff_check.py`。
 7. 读取 `current_asset / current_key / current_status / next_action`。
 8. 若 `READY + GENERATE`，直接执行当前资产生成任务；不要重新规划、不要从 B01 重来。
