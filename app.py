@@ -1004,7 +1004,7 @@ def world_payload() -> dict:
     recent_todo = False
     with suppress(Exception):
         conn=db()
-        recent_todo = conn.execute("SELECT 1 FROM todos WHERE done=1 AND completed_at>=? LIMIT 1",(datetime.now().replace(hour=0,minute=0,second=0,microsecond=0).isoformat(),)).fetchone() is not None
+        recent_todo = conn.execute("SELECT 1 FROM todos WHERE done=1 AND completed_at>=? LIMIT 1",((datetime.now()-timedelta(seconds=90)).isoformat(),)).fetchone() is not None
         conn.close()
     if recent_todo:
         pelican_state="celebrating"
