@@ -10,7 +10,7 @@
 2. 首先完整读取根目录 ART_HANDOFF.md，并严格遵守其中的强制接力规则。
 3. 读取 ART_SYNC_GUIDE.md，理解跨账号/平台/电脑的资产文件同步和版本命名规则。
 4. 再读取：art-production-spec/ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md、ART_ASSET_CATALOG.md、README.md。
-5. 如果存在，再读取 art-pipeline/REFERENCE_ASSET_MAP.json、art-pipeline/ART_REVIEW_SCHEMA.json。
+5. 如果存在，再读取 art-production-spec/REFERENCE_ASSET_MAP.json、art-production-spec/ART_REVIEW_SCHEMA.json。
 6. 阅读 art-production-spec/HUMAN_REVIEW_GUIDE.md，理解人工审核和 APPROVED 的唯一合法流程。
 7. 执行：python art-pipeline\handoff_check.py
 8. 严格从 STATE/checker 给出的 current_asset / current_key / current_status / next_action 继续。
@@ -41,3 +41,13 @@
 
 ## 完成一轮资产后
 必须把候选、QA、人工审核结论、状态变化和必要的 review.json 持久化到仓库并 commit + push，然后才能继续下一资产。
+
+
+## 产品功能基线
+
+美术生产不是独立项目。开始任何全量资产生产前，应了解产品功能基线：
+
+- `docs/PRODUCT_REQUIREMENTS.md`
+- `docs/WORKBENCH_PRODUCT_ARCHITECTURE.md`
+
+资产的状态、构图、交互和环境要求必须服务于产品实际功能，而不是只生成“好看的图片”。
