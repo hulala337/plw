@@ -1,0 +1,30 @@
+{
+  "success": false,
+  "error_type": "model_not_verified",
+  "message": "Selected tier lacks successful generation evidence for this origin. No downgrade, fallback or image was generated.",
+  "retryable": false,
+  "asset_id": "B04",
+  "complexity_score": 94,
+  "complexity_breakdown": {
+    "composition": 20,
+    "character": 16,
+    "scene": 15,
+    "multi_object": 15,
+    "material_lighting": 8,
+    "text_ui": 10,
+    "style_consistency": 10
+  },
+  "importance": "critical",
+  "difficulty": "complex",
+  "selected_tier": "complex",
+  "selection_reason": "\u89c4\u5219\u8bc4\u5206 94/100\uff0c\u57fa\u7840\u6863\u4f4d COMPLEX\uff1b\u6b63\u5f0f/\u6838\u5fc3\u8d44\u4ea7\u6216\u4e25\u683c\u98ce\u683c\u4e00\u81f4\u6027\uff1a\u81f3\u5c11 MEDIUM\uff1b\u5173\u952e\u89c6\u89c9\u8d44\u4ea7/\u590d\u6742\u573a\u666f\u6216\u6700\u9ad8\u8d28\u91cf\u8981\u6c42\uff1a\u81f3\u5c11 MEDIUM",
+  "routing_version": "2.0",
+  "scoring_method": "deterministic bilingual rubric",
+  "quota_policy": "one image, one POST, no retry or fallback",
+  "selected_model": "gpt-image-2.5-flare",
+  "generated_count": 0,
+  "generation_post_submitted": false,
+  "candidate_created": false,
+  "discovery_endpoint": "https://xingai.ai/v1/models",
+  "additional_evidence": "https://xingai.ai/api/pricing also reports only openai (/v1/chat/completions) for the selected model. image_ratio is pricing metadata, not proof of image output or reference editing support."
+}
