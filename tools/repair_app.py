@@ -17,8 +17,12 @@ def replace_if_present(text: str, old: str, new: str, label: str) -> str:
 
 
 def repair(text: str) -> str:
+    # The release build invokes this script before compilation. Keep the
+    # repair step idempotent, but never allow a malformed source tree to pass
+    # simply because all historical repair markers are present.
     required = ('monitor_layout_signature','math.isfinite(dist) and dist >= 0','def self_test() -> int:','input pipeline persistence check failed','PRAGMA journal_mode=WAL','wait_for_server','tracker_reset_seq')
     if all(marker in text for marker in required):
+        compile(text, str(APP), "exec")
         return text
 
     text = replace_if_present(
