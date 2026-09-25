@@ -26,7 +26,7 @@ PelicanWorkBench_Art_Handoff_YYYYMMDD_<ASSET_ID>.zip
 - art-production-spec/CHARACTER_BIBLE.md
 - art-production-spec/ART_DIRECTION.md
 - art-production-spec/PRODUCTION_RULES.md
-- HUMAN_REVIEW_GUIDE.md
+- art-production-spec/HUMAN_REVIEW_GUIDE.md
 - REFERENCE_ASSET_MAP.json
 - 当前资产 brief
 - B01 风格锚点参考图
@@ -160,7 +160,7 @@ python art-pipeline\asset_intake.py --validate-return-package "D:\Return\Pelican
 
 ## 7. 离线平台可直接粘贴的启动指令
 
-> 请接手 Pelican Workbench 美术资产生产。当前环境不能连接 GitHub，也可能没有本地 Git 仓库。请先完整读取 Handoff Package 中的 ART_HANDOFF.md、ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md、HUMAN_REVIEW_GUIDE.md 和 REFERENCE_ASSET_MAP.json。严格使用 STATE 的 current_asset/current_key/current_status/next_action 恢复任务，不从 B01 重启，不重复已有候选，不覆盖任何版本。若 current_status=READY 且 next_action=GENERATE，就执行当前资产生成；新结果保存到 art-assets/<ASSET_ID>/candidates/，保持 GENERATED / HUMAN REVIEW REQUIRED。完成 QA 和人工审核后，按 ART_OFFLINE_HANDOFF_GUIDE.md 生成并校验 Return Package；不要因为 AI 判断通过就自动 APPROVED，也不要擅自进入下一个资产。
+> 请接手 Pelican Workbench 美术资产生产。当前环境不能连接 GitHub，也可能没有本地 Git 仓库。请先完整读取 Handoff Package 中的 ART_HANDOFF.md、ART_PRODUCTION_STATE.json、ART_ASSET_MANIFEST.json、CHARACTER_BIBLE.md、ART_DIRECTION.md、PRODUCTION_RULES.md、art-production-spec/HUMAN_REVIEW_GUIDE.md 和 REFERENCE_ASSET_MAP.json。严格使用 STATE 的 current_asset/current_key/current_status/next_action 恢复任务，不从 B01 重启，不重复已有候选，不覆盖任何版本。若 current_status=READY 且 next_action=GENERATE，就执行当前资产生成；新结果保存到 art-assets/<ASSET_ID>/candidates/，保持 GENERATED / HUMAN REVIEW REQUIRED。完成 QA 和人工审核后，按 ART_OFFLINE_HANDOFF_GUIDE.md 生成并校验 Return Package；不要因为 AI 判断通过就自动 APPROVED，也不要擅自进入下一个资产。
 
 ## 8. 最重要的一条
 
