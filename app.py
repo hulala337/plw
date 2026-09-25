@@ -766,6 +766,40 @@ def self_test() -> int:
             if status != 200 or not isinstance(payload,dict):
                 raise RuntimeError("HTTP API contract failed: "+path)
 
+        # Verify Equipment rejects unknown/locked items and preserves
+        # multiple decorations without overwriting another decoration.
+        conn=db()
+        original_equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment").fetchall()]
+        conn.execute("INSERT OR REPLACE INTO scenes(id,name,required_level,base_id,weather,time_mode,monitor_mode) VALUES(?,?,?,?,?,?,?)",("__self_test_locked__","Self Test Locked",999,"office","clear","auto","auto"))
+        conn.execute("INSERT OR REPLACE INTO decorations(id,name,required_level,slot) VALUES(?,?,?,?)",("__self_test_dec_a__","Self Test A",1,"room"))
+        conn.execute("INSERT OR REPLACE INTO decorations(id,name,required_level,slot) VALUES(?,?,?,?)",("__self_test_dec_b__","Self Test B",1,"room"))
+        conn.commit(); conn.close()
+        try:
+            import urllib.error
+            def expect_http_error(path, expected_status, body):
+                try:
+                    http_json(path,"PATCH",body)
+                except urllib.error.HTTPError as exc:
+                    if exc.code != expected_status:
+                        raise RuntimeError("unexpected equipment error status: "+str(exc.code))
+                    return
+                raise RuntimeError("expected equipment HTTP error was not raised")
+            expect_http_error("/api/equipment",404,{"slot":"scene","item_id":"__self_test_missing__"})
+            expect_http_error("/api/equipment",403,{"slot":"scene","item_id":"__self_test_locked__"})
+            http_json("/api/equipment","PATCH",{"slot":"decoration","item_id":"__self_test_dec_a__"})
+            http_json("/api/equipment","PATCH",{"slot":"decoration","item_id":"__self_test_dec_b__"})
+            status,equip=http_json("/api/equipment","PATCH",{"slot":"decoration","item_id":"__self_test_dec_a__"})
+            if status != 200 or not any(x["slot"]=="decoration:__self_test_dec_a__" for x in equip["equipment"]) or not any(x["slot"]=="decoration:__self_test_dec_b__" for x in equip["equipment"]):
+                raise RuntimeError("multiple decoration equipment did not coexist")
+        finally:
+            conn=db()
+            conn.execute("DELETE FROM equipment WHERE slot LIKE 'decoration:__self_test_%'")
+            conn.execute("DELETE FROM scenes WHERE id='__self_test_locked__'")
+            conn.execute("DELETE FROM decorations WHERE id IN ('__self_test_dec_a__','__self_test_dec_b__')")
+            for row in original_equipment:
+                conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(row["slot"],row["item_type"],row["item_id"],row["updated_at"]))
+            conn.commit(); conn.close()
+
         # Verify Todo completion is one reward per false -> true transition.
         status,todo=http_json("/api/todos","POST",{"title":"__self_test_todo__"})
         if status != 200 or "id" not in todo:
