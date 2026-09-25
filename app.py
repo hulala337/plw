@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 import math
 import os
 import socket
@@ -684,7 +685,46 @@ def self_test() -> int:
         conn.execute("UPDATE daily SET %s WHERE day=?" % assignments, [before[key] for key in columns] + [day])
         conn.commit()
         conn.close()
-        print("Pelican Workbench self-test: PASS (DB + real hooks + display + web)")
+
+        # Exercise the real HTTP boundary, not only route registration. The
+        # packaged self-test must prove Web -> API -> SQLite wiring.
+        run_server()
+        if not wait_for_server():
+            raise RuntimeError("local API server failed to start during self-test")
+        import urllib.request
+        def http_json(path, method="GET", body=None):
+            req=urllib.request.Request(
+                f"http://127.0.0.1:{PORT}{path}",
+                data=(json.dumps(body).encode("utf-8") if body is not None else None),
+                headers={"Content-Type":"application/json"},
+                method=method,
+            )
+            with urllib.request.urlopen(req, timeout=3) as response:
+                return response.status, json.loads(response.read().decode("utf-8"))
+        status,health=http_json("/api/health")
+        if status != 200 or "database" not in health or "tracker" not in health:
+            raise RuntimeError("HTTP health contract failed")
+        for path in ("/api/dashboard?range=today","/api/growth","/api/world","/api/display-info","/api/settings","/api/replay"):
+            status,payload=http_json(path)
+            if status != 200 or not isinstance(payload,dict):
+                raise RuntimeError("HTTP API contract failed: "+path)
+
+        # Verify Todo completion is one reward per false -> true transition.
+        status,todo=http_json("/api/todos","POST",{"title":"__self_test_todo__"})
+        if status != 200 or "id" not in todo:
+            raise RuntimeError("Todo create API failed")
+        tid=todo["id"]
+        try:
+            http_json(f"/api/todos/{tid}","PATCH",{"done":True})
+            before=growth_payload()["profile"]["xp"]
+            http_json(f"/api/todos/{tid}","PATCH",{"done":True})
+            after=growth_payload()["profile"]["xp"]
+            if after != before:
+                raise RuntimeError("Todo completion reward is not idempotent")
+        finally:
+            with suppress(Exception):
+                http_json(f"/api/todos/{tid}","DELETE")
+        print("Pelican Workbench self-test: PASS (DB + real hooks + display + HTTP API + frontend contract)")
         return 0
     except Exception as exc:
         print(f"Pelican Workbench self-test: FAIL: {exc}")
