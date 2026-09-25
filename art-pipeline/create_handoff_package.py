@@ -16,7 +16,7 @@ REQUIRED = [
     "ART_HANDOFF.md",
     "ART_OFFLINE_HANDOFF_GUIDE.md",
     "ART_SYNC_GUIDE.md",
-    "HUMAN_REVIEW_GUIDE.md",
+    "art-production-spec/HUMAN_REVIEW_GUIDE.md",
     "REFERENCE_ASSET_MAP.json",
     "art-production-spec/ART_PRODUCTION_STATE.json",
     "art-production-spec/ART_ASSET_MANIFEST.json",
