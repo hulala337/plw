@@ -892,7 +892,7 @@ def api_payload(kind="today") -> dict:
     sessions=conn.execute("SELECT id,started_at,ended_at,active_seconds,categories,ended_reason FROM focus_sessions WHERE started_at < ? AND (ended_at IS NULL OR ended_at >= ?) ORDER BY started_at DESC", ((end+timedelta(days=1)).isoformat(), start.isoformat())).fetchall()
     todos=conn.execute("SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC").fetchall(); conn.close()
     world = world_payload()
-    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"world":world,"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":True}}
+    return {"version":VERSION,"range":kind,"summary":total,"display":display_info(),"days":by_day,"longest_focus_seconds":longest,"rhythm":rhythm,"timeline":[dict(x) for x in timeline],"apps":[dict(x) for x in apps],"sessions":[dict(x) for x in sessions],"active_session":active_session(),"todos":[dict(x) for x in todos],"lifetime":lifetime_stats(),"streak":streak_days(),"world":world,"privacy":{"stores_actual_input":False,"stores_window_titles":False,"stores_urls":False,"local_only":not setting_get("weather_enabled","1")!="0","weather_external":setting_get("weather_enabled","1")!="0","weather_provider":"Open-Meteo"}}
 
 
 def startup_enabled() -> bool:
@@ -1185,7 +1185,7 @@ def dashboard(range: str="today"):
 
 @api.get("/api/settings")
 def get_settings():
-    return {"version":VERSION,"autostart":startup_enabled(),"idle_seconds":int(setting_get("idle_seconds",str(IDLE_SECONDS))),"weather_enabled":setting_get("weather_enabled","1")!="0","desktop_pet":setting_get("desktop_pet","1")!="0","sounds_enabled":setting_get("sounds_enabled","0")!="0","privacy":{"local_only":True,"actual_input":False,"window_titles":False,"urls":False}}
+    return {"version":VERSION,"autostart":startup_enabled(),"idle_seconds":int(setting_get("idle_seconds",str(IDLE_SECONDS))),"weather_enabled":setting_get("weather_enabled","1")!="0","desktop_pet":setting_get("desktop_pet","1")!="0","sounds_enabled":setting_get("sounds_enabled","0")!="0","privacy":{"local_only":not setting_get("weather_enabled","1")!="0","actual_input":False,"window_titles":False,"urls":False,"weather_external":setting_get("weather_enabled","1")!="0","weather_provider":"Open-Meteo"}}
 
 @api.patch("/api/settings")
 def patch_settings(item: SettingsPatch):
