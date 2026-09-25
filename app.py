@@ -597,7 +597,7 @@ def self_test() -> int:
         if not (WEB / "assets").is_dir():
             raise RuntimeError("web/assets missing")
         paths={getattr(route,"path","") for route in api.routes}
-        required_paths={"/","/api/dashboard","/api/health","/api/display-info","/api/settings","/api/growth","/api/todos","/api/forget-today","/api/replay","/api/export/csv","/api/export/xlsx","/api/equipment"}
+        required_paths={"/","/api/dashboard","/api/world","/api/health","/api/display-info","/api/settings","/api/growth","/api/todos","/api/forget-today","/api/replay","/api/export/csv","/api/export/xlsx","/api/equipment"}
         missing=required_paths-paths
         if missing:
             raise RuntimeError("required API routes missing: "+", ".join(sorted(missing)))
@@ -634,6 +634,15 @@ def self_test() -> int:
             raise RuntimeError("default scene not unlocked")
         if not any(x["id"]=="classic" and x["unlocked"] for x in gp["pelicans"]):
             raise RuntimeError("default pelican not unlocked")
+        equipment_by_slot={x["slot"]:x for x in gp["equipment"] if not x["slot"].startswith("decoration:")}
+        for slot,item_id in (("scene","office"),("pelican","classic"),("outfit","default")):
+            if equipment_by_slot.get(slot,{}).get("item_id") != item_id:
+                raise RuntimeError("default equipment missing: "+slot)
+        world=world_payload()
+        required_world={"scene","selected_scene","pelican","outfit","decorations","display_count","work_state","time_phase","weather_enabled"}
+        if not required_world.issubset(world):
+            raise RuntimeError("world projection incomplete")
+
         info = display_info()
         if not isinstance(info.get("count"), int):
             raise RuntimeError("display detection returned invalid data")
@@ -825,19 +834,56 @@ def streak_days() -> int:
 
 
 def world_payload() -> dict:
-    g=growth_payload(); eq={x["slot"]:x["item_id"] for x in g["equipment"]}
-    displays=display_info(); unlocked={x["item_id"] for x in g["unlocks"] if x["item_type"]=="scene"}
+    """Return the normalized, data-driven work-world projection consumed by UI."""
+    g=growth_payload()
+    eq={x["slot"]:x["item_id"] for x in g["equipment"]}
+    displays=display_info()
+    unlocked={(x["item_type"],x["item_id"]) for x in g["unlocks"]}
+
     selected_scene=eq.get("scene","office")
     effective_scene=selected_scene
-    if selected_scene=="office" and displays["count"]>=2 and "dual_monitor_office" in unlocked:
+    # Multi-monitor adaptation is allowed only when the corresponding scene
+    # has actually been unlocked.
+    if selected_scene=="office" and displays["count"]>=2 and ("scene","dual_monitor_office") in unlocked:
         effective_scene="dual_monitor_office"
+
+    now=datetime.now()
+    hour=now.hour
+    if hour >= 19 or hour < 6:
+        time_phase="night"
+    elif hour >= 17:
+        time_phase="dusk"
+    elif hour < 9:
+        time_phase="morning"
+    else:
+        time_phase="day"
+
+    idle_seconds=int(setting_get("idle_seconds",str(IDLE_SECONDS)))
+    recent_input=last_input_ts > 0 and (time.time()-last_input_ts) <= idle_seconds
     active=bool(active_session())
-    return {"scene":effective_scene,"selected_scene":selected_scene,"pelican":eq.get("pelican","classic"),
-            "outfit":eq.get("outfit","default"),"accessory":eq.get("accessory"),
-            "decorations":[x["item_id"] for x in g["equipment"] if x["item_type"]=="decoration"],
-            "effect":eq.get("effect"),"display_count":displays["count"],
-            "current_monitor_index":displays.get("current_monitor_index"),
-            "work_state":"working" if active else "resting"}
+    if active:
+        work_state="working"
+    elif recent_input:
+        work_state="active"
+    else:
+        work_state="resting"
+
+    weather_enabled=setting_get("weather_enabled","1")!="0"
+    return {
+        "scene":effective_scene,
+        "selected_scene":selected_scene,
+        "pelican":eq.get("pelican","classic"),
+        "outfit":eq.get("outfit","default"),
+        "accessory":eq.get("accessory"),
+        "decorations":[x["item_id"] for x in g["equipment"] if x["item_type"]=="decoration"],
+        "effect":eq.get("effect"),
+        "display_count":displays["count"],
+        "current_monitor_index":displays.get("current_monitor_index"),
+        "work_state":work_state,
+        "time_phase":time_phase,
+        "weather_enabled":weather_enabled,
+        "weather_source":"local_visual" if weather_enabled else "disabled",
+    }
 
 def api_payload(kind="today") -> dict:
     start,end=range_bounds(kind); total,by_day,longest,rhythm=fetch_summary(start,end); conn=db()
@@ -1061,13 +1107,31 @@ def api_display_info():
 
 @api.get("/api/health")
 def api_health():
-    return {
-        "status": "ok" if listeners_healthy() and any(t.name == "tracker" and t.is_alive() for t in threading.enumerate()) and DB_PATH.exists() else "degraded",
-        "listeners": listeners_healthy(),
+    listener_ok=listeners_healthy()
+    tracker_ok=any(t.name == "tracker" and t.is_alive() for t in threading.enumerate())
+    db_ok=False
+    db_error=""
+    try:
+        conn=db()
+        conn.execute("SELECT 1").fetchone()
+        conn.close()
+        db_ok=True
+    except Exception as exc:
+        db_error=str(exc)
+    web_ok=WEB.is_dir() and (WEB/"index.html").is_file()
+    checks={
         "keyboard_listener": bool(listener_refs and len(listener_refs) >= 1 and listener_refs[0].is_alive()),
         "mouse_listener": bool(listener_refs and len(listener_refs) >= 2 and listener_refs[1].is_alive()),
-        "tracker": any(t.name == "tracker" and t.is_alive() for t in threading.enumerate()),
-        "database": DB_PATH.exists(),
+        "tracker": tracker_ok,
+        "database": db_ok,
+        "web": web_ok,
+        "display": isinstance(display_info().get("count"),int),
+    }
+    return {
+        "status": "ok" if all(checks.values()) else "degraded",
+        "listeners": listener_ok,
+        **checks,
+        "db_error": db_error,
         "last_listener_ok": listener_last_ok,
         "last_keyboard_event": listener_last_keyboard_event,
         "last_mouse_event": listener_last_mouse_event,
@@ -1103,12 +1167,16 @@ def patch_equipment(item: EquipmentPatch):
     if not row: conn.close(); raise HTTPException(404,"内容不存在")
     profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone(); level=int(profile["level"] if profile else 1)
     unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
-    if not unlocked and int(row["required_level"] or 1)>level: conn.close(); raise HTTPException(403,"内容尚未解锁")
+    if not unlocked and int(row["required_level"] or 1)>1: conn.close(); raise HTTPException(403,"内容尚未解锁")
     now=datetime.now().isoformat(timespec="seconds")
     storage_slot=("decoration:"+item.item_id) if slot=="decoration" else slot
     conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(storage_slot,slot,item.item_id,now))
     conn.commit(); equipment=[dict(x) for x in conn.execute("SELECT * FROM equipment ORDER BY slot").fetchall()]; conn.close()
     return {"ok":True,"equipment":equipment}
+
+@api.get("/api/world")
+def world():
+    return world_payload()
 
 @api.get("/api/dashboard")
 def dashboard(range: str="today"):
