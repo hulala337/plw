@@ -837,3 +837,38 @@ Self Test
 **本文件是 Pelican Workbench 后续开发的产品架构基线。**
 
 开发代码、UI、数据库、API、视觉系统和发布流程出现冲突时，应优先检查并更新本文件，再修改实现，避免项目重新进入“功能、视觉和版本互相打架”的状态。
+
+
+---
+
+# 22. 与完整产品需求基线的关系
+
+本文件负责**架构分层与长期设计原则**；完整功能定义统一由 `docs/PRODUCT_REQUIREMENTS.md` 管理。
+
+必须特别区分：
+
+- **产品目标**：最终应该具备什么能力。
+- **当前实现**：GitHub main 当前代码已经具备什么能力。
+- **验收完成**：是否已经通过 Windows runtime evidence。
+
+“有数据库表/API”不能直接等价于“用户功能完成”。
+
+## 22.1 当前已知实现与产品目标之间的边界
+
+当前 V3.6 已具备 Growth 数据模型、Unlock、Achievement、Equipment API/DB 和 World projection；但前端仍主要展示 Collection/成长信息，尚未形成完整的装备选择工作流。
+
+当前已有 weather 设置和 Scene weather 字段，但这不等于已经完成“真实天气服务”。真实天气属于后续能力，必须明确数据源、刷新策略、离线 fallback 和隐私边界。
+
+当前已有 Tray、开机自启动、本地 WebView、导出和资源完整性链路；这些属于产品能力，不应被遗漏在“统计工具”定义之外。
+
+## 22.2 架构变更必须同步的文档
+
+涉及产品能力的改动至少同步：
+
+1. `docs/PRODUCT_REQUIREMENTS.md`
+2. 对应 P0/P1/P2 Acceptance Matrix
+3. 本架构文档（如果改变 Domain 或数据链路）
+4. UI/美术说明（如果改变用户可见表现）
+5. Manifest / Character Bible（如果新增美术资产）
+
+这样可以避免代码、UI、产品目标和美术生产出现不同步。
