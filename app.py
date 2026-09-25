@@ -703,7 +703,7 @@ def self_test() -> int:
             with urllib.request.urlopen(req, timeout=3) as response:
                 return response.status, json.loads(response.read().decode("utf-8"))
         status,health=http_json("/api/health")
-        if status != 200 or "database" not in health or "tracker" not in health:
+        if status != 200 or health.get("database") is not True or health.get("tracker") is not True or health.get("keyboard_listener") is not True or health.get("mouse_listener") is not True:
             raise RuntimeError("HTTP health contract failed")
         for path in ("/api/dashboard?range=today","/api/growth","/api/world","/api/display-info","/api/settings","/api/replay"):
             status,payload=http_json(path)
@@ -716,12 +716,20 @@ def self_test() -> int:
             raise RuntimeError("Todo create API failed")
         tid=todo["id"]
         try:
+            xp0=growth_payload()["profile"]["xp"]
+            first=http_json(f"/api/todos/{tid}","PATCH",{"done":True})[1]
+            xp1=growth_payload()["profile"]["xp"]
+            if first.get("completion_count") != 1 or xp1 < xp0+20:
+                raise RuntimeError("Todo first-completion reward failed")
             http_json(f"/api/todos/{tid}","PATCH",{"done":True})
-            before=growth_payload()["profile"]["xp"]
-            http_json(f"/api/todos/{tid}","PATCH",{"done":True})
-            after=growth_payload()["profile"]["xp"]
-            if after != before:
+            xp2=growth_payload()["profile"]["xp"]
+            if xp2 != xp1:
                 raise RuntimeError("Todo completion reward is not idempotent")
+            http_json(f"/api/todos/{tid}","PATCH",{"done":False})
+            second=http_json(f"/api/todos/{tid}","PATCH",{"done":True})[1]
+            xp3=growth_payload()["profile"]["xp"]
+            if second.get("completion_count") != 2 or xp3 < xp2+20:
+                raise RuntimeError("Todo re-completion reward failed")
         finally:
             with suppress(Exception):
                 http_json(f"/api/todos/{tid}","DELETE")
@@ -773,6 +781,10 @@ def tracker() -> None:
                     session_started=last_input_ts; session_active=0; session_last_active=last_input_ts; session_events=0; categories=[]
                 session_active+=elapsed_to_persist; session_last_active=last_input_ts; session_events+=new_events
                 if category not in categories: categories.append(category)
+                with suppress(Exception):
+                    conn=db()
+                    conn.execute("UPDATE focus_sessions SET active_seconds=?,event_count=?,categories=? WHERE id=? AND ended_at IS NULL",(session_active,session_events,",".join(categories),session_id))
+                    conn.commit(); conn.close()
             else:
                 if session_id and session_last_active and now-session_last_active>FOCUS_BREAK_SECONDS:
                     session_active += active_credit
@@ -790,7 +802,11 @@ def tracker() -> None:
 def active_session() -> dict | None:
     conn=db(); row=conn.execute("SELECT * FROM focus_sessions WHERE ended_at IS NULL ORDER BY id DESC LIMIT 1").fetchone(); conn.close()
     if not row: return None
-    item=dict(row); item["live_seconds"]=max(0,round(time.time()-datetime.fromisoformat(item["started_at"]).timestamp())); return item
+    item=dict(row)
+    # Tracker persists active_seconds continuously; use active work time rather
+    # than wall-clock time since Session start.
+    item["live_seconds"]=max(0,round(float(item.get("active_seconds") or 0)))
+    return item
 
 
 UNLOCK_CATALOG = [
@@ -927,6 +943,7 @@ def world_payload() -> dict:
         work_state="resting"
 
     weather_enabled=setting_get("weather_enabled","1")!="0"
+    desktop_pet=setting_get("desktop_pet","1")!="0"
     return {
         "scene":effective_scene,
         "selected_scene":selected_scene,
@@ -941,6 +958,7 @@ def world_payload() -> dict:
         "time_phase":time_phase,
         "weather_enabled":weather_enabled,
         "weather_source":"local_visual" if weather_enabled else "disabled",
+        "desktop_pet":desktop_pet,
     }
 
 def api_payload(kind="today") -> dict:
@@ -1226,6 +1244,11 @@ def patch_equipment(item: EquipmentPatch):
     profile=conn.execute("SELECT level FROM progress_profile WHERE id=1").fetchone(); level=int(profile["level"] if profile else 1)
     unlocked=conn.execute("SELECT 1 FROM unlocks WHERE item_type=? AND item_id=?",(slot,item.item_id)).fetchone()
     if not unlocked and int(row["required_level"] or 1)>1: conn.close(); raise HTTPException(403,"内容尚未解锁")
+    if slot=="outfit":
+        pelican=conn.execute("SELECT item_id FROM equipment WHERE slot='pelican'").fetchone()
+        outfit=conn.execute("SELECT pelican_id FROM outfits WHERE id=?",(item.item_id,)).fetchone()
+        if outfit and outfit["pelican_id"] and pelican and outfit["pelican_id"]!=pelican["item_id"]:
+            conn.close(); raise HTTPException(409,"该服装与当前鹈鹕不匹配")
     now=datetime.now().isoformat(timespec="seconds")
     storage_slot=("decoration:"+item.item_id) if slot=="decoration" else slot
     conn.execute("INSERT INTO equipment(slot,item_type,item_id,updated_at) VALUES(?,?,?,?) ON CONFLICT(slot) DO UPDATE SET item_type=excluded.item_type,item_id=excluded.item_id,updated_at=excluded.updated_at",(storage_slot,slot,item.item_id,now))
