@@ -51,7 +51,43 @@ on('startReplay','click',async()=>{try{const r=await fetch('/api/replay');if(!r.
 on('forgetToday','click',async()=>{if(!confirm('删除今天的统计与时间轴？此操作不可恢复。'))return;const r=await fetch('/api/forget-today',{method:'POST'});if(!r.ok){console.error('forget today failed',r.status);return;}getData(state.range);getGrowth();});
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.range=b.dataset.range;getData(state.range);});
 function setupDonation(){const modal=$('donateModal'),btn=$('donateBtn'),img=$('wechatQr'),fallback=$('qrFallback'),close=$('donateClose'),backdrop=$('donateBackdrop');if(!modal||!btn)return;if(img)img.onerror=()=>{img.style.display='none';if(fallback)fallback.style.display='block'};btn.addEventListener('click',()=>{modal.classList.remove('hidden');document.body.classList.add('modal-open')});if(close)close.addEventListener('click',()=>{modal.classList.add('hidden');document.body.classList.remove('modal-open')});if(backdrop)backdrop.addEventListener('click',()=>{if(close)close.click();});}
-async function renderWeather(){const scene=$('scene');if(!weatherEnabled){if($('weather'))$('weather').textContent='本地天气未启用';if(scene){delete scene.dataset.weather;scene.classList.remove('raining');}delete document.body.dataset.weather;return;}try{if(!('geolocation' in navigator))throw 0;navigator.geolocation.getCurrentPosition(async pos=>{try{const lat=pos.coords.latitude,lon=pos.coords.longitude;const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);const j=await r.json(),c=j.current;const map={0:['晴天','☀️','clear'],1:['晴间多云','🌤️','cloud'],2:['多云','⛅','cloud'],3:['阴天','☁️','cloud'],45:['雾','🌫️','mist'],48:['雾','🌫️','mist'],51:['毛毛雨','🌦️','rain'],53:['毛毛雨','🌦️','rain'],55:['毛毛雨','🌦️','rain'],61:['下雨','🌧️','rain'],63:['中雨','🌧️','rain'],65:['大雨','🌧️','rain'],71:['下雪','❄️','snow'],73:['下雪','❄️','snow'],75:['大雪','❄️','snow'],80:['阵雨','🌦️','rain'],81:['阵雨','🌦️','rain'],82:['强阵雨','🌧️','rain'],95:['雷雨','⛈️','rain'],96:['雷雨','⛈️','rain'],99:['雷雨','⛈️','rain']};const x=map[c.weather_code]||['天气','🌤️','clear'];if($('weather'))$('weather').textContent=`${x[1]} ${c.temperature_2m}°C · ${x[0]}`;if(scene){scene.dataset.weather=x[2];scene.classList.toggle('raining',x[2]==='rain');}document.body.dataset.weather=x[2];}catch(e){if($('weather'))$('weather').textContent='本地天气未启用';}} ,()=>{if($('weather'))$('weather').textContent='本地天气未启用';});}catch(e){if($('weather'))$('weather').textContent='本地天气未启用';}}
+async function renderWeather(){
+  const scene=$('scene'), cacheKey='pelican.weather.v1', cacheMaxAge=30*60*1000;
+  const show=(x,source)=>{
+    if(!x)return;
+    if($('weather'))$('weather').textContent=x.icon+' '+x.temperature+'°C · '+x.label;
+    if(scene){scene.dataset.weather=x.kind;scene.classList.toggle('raining',x.kind==='rain');}
+    document.body.dataset.weather=x.kind;
+    if(source==='cache' && $('weather'))$('weather').title='使用最近一次天气缓存';
+  };
+  if(!weatherEnabled){
+    if($('weather'))$('weather').textContent='本地天气未启用';
+    if(scene){delete scene.dataset.weather;scene.classList.remove('raining');}
+    delete document.body.dataset.weather;
+    return;
+  }
+  let cached=null;
+  try{cached=JSON.parse(localStorage.getItem(cacheKey)||'null');}catch(_e){}
+  if(cached && cached.savedAt && Date.now()-cached.savedAt<cacheMaxAge)show(cached.data,'cache');
+  const map={0:['晴天','☀️','clear'],1:['晴间多云','🌤️','cloud'],2:['多云','⛅','cloud'],3:['阴天','☁️','cloud'],45:['雾','🌫️','mist'],48:['雾','🌫️','mist'],51:['毛毛雨','🌦️','rain'],53:['毛毛雨','🌦️','rain'],55:['毛毛雨','🌦️','rain'],61:['下雨','🌧️','rain'],63:['中雨','🌧️','rain'],65:['大雨','🌧️','rain'],71:['下雪','❄️','snow'],73:['下雪','❄️','snow'],75:['大雪','❄️','snow'],80:['阵雨','🌦️','rain'],81:['阵雨','🌦️','rain'],82:['强阵雨','🌧️','rain'],95:['雷雨','⛈️','rain'],96:['雷雨','⛈️','rain'],99:['雷雨','⛈️','rain']};
+  try{
+    if(!('geolocation' in navigator))throw new Error('geolocation unavailable');
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      try{
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+        const lat=pos.coords.latitude,lon=pos.coords.longitude;
+        const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code&timezone=auto';
+        const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
+        if(!r.ok)throw new Error('weather '+r.status);
+        const j=await r.json(),c=j.current,x=map[c.weather_code]||['天气','🌤️','clear'];
+        const data={temperature:c.temperature_2m,label:x[0],icon:x[1],kind:x[2]};
+        show(data,'live');
+        try{localStorage.setItem(cacheKey,JSON.stringify({savedAt:Date.now(),data:data}));}catch(_e){}
+      }catch(e){if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';}
+    },()=>{if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';},{enableHighAccuracy:false,maximumAge:cacheMaxAge,timeout:5000});
+  }catch(e){if(!cached?.data && $('weather'))$('weather').textContent='天气暂不可用';}
+}
+
 function renderGrowth(){const g=state.growth||{},p=g.profile||{},pct=Number(p.progress_pct||0),eq=Object.fromEntries((g.equipment||[]).filter(x=>!x.slot.startsWith('decoration:')).map(x=>[x.slot,x.item_id])),decorEq=new Set((g.equipment||[]).filter(x=>x.item_type==='decoration').map(x=>x.item_id));const report=$('growthReport');if(report)report.innerHTML=[['等级',p.level||1],['XP',fmtNum(p.xp||0)],['本级进度',fmtNum(p.xp_into_level||0)+' / '+fmtNum(Math.max(0,(p.next_level_xp||0)-(p.level_xp_start||0)))],['累计工作',fmtSec((p.active_hours||0)*3600)],['已解锁',(g.unlocks||[]).length],['成就',(g.achievements||[]).length]].map(x=>'<div><small>'+x[0]+'</small><b>'+x[1]+'</b></div>').join('')+'<div class="growth-xp"><small>'+(p.level>=12?'最高等级':'距下一级 '+fmtNum(p.xp_to_next_level||0)+' XP')+'</small><i style="width:'+pct+'%"></i></div>';const achLabels={first_session:'第一次 Session',ten_hours:'累计 10 小时',hundred_hours:'累计 100 小时',multi_monitor:'多显示器',seven_day_streak:'连续 7 天'};const ae=$('growthAchievements');if(ae)ae.innerHTML=(g.achievement_catalog||[]).map(x=>'<span>'+(x.unlocked?'🏆 ':'🔒 ')+(achLabels[x.id]||x.id)+(x.unlocked?'':' · '+x.condition)+'</span>').join('')||'<span>暂无成就。</span>';const labels={green_plant:'🌿 植物',lamp:'💡 台灯',coffee_machine:'☕ 咖啡机',fish_tank:'🐠 鱼缸',bookshelf:'📚 书架',dual_monitor_office:'🖥️ 双屏工作室',sunset_office:'🌇 黄昏工作室',coffee_pelican:'🐦 咖啡鹈鹕',coffee_outfit:'🧑‍🍳 咖啡围裙',headphones:'🎧 耳机',focus_sparkles:'✨ 专注星光'};const ue=$('growthUnlocks');if(ue)ue.innerHTML=(g.unlocks||[]).map(x=>'<span>'+(labels[x.item_id]||x.item_id)+'</span>').join('')||'<span>继续真实工作以解锁内容。</span>';[['scenes','growthScenes','scene'],['pelicans','growthPelicans','pelican'],['outfits','growthOutfits','outfit'],['accessories','growthAccessories','accessory'],['decorations','growthDecorations','decoration'],['effects','growthEffects','effect']].forEach(([key,id,slot])=>{const el=$(id);if(!el)return;el.innerHTML=(g.collection?.[key]||[]).map(x=>'<button type="button" class="growth-item '+(x.unlocked?'':'locked')+((slot==='decoration'?decorEq.has(x.id):eq[slot]===x.id)?' equipped':'')+'" data-equip-slot="'+slot+'" data-equip-id="'+x.id+'" '+(x.unlocked?'':'disabled')+'>'+((slot==='decoration'&&decorEq.has(x.id))?'✓ ':((eq[slot]===x.id)?'✓ ':(!x.unlocked?'🔒 ':' ')))+x.name+(x.unlocked?'':' · Lv.'+x.required_level)+'</button>').join('')||'<span>暂无内容。</span>';});document.querySelectorAll('[data-equip-slot]').forEach(b=>b.onclick=async()=>{const r=await fetch('/api/equipment',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({slot:b.dataset.equipSlot,item_id:b.dataset.equipId})});if(!r.ok){console.error('equip failed',r.status);return;}await getGrowth();await getData(state.range);});}
 function renderAll(){renderMetrics();renderPet();renderTimeline();renderSessions();renderTodos();renderApps();renderStats();}
 function healthLabel(ok){return ok?'正常':'异常';}
