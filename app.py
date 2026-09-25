@@ -1000,6 +1000,22 @@ def world_payload() -> dict:
 
     weather_enabled=setting_get("weather_enabled","1")!="0"
     desktop_pet=setting_get("desktop_pet","1")!="0"
+    daily_active=float(fetch_summary(date.today(),date.today())[0].get("active_seconds",0))
+    recent_todo = False
+    with suppress(Exception):
+        conn=db()
+        recent_todo = conn.execute("SELECT 1 FROM todos WHERE done=1 AND completed_at>=? LIMIT 1",(datetime.now().replace(hour=0,minute=0,second=0,microsecond=0).isoformat(),)).fetchone() is not None
+        conn.close()
+    if recent_todo:
+        pelican_state="celebrating"
+    elif active and daily_active >= 6*3600:
+        pelican_state="tired"
+    elif active:
+        pelican_state="working"
+    elif recent_input:
+        pelican_state="focused"
+    else:
+        pelican_state="resting"
     return {
         "scene":effective_scene,
         "selected_scene":selected_scene,
@@ -1011,6 +1027,7 @@ def world_payload() -> dict:
         "display_count":displays["count"],
         "current_monitor_index":displays.get("current_monitor_index"),
         "work_state":work_state,
+        "pelican_state":pelican_state,
         "time_phase":time_phase,
         "weather_enabled":weather_enabled,
         "weather_source":"local_visual" if weather_enabled else "disabled",
