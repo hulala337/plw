@@ -257,10 +257,11 @@
       <div class="settings-grid">
         <div class="panel setting"><b>开机启动</b><small>登录 Windows 后静默进入托盘。</small><label class="switch"><input type="checkbox" id="autostartSettings"><i></i></label></div>
         <div class="panel setting"><b>桌面宠物</b><small>让小鹈鹕在窗口角落陪你工作。</small><label class="switch"><input type="checkbox" id="desktopPet"><i></i></label></div>
+        <div class="panel setting"><b>交互声音</b><small>完成待办等交互时播放轻提示音，默认关闭。</small><label class="switch"><input type="checkbox" id="soundsEnabled"><i></i></label></div>
         <div class="panel setting"><b>离开电脑阈值</b><small>超过多久没有输入，就判定为离开。</small><select id="idleSeconds"><option value="60">1 分钟</option><option value="120">2 分钟</option><option value="180">3 分钟</option><option value="300">5 分钟</option><option value="600">10 分钟</option></select></div>
         <div class="panel setting"><b>显示器与鼠标空间</b><small id="displayInfoSettings">正在识别显示器布局…</small></div>
-        <div class="panel setting"><b>天气场景</b><small>天气只用于当前界面视觉，不写入工作数据库。</small><label class="switch"><input type="checkbox" id="weatherEnabled"><i></i></label></div>
-        <div class="panel setting privacy"><b>隐私中心 <span>✓ 已开启</span></b><small>键盘只记录数量与字符数。</small><p>✓ 实际输入文字：不保存<br>✓ 窗口标题 / 文件名：不保存<br>✓ URL / 网页正文：不保存<br>✓ 数据库：仅本机</p><button class="ghost" id="forgetToday">删除今天的统计</button></div>
+        <div class="panel setting"><b>天气场景</b><small>开启后，浏览器会获取当前位置并发送经纬度给 Open-Meteo，仅用于获取天气；关闭后不定位、不联网。</small><label class="switch"><input type="checkbox" id="weatherEnabled"><i></i></label></div>
+        <div class="panel setting privacy"><b>隐私中心 <span>✓ 已开启</span></b><small>键盘只记录数量与字符数。</small><p>✓ 实际输入文字：不保存<br>✓ 窗口标题 / 文件名：不保存<br>✓ URL / 网页正文：不保存<br>✓ 数据库：仅本机<br>✓ 天气关闭：不获取位置、不访问天气服务</p><button class="ghost" id="forgetToday">删除今天的统计</button></div>
         <div class="panel setting health-panel">
           <div class="setting-head"><b>系统健康</b><button class="ghost health-refresh" id="healthRefresh" type="button">重新检查</button></div>
           <small>实时检查监听器、Tracker、SQLite、网页资源与显示器检测。</small>
