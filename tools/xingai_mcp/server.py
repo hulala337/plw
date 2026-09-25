@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import binascii
+import hashlib
 import io
 import ipaddress
 import json
@@ -23,6 +24,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp import types
+from image_routing import analyze, load_pool
 
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parents[1]
@@ -78,6 +80,14 @@ class VideoArgs(Args):
     duration: float | None = Field(default=None, gt=0, le=120)
     reference_image: str | None = None
     task_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9_-]{1,200}$")
+
+
+class ProjectImageArgs(Args):
+    task: str = Field(min_length=1, max_length=32000)
+    asset_id: str = Field(min_length=1, max_length=100, pattern=r'^[A-Za-z0-9_-]+$')
+    output_path: str = Field(min_length=1, max_length=1024)
+    reference_images: list[str] = Field(default_factory=list, max_length=1)
+    quality_hint: str | None = Field(default=None, max_length=1000)
 
 
 class Settings:
@@ -166,6 +176,60 @@ class XingAI:
         self.s = settings
         self.transport = transport
 
+    async def generate_project_image(self, a: ProjectImageArgs) -> dict:
+        route = analyze(a.task, a.asset_id, a.quality_hint, bool(a.reference_images))
+        generation_entered = False
+        try:
+            self.output(a.output_path)
+            for ref in a.reference_images:
+                self.reference(ref)
+            try:
+                pool, evidence = load_pool(safe_path(str(HERE / 'image_models.toml'), PROJECT))
+            except (OSError, ValueError):
+                raise ToolError('configuration_error', 'Invalid image_models.toml; no generation submitted.') from None
+            model = pool[route['difficulty']]
+            route['selected_model'] = model
+            verification = evidence.get(model, {})
+            if not isinstance(verification, dict) or verification.get('generation_verified') is not True or verification.get('origin') != self.s.base or not verification.get('source'):
+                raise ToolError('model_not_verified', 'Selected tier lacks successful generation evidence for this origin. No downgrade, fallback or image was generated.')
+            catalog = await self.models()
+            if catalog['source'] != 'api':
+                raise ToolError('discovery_required', 'Project routing requires live model discovery, not fallback availability.')
+            match = next((x for x in catalog['models'] if x['id']==model), None)
+            needed = 'image_edit' if a.reference_images else 'image'
+            if not match or match['capabilities'].get(needed) is not True:
+                raise ToolError('capability_unconfirmed', 'Selected pool model is absent or lacks the required generation/edit capability.')
+            if a.reference_images and verification.get('editing_verified') is not True:
+                raise ToolError('capability_unconfirmed', 'Reference editing has not been verified for this pool model.')
+            # Durable per-asset reservation: repeated/concurrent calls cannot buy
+            # another image by changing output_path. Failed/uncertain requests
+            # retain the reservation for explicit human reconciliation.
+            ledger = safe_path(str(HERE / 'outputs' / 'project_image_attempts'), PROJECT)
+            ledger.mkdir(parents=True, exist_ok=True)
+            receipt = safe_path(str(ledger / (hashlib.sha256(a.asset_id.upper().encode()).hexdigest() + '.json')), PROJECT)
+            try:
+                with receipt.open('x', encoding='utf-8') as f:
+                    json.dump({'asset_id': a.asset_id, 'selected_model': model,
+                               'output_path': a.output_path, 'state': 'reserved_no_automatic_retry'}, f)
+            except FileExistsError:
+                raise ToolError('asset_already_attempted', 'This asset already has a generation reservation. Reconcile its result before an explicitly authorized rework; no new image submitted.') from None
+            # Reuse the existing adapter; it submits n=1 once and never retries.
+            generation_entered = True
+            result = await self.generate_image(ImageArgs(model=model, prompt=a.task,
+                output_path=a.output_path, reference_images=a.reference_images))
+            saved = safe_path(result['output_path'], self.s.output_root)
+            if not saved.is_file():
+                raise ToolError('file_validation_failed', 'API completed but the output file is missing.')
+            mime, _ = image_info(saved.read_bytes())
+            return {**result, **route, 'mime_type': mime, 'generated_count': 1}
+        except ToolError as exc:
+            exc.payload.update(route)
+            exc.payload['generated_count'] = None if generation_entered else 0
+            if generation_entered:
+                exc.payload['retryable'] = False
+                exc.payload['message'] += ' Do not automatically retry or switch models; generation may have been accepted.'
+            raise
+
     async def request(self, method: str, path: str, *, auth: bool = True, **kwargs) -> tuple[dict, int]:
         try:
             return await self._request(method, path, auth=auth, **kwargs)
@@ -212,6 +276,10 @@ class XingAI:
             rows = self.s.mapping["models"]
             source, status, warning = "explicit_configuration_fallback", None, exc.payload
         overrides = {x["id"]: x for x in self.s.mapping.get("models", [])}
+        try:
+            _, registry = load_pool(safe_path(str(HERE / 'image_models.toml'), PROJECT))
+        except (OSError, ValueError):
+            registry = {}  # Discovery remains usable without optional pool metadata.
         normalized = []
         for row in rows:
             endpoints = row.get("supported_endpoint_types", [])
@@ -222,6 +290,12 @@ class XingAI:
             override = overrides.get(row["id"], {})
             caps.update(override.get("capabilities", {}))
             item = {"id": row["id"], "provider": row.get("owned_by", row.get("provider")), "provider_source": "API owned_by (not independently verified)", "type": [k for k, v in caps.items() if v is True] or ["unknown"], "capabilities": caps, "supports_image": caps["image"], "supports_video": caps["video"], "supports_text_chat": caps["chat"], "supported_endpoint_types": endpoints, "endpoints": {e: ENDPOINTS[e] for e in endpoints if e in ENDPOINTS}, "evidence": override.get("source", "/v1/models supported_endpoint_types"), "availability": "listed_by_api" if source == "api" else "configured_not_verified", "image_adapter": override.get("image_adapter", "openai-images" if "image-generation" in endpoints else "unconfirmed")}
+            record = registry.get(row['id'], {})
+            if isinstance(record, dict) and record.get('origin') == self.s.base:
+                item['capability_verification'] = {
+                    k: record.get(k, 'unverified') if record.get(k) in {'verified', 'unverified'} else 'unverified'
+                    for k in ('image_generation', 'image_editing', 'reference_image')}
+                item['verification_source'] = record.get('source')
             if task is None or caps[task] is True:
                 normalized.append(item)
         return dict(success=True, source=source, endpoint="/v1/models", http_status=status, models=normalized, warning=warning, note="Null capability means unknown. Endpoint availability does not guarantee account quota or a successful generation. No model-name guessing.")
@@ -392,6 +466,7 @@ class XingAI:
 
 
 SPECS = {
+    "xingai_generate_project_image": (ProjectImageArgs, "Route a project image with a deterministic 100-point rubric and mandatory asset importance floors through fixed simple/medium/complex configuration; tiers may share a model. Generates exactly one image; no comparisons, retries or silent downgrades. Unverified tiers fail closed."),
     "xingai_list_models": (ListArgs, "Discover real XingAI model IDs, endpoint types and tri-state capabilities. Optional task_type filter. No model-name guessing."),
     "xingai_chat": (ChatArgs, "Call a discovered text/chat model. model=auto uses evidence and explicit preferences, otherwise returns candidates. Text messages only."),
     "xingai_generate_image": (ImageArgs, "Generate one image to a new file under the output root. Optional single LOCAL reference routes to edits only with explicit edit capability evidence. Never returns image bytes."),
@@ -425,7 +500,7 @@ async def dispatch(name: str, arguments: dict, service: XingAI | None = None) ->
         if name == "xingai_list_models":
             result = await api.models(args.task_type)
         else:
-            handler = {"xingai_chat": api.chat, "xingai_generate_image": api.generate_image, "xingai_generate_video": api.generate_video}[name]
+            handler = {"xingai_generate_project_image": api.generate_project_image, "xingai_chat": api.chat, "xingai_generate_image": api.generate_image, "xingai_generate_video": api.generate_video}[name]
             result = await handler(args)
     except ValidationError:
         result = dict(success=False, error_type="invalid_arguments", message="Arguments do not match the tool schema; no request was made.", retryable=False)

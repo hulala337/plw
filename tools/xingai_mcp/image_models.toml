@@ -1,0 +1,24 @@
+# Fixed user policy: medium and complex intentionally share one model.
+[image_models.simple]
+id = "gpt-image-2-pro-c"
+
+[image_models.medium]
+id = "gpt-image-2.5-flare"
+
+[image_models.complex]
+id = "gpt-image-2.5-flare"
+
+[verification."gpt-image-2-pro-c"]
+origin = "https://xingai.ai"
+generation_verified = false
+source = "User-selected model; successful generation not yet verified."
+
+[verification."gpt-image-2.5-flare"]
+origin = "https://xingai.ai"
+generation_verified = false
+editing_verified = false
+image_generation = "unverified"
+image_editing = "unverified"
+reference_image = "unverified"
+checked_on = "2026-09-25"
+source = "FLARE_CAPABILITY_REPORT.md: live /v1/models and /api/pricing advertise chat only; linked image documentation does not name this model. No image POST submitted."

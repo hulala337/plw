@@ -230,6 +230,7 @@ class Stdio(unittest.IsolatedAsyncioTestCase):
                     tools = await session.list_tools()
                     self.assertEqual({x.name for x in tools.tools}, set(s.SPECS))
                     legal = {"xingai_list_models": {}, "xingai_chat": {"messages": [{"role": "user", "content": "PROMPT-LOG-CANARY"}]}, "xingai_generate_image": {"prompt": "PROMPT-LOG-CANARY", "output_path": "a.png"}, "xingai_generate_video": {"prompt": "PROMPT-LOG-CANARY", "output_path": "a.mp4"}}
+                    legal['xingai_generate_project_image'] = {'task':'simple icon','asset_id':'TEST','output_path':'a.png'}
                     for name, args in legal.items():
                         result = await session.call_tool(name, args)
                         self.assertEqual(result.structuredContent["error_type"], "configuration_error")
