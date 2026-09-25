@@ -13,5 +13,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Python syntax check
+        run: python -m py_compile app.py tools/p0_acceptance.py tools/p1_acceptance.py tools/p0_p1_integration.py
+      - name: JavaScript syntax check
+        run: node --check web/assets/app.js
       - name: Run deterministic P0 contract checker
         run: python tools/p0_acceptance.py
