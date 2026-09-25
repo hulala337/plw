@@ -17,9 +17,9 @@ def main():
     if REQUIRED_TABLES-tables: raise RuntimeError("missing P1 tables: "+", ".join(sorted(REQUIRED_TABLES-tables)))
     ids=set(re.findall(r'id="([^"]+)"',html))
     if REQUIRED_COLLECTION_IDS-ids: raise RuntimeError("missing Growth collection DOM: "+", ".join(sorted(REQUIRED_COLLECTION_IDS-ids)))
-    for token in ("UNLOCK_CATALOG","ACHIEVEMENT_CATALOG","progress_events","growth_payload","world_payload","patch_equipment","total_active_seconds"):
+    for token in ("UNLOCK_CATALOG","ACHIEVEMENT_CATALOG","progress_events","growth_payload","world_payload","patch_equipment","total_active_seconds","completion_count","pending_time"):
         if token not in app: raise RuntimeError("missing P1 backend contract: "+token)
-    for token in ("growthScenes","growthPelicans","growthOutfits","growthAccessories","growthDecorations","growthEffects","/api/equipment","state.data.world","/api/world"):
+    for token in ("growthScenes","growthPelicans","growthOutfits","growthAccessories","growthDecorations","growthEffects","/api/equipment","state.data.world","/api/world","pelican.weather.v1","AbortController"):
         if token not in js: raise RuntimeError("missing P1 frontend contract: "+token)
     print("Pelican Workbench P1 contract: PASS")
     print("Runtime gates still required: Windows input, real SQLite persistence, monitor topology, UI interaction and packaged EXE.")
