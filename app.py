@@ -672,8 +672,9 @@ def self_test() -> int:
         before = dict(before_row)
         conn.close()
 
+        self_test_slice = "__self_test__"
         queue_input(keys=1, text_chars=1, cursor_distance_px=123.0, monitor_switches=1)
-        persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
+        persist_tracker_tick(day, self_test_slice, self_test_slice, 0.0, 1)
         conn = db()
         after = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
         expected = {"keys": 1, "text_chars": 1, "cursor_distance_px": 123.0, "activity_events": 1, "monitor_switches": 1}
@@ -701,7 +702,7 @@ def self_test() -> int:
         globals()["db"] = fail_once_db
         try:
             try:
-                persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
+                persist_tracker_tick(day, self_test_slice, self_test_slice, 0.0, 1)
             except RuntimeError:
                 pass
             else:
@@ -711,12 +712,14 @@ def self_test() -> int:
         with pending_lock:
             if pending["keys"] != 1:
                 raise RuntimeError("pending input was lost during database failure")
-        persist_tracker_tick(day, datetime.now().replace(second=0,microsecond=0).isoformat(timespec="minutes"), "focus", 0.0, 1)
+        persist_tracker_tick(day, self_test_slice, self_test_slice, 0.0, 1)
         with pending_lock:
             if pending["keys"] != 0:
                 raise RuntimeError("pending input was not cleared after recovery")
         conn = db()
         recovered = dict(conn.execute("SELECT * FROM daily WHERE day=?", (day,)).fetchone())
+        conn.execute("DELETE FROM activity_slices WHERE slice_start=? AND category=?", (self_test_slice, self_test_slice))
+        conn.execute("DELETE FROM app_usage WHERE day=? AND category=?", (day, self_test_slice))
         columns = [key for key in before_pending if key != "day"]
         assignments = ", ".join("%s=?" % key for key in columns)
         conn.execute("UPDATE daily SET %s WHERE day=?" % assignments, [before_pending[key] for key in columns] + [day])
