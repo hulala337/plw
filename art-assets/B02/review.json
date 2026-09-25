@@ -1,0 +1,10 @@
+{
+  "asset_id": "B02",
+  "status": "APPROVED",
+  "review_type": "HUMAN",
+  "reviewed_on": "2026-09-25",
+  "selected_candidate": "art-assets/B02/candidates/鹈鹕工作台：专注工作.png",
+  "decision": "APPROVE",
+  "reviewer_decision_source": "User explicit approval in current conversation",
+  "notes": "Human review completed. Preserve the selected candidate as the approved production version; do not overwrite the historical candidate."
+}
