@@ -8,21 +8,68 @@
   "canonical_state": "art-production-spec/ART_PRODUCTION_STATE.json",
   "manifest": "art-production-spec/ART_ASSET_MANIFEST.json",
   "style_anchor": "B01",
-  "current_asset": "B04",
-  "current_key": "pelican_thinking",
+  "current_asset": "B07",
+  "current_key": "pelican_drinking_coffee",
   "current_status": "READY",
   "next_action": "GENERATE",
-  "production_sequence": ["B01","B02","B03","B04","B07","C01","C02","C03","E01"],
+  "production_sequence": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B07",
+    "C01",
+    "C02",
+    "C03",
+    "E01"
+  ],
   "assets": {
-    "B01": {"key":"pelican_master","status":"REFERENCE / STYLE ANCHOR","review_required":false},
-    "B02": {"key":"pelican_working","status":"GENERATED / HUMAN REVIEW REQUIRED","review_required":true,"candidates":"multiple"},
-    "B03": {"key":"pelican_typing","status":"GENERATED / HUMAN REVIEW REQUIRED","review_required":true},
-    "B04": {"key":"pelican_thinking","status":"READY","review_required":true},
-    "B07": {"key":"pelican_drinking_coffee","status":"PLANNED","review_required":true},
-    "C01": {"key":"office_master","status":"PLANNED","review_required":true},
-    "C02": {"key":"office_day","status":"PLANNED","review_required":true},
-    "C03": {"key":"office_night","status":"PLANNED","review_required":true},
-    "E01": {"key":"dashboard_hero","status":"PLANNED","review_required":true}
+    "B01": {
+      "key": "pelican_master",
+      "status": "REFERENCE / STYLE ANCHOR",
+      "review_required": false
+    },
+    "B02": {
+      "key": "pelican_working",
+      "status": "APPROVED",
+      "review_required": true,
+      "candidates": "multiple"
+    },
+    "B03": {
+      "key": "pelican_typing",
+      "status": "APPROVED",
+      "review_required": true
+    },
+    "B04": {
+      "key": "pelican_thinking",
+      "status": "APPROVED",
+      "review_required": true
+    },
+    "B07": {
+      "key": "pelican_drinking_coffee",
+      "status": "READY",
+      "review_required": true
+    },
+    "C01": {
+      "key": "office_master",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "C02": {
+      "key": "office_day",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "C03": {
+      "key": "office_night",
+      "status": "PLANNED",
+      "review_required": true
+    },
+    "E01": {
+      "key": "dashboard_hero",
+      "status": "PLANNED",
+      "review_required": true
+    }
   },
   "handoff_policy": {
     "chat_history_is_not_source_of_truth": true,
@@ -48,21 +95,21 @@
     "github_is_cross_environment_sync_source": true
   },
   "execution_handoff": {
-    "asset_id": "B04",
+    "asset_id": "B07",
     "checked_on": "2026-09-25",
-    "source_main_commit": "87a90cf88ab97a010939f5d8697b4b2c27b96a12",
+    "source_main_commit": "125ee5fdf70890b753b562bf186f88e528538a4c",
     "handoff_check": "PASS",
     "generation_attempted": false,
     "candidate_created": false,
-    "blocker": "XingAI MCP preflight returned model_not_verified for required gpt-image-2.5-flare. Live /v1/models and /api/pricing only declare the chat endpoint; generation and B01 reference editing contracts are unconfirmed. No image POST submitted.",
-    "next_action_detail": "Keep B04 READY / GENERATE. Obtain provider documentation confirming gpt-image-2.5-flare image output and reference image request/response schema. Implement/verify that exact adapter without claiming untested success, then generate exactly one B04 candidate with B01 reference. Do not substitute a model, drop the reference, or create comparison test images. Persist QA and HUMAN REVIEW REQUIRED, commit and push before advancing.",
-    "reference_note": "Local B01_v01.png has the same Git blob as main art-assets/B01/master/B01_v01.png.png (348223cf9936ab305c941df6b7b07436a6c9ce38). The pre-existing local rename was not included in this handoff commit.",
+    "blocker": null,
+    "next_action_detail": "Generate exactly one B07 candidate using B01 as the style/identity reference, persist technical/visual QA and HUMAN REVIEW REQUIRED, then wait for explicit human approval before advancing.",
+    "reference_note": "B01 remains the sole style anchor. Approved B02-B04 human review records are persisted in GitHub.",
     "spec_notes": [
-      "Manifest statuses remain PLANNED while STATE records production progress; STATE is the canonical progress source. handoff_check.py does not validate status agreement.",
-      "Catalog B04 pose text describes typing, whereas the canonical key pelican_thinking and higher-priority Character Bible specify thoughtful posture. Follow the documented reference hierarchy; do not rename or reorder assets."
+      "Manifest statuses remain PLANNED while STATE records production progress; STATE is the canonical progress source.",
+      "B07 canonical key is pelican_drinking_coffee; follow the documented reference hierarchy and do not rename or reorder assets."
     ],
     "cli_fallback_authorized": true,
-    "generation_record": "art-assets/B04/qa/B04_xingai_preflight_20260925.json"
+    "generation_record": null
   },
   "last_updated": "2026-09-25"
 }
