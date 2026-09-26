@@ -1,0 +1,12 @@
+{
+  "asset_id": "B07",
+  "asset_key": "pelican_drinking_coffee",
+  "selected_candidate": "B07_v02.jpg",
+  "human_review": "APPROVED",
+  "approved_by_user": true,
+  "approved_at": "2026-09-26",
+  "source_image": "/mnt/data/a_wide_clean_high_quality_character_concept_art.png",
+  "production_derivative": "/mnt/data/B07_v02.jpg",
+  "sha256": "ae8ca1a47bda9662bb59997602cb6b8a1355f7fb64052af1847f5ac7266d1b0c",
+  "notes": "User explicitly selected the second generated B07 image for use. A production crop of the main hero area was prepared as B07_v02.jpg to remove the presentation-sheet side panel and retain the selected visual. GitHub binary persistence remains pending."
+}
