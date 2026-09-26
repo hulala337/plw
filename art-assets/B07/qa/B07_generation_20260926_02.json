@@ -1,0 +1,21 @@
+{
+  "asset_id": "B07",
+  "asset_key": "pelican_drinking_coffee",
+  "candidate": "B07_v02.jpg",
+  "generated_at": "2026-09-26",
+  "human_review": "APPROVED",
+  "technical_qa": {
+    "dimensions": "PASS",
+    "format": "JPEG",
+    "unique_version_name": "PASS",
+    "sha256": "ae8ca1a47bda9662bb59997602cb6b8a1355f7fb64052af1847f5ac7266d1b0c"
+  },
+  "visual_qa": {
+    "user_selection": "PASS",
+    "coffee_interaction": "PASS",
+    "pelican_identity": "PASS",
+    "workspace_context": "PASS"
+  },
+  "persistence_to_github": "PENDING",
+  "decision": "APPROVED_PENDING_PERSISTENCE"
+}
