@@ -1,0 +1,33 @@
+{
+  "asset_id": "B07",
+  "asset_key": "pelican_drinking_coffee",
+  "attempted_at": "2026-09-26T08:02:00+08:00",
+  "execution_mode": "ChatGPT image generation",
+  "model": "image_generation",
+  "output_size": "1536x1024",
+  "generated_candidate": "B07_v01.jpg",
+  "candidate_created": true,
+  "local_source_file": "/mnt/data/B07_v01.jpg",
+  "library_copy": "/Pelican Workbench/B07/B07_v01.jpg",
+  "reference_asset": "art-assets/B01/master/B01_v01.png",
+  "technical_qa": {
+    "dimensions": "PASS",
+    "format": "JPEG",
+    "readable": "PASS",
+    "unique_version_name": "PASS",
+    "text_in_image": "FAIL",
+    "note": "Generated image contains presentation-sheet labels/text; this conflicts with the B07 production rule requiring no rendered text in generated images."
+  },
+  "visual_qa": {
+    "identity_anchor": "PARTIAL",
+    "action_interaction": "PASS",
+    "style_match": "FAIL",
+    "note": "Candidate drifted toward cinematic 3D/CGI and asset-sheet presentation rather than the required polished 2D/2.5D editorial illustration. Do not approve this candidate."
+  },
+  "human_review": "REQUIRED",
+  "approval": null,
+  "persistence_to_github": "BLOCKED",
+  "persistence_note": "GitHub connector available in this environment does not expose a binary-file upload path from the generated image file reference; no fake repository candidate was created.",
+  "decision": "REJECT_CANDIDATE_AND_REGENERATE",
+  "notes": "Generation succeeded, but the result is not production-compliant. B07 remains blocked pending a compliant regeneration and GitHub persistence."
+}
