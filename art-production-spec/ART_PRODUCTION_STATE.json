@@ -10,8 +10,8 @@
   "style_anchor": "B01",
   "current_asset": "B07",
   "current_key": "pelican_drinking_coffee",
-  "current_status": "READY",
-  "next_action": "GENERATE",
+  "current_status": "GENERATED",
+  "next_action": "REGENERATE",
   "production_sequence": [
     "B01",
     "B02",
@@ -99,17 +99,17 @@
     "checked_on": "2026-09-25",
     "source_main_commit": "125ee5fdf70890b753b562bf186f88e528538a4c",
     "handoff_check": "PASS",
-    "generation_attempted": false,
-    "candidate_created": false,
-    "blocker": null,
-    "next_action_detail": "Generate exactly one B07 candidate using B01 as the style/identity reference, persist technical/visual QA and HUMAN REVIEW REQUIRED, then wait for explicit human approval before advancing.",
+    "generation_attempted": true,
+    "candidate_created": true,
+    "blocker": "B07_v01 generated but rejected: rendered text/asset-sheet layout and 3D/CGI drift violate the production brief; GitHub binary persistence is also unavailable through the current connector.",
+    "next_action_detail": "Regenerate exactly one compliant B07 candidate: original polished 2D/2.5D editorial illustration, no text, no character sheet/contact sheet, coherent coffee-cup interaction, B01 identity lock; then persist the binary candidate to GitHub, run QA, and request human review.",
     "reference_note": "B01 remains the sole style anchor. Approved B02-B04 human review records are persisted in GitHub.",
     "spec_notes": [
       "Manifest statuses remain PLANNED while STATE records production progress; STATE is the canonical progress source.",
       "B07 canonical key is pelican_drinking_coffee; follow the documented reference hierarchy and do not rename or reorder assets."
     ],
     "cli_fallback_authorized": true,
-    "generation_record": null
+    "generation_record": "art-assets/B07/qa/B07_generation_20260926_01.json"
   },
-  "last_updated": "2026-09-25"
+  "last_updated": "2026-09-26"
 }
