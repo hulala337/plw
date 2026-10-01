@@ -8,10 +8,10 @@
   "canonical_state": "art-production-spec/ART_PRODUCTION_STATE.json",
   "manifest": "art-production-spec/ART_ASSET_MANIFEST.json",
   "style_anchor": "B01",
-  "current_asset": "B07",
-  "current_key": "pelican_drinking_coffee",
-  "current_status": "APPROVED",
-  "next_action": "PERSIST_TO_GITHUB",
+  "current_asset": "F08",
+  "current_key": "timeline_focus_marker",
+  "current_status": "GENERATED / BINARY PERSISTENCE PENDING",
+  "next_action": "PERSIST_GENERATED_ASSETS",
   "production_sequence": [
     "B01",
     "B02",
@@ -21,7 +21,18 @@
     "C01",
     "C02",
     "C03",
-    "E01"
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E05",
+    "E06",
+    "F01",
+    "F02",
+    "F03",
+    "F06",
+    "F07",
+    "F08"
   ],
   "assets": {
     "B01": {
@@ -47,30 +58,85 @@
     },
     "B07": {
       "key": "pelican_drinking_coffee",
-      "status": "APPROVED",
+      "status": "SKIPPED BY USER",
       "review_required": true,
       "selected_candidate": "B07_v02.jpg",
       "human_approval": true,
-      "persistence_status": "PENDING"
+      "persistence_status": "NOT REQUIRED"
     },
     "C01": {
       "key": "office_master",
-      "status": "PLANNED",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
       "review_required": true
     },
     "C02": {
       "key": "office_day",
-      "status": "PLANNED",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
       "review_required": true
     },
     "C03": {
       "key": "office_night",
-      "status": "PLANNED",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
       "review_required": true
     },
     "E01": {
       "key": "dashboard_hero",
-      "status": "PLANNED",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "E02": {
+      "key": "dashboard_score_mascot",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "E03": {
+      "key": "dashboard_focus_mascot",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "E04": {
+      "key": "dashboard_todo_mascot",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "E05": {
+      "key": "dashboard_encouragement",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "E06": {
+      "key": "dashboard_empty",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F01": {
+      "key": "timeline_document",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F02": {
+      "key": "timeline_web",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F03": {
+      "key": "timeline_excel",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F06": {
+      "key": "timeline_other",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F07": {
+      "key": "timeline_idle",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
+      "review_required": true
+    },
+    "F08": {
+      "key": "timeline_focus_marker",
+      "status": "GENERATED / BINARY PERSISTENCE PENDING",
       "review_required": true
     }
   },
@@ -98,21 +164,15 @@
     "github_is_cross_environment_sync_source": true
   },
   "execution_handoff": {
-    "asset_id": "B07",
-    "checked_on": "2026-09-26",
-    "source_main_commit": "b966ef74a3a5856d10a11bd3bd7a6e45c0aee10f",
-    "handoff_check": "PASS",
+    "asset_id": "F08",
+    "checked_on": "2026-10-01",
+    "handoff_check": "STATE RESYNCED",
     "generation_attempted": true,
     "candidate_created": true,
-    "blocker": "Human-approved B07_v02; binary persistence to GitHub remains pending because the current GitHub connector does not accept local/generated image file references for binary blob creation.",
-    "next_action_detail": "Persist the approved B07_v02 binary as art-assets/B07/candidates/B07_v02.jpg and art-assets/B07/approved/B07_v02.jpg, then commit/push to main. Do not advance to C01 before binary persistence is confirmed.",
-    "reference_note": "B01 remains the sole style anchor. Approved B02-B04 human review records are persisted in GitHub.",
-    "spec_notes": [
-      "Manifest statuses remain PLANNED while STATE records production progress; STATE is the canonical progress source.",
-      "B07 canonical key is pelican_drinking_coffee; follow the documented reference hierarchy and do not rename or reorder assets."
-    ],
-    "cli_fallback_authorized": true,
-    "generation_record": "art-assets/B07/qa/B07_generation_20260926_02.json"
+    "blocker": "The generated image binaries from the recent ChatGPT image-generation turns are not exposed to the GitHub connector as binary file references, so this sync updates repository state/registers but does not fabricate binary uploads.",
+    "next_action_detail": "Persist the actual generated PNG/JPG binaries into their canonical art-assets/<ID>/candidates/ paths when the files are available locally or through a binary-capable GitHub upload route. Do not mark these assets APPROVED until human review and binary persistence are confirmed.",
+    "reference_note": "B01 remains the sole style anchor. B07 remains skipped by user instruction.",
+    "cli_fallback_authorized": true
   },
-  "last_updated": "2026-09-26"
+  "last_updated": "2026-10-01"
 }
