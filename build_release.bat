@@ -1,4 +1,6 @@
 @echo off
+chcp 65001 >nul
+set "PYTHONUTF8=1"
 setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
 set "ROOT=%CD%"
@@ -30,19 +32,16 @@ echo  PELICAN WORKBENCH V%VERSION% - RELIABLE WINDOWS RELEASE
 echo ============================================================
 echo [INFO] Version: %VERSION%
 echo [INFO] Build engine: PyInstaller one-file
-where py >nul 2>&1 || (echo [ERROR] Python Launcher ^(py.exe^) not found. Install Python 3.11/3.12 x64.& goto :fail)
+where py >nul 2>&1 || (echo [ERROR] Python Launcher ^(py.exe^) not found. Install Python 3.11 x64.& goto :fail)
 
 if not exist "%PY%" (
   echo [1/9] Creating isolated virtual environment...
-  py -3 -m venv "%VENV%" || goto :fail
+  py -3.11 -m venv "%VENV%" || goto :fail
 )
-call "%PY%" -m pip install --upgrade pip setuptools wheel || goto :fail
-call "%PIP%" install -r "%ROOT%\requirements.txt" || goto :fail
-call "%PIP%" install --upgrade "pyinstaller>=6.16,<7" || goto :fail
+call "%PIP%" install -r "%ROOT%\requirements-build-lock-windows.txt" || goto :fail
 
-echo [2/9] Applying verified source repairs and visual polish...
-call "%PY%" "%ROOT%\tools\repair_app.py" || goto :fail
-call "%PY%" "%ROOT%\tools\visual_polish.py" || goto :fail
+echo [2/9] Checking source without modifying it...
+call "%PY%" "%ROOT%\tools\check_project.py" --require-node || goto :fail
 
 if not exist "%SIGN_DIR%" mkdir "%SIGN_DIR%"
 if not exist "%PRIVATE_KEY%" (

@@ -1,0 +1,15 @@
+.venv*/
+__pycache__/
+*.py[cod]
+.vscode/
+.vsocde/
+build/
+dist/
+release/
+.env
+*.log
+
+.tools/
+security/public_key.py
+security/release_manifest.json
+security/release_manifest.sig
