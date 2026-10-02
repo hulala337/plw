@@ -17,3 +17,15 @@ all JS syntax checks, isolated runtime self-test and actual Edge desktop/mobile
 interaction (todo CRUD, date/range controls, replay, no mobile overflow).
 
 Launch: `.venv/Scripts/python.exe app.py`.
+
+## Journal experience
+
+The lightweight journal now includes a category-based daily portrait (excluding
+idle time), CSS-only book/path/record artwork, 24 hourly activity bars for the
+replay date, and a downloadable local PNG journal card. Card exports include
+conversion rules and never contain task titles or recorded text. Empty days
+remain empty, with no fabricated progress or productivity ranking.
+HTTP calls time out after eight seconds and show recoverable errors. Replay
+starts at the first recorded slice and stops at the last. Hidden tabs stop
+replay and skip periodic polling. Browser verification covered populated data,
+PNG download, mobile overflow and an API failure state in an isolated database.
