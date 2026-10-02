@@ -29,3 +29,16 @@ HTTP calls time out after eight seconds and show recoverable errors. Replay
 starts at the first recorded slice and stops at the last. Hidden tabs stop
 replay and skip periodic polling. Browser verification covered populated data,
 PNG download, mobile overflow and an API failure state in an isolated database.
+
+## Everyday reliability
+
+The date rolls over while the journal remains open; an explicitly selected
+historical replay date is preserved. Polling pauses while editing tasks or
+mutating data and never interrupts playback. Changing summary ranges disables
+card export until matching data arrives, preventing mislabeled exports.
+
+Repeat browser acceptance with `python tools/lite_browser_smoke.py` after
+installing Playwright in the QA environment. It uses installed Edge, isolated
+SQLite data, no input hooks, and tests literal task text, task completion and
+delete, story conversion, PNG download, mobile layout and failed-range export
+protection. No browser test data enters the user's actual database.
