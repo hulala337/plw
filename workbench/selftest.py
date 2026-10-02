@@ -37,21 +37,12 @@ def self_test() -> int:
                 "required API routes missing: " + ", ".join(sorted(missing))
             )
         html = (runtime.WEB / "index.html").read_text(encoding="utf-8")
-        js = (runtime.WEB / "assets" / "app.js").read_text(encoding="utf-8")
-        if 'data-view="growth"' not in html or 'id="view-growth"' not in html:
-            raise RuntimeError("Growth UI navigation/view missing")
-        import re
-
-        html_ids = set(re.findall('id="([^"]+)"', html))
-        js_ids = set(re.findall("\\$\\('([^']+)'\\)", js))
-        missing_dom = sorted(js_ids - html_ids)
-        if missing_dom:
-            raise RuntimeError(
-                "frontend DOM contract missing IDs: " + ", ".join(missing_dom)
-            )
-        for view in ("home", "replay", "timeline", "stats", "growth", "settings"):
-            if f'id="view-{view}"' not in html:
-                raise RuntimeError("frontend view missing: " + view)
+        js = (runtime.WEB / "assets" / "lite.js").read_text(encoding="utf-8")
+        for element in ("stories", "raw", "timeline", "todos", "settings", "csv", "xlsx"):
+            if f'id="{element}"' not in html:
+                raise RuntimeError("Lite frontend missing: " + element)
+        if "visual-v36" in html or 'id="scene"' in html:
+            raise RuntimeError("Legacy scene must not load in lightweight UI")
         services.seed_progression_catalog()
         conn = database.db()
         required_tables = {

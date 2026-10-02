@@ -1,0 +1,19 @@
+# Daily office lightweight branch
+
+- Original main remains unchanged.
+- backup/main-working-state-20261003 preserves all pre-existing uncommitted code and artwork.
+- feature/daily-office-lite contains the lightweight UI.
+
+The same local database, counters, input listeners, history, tasks and CSV/XLSX exports remain compatible. Do not run both variants simultaneously against the same database.
+The UI loads only lite.css, lite-math.js and lite.js. No scene, pet, weather request, equipment or unlock UI is loaded. Legacy compatibility APIs and stored progression records remain available; dashboard polling no longer computes the scene or unlock payload.
+
+Stories use transparent fictional equivalents, never invented actual achievements:
+500 estimated input characters/page; 100,000 characters/fictional manuscript;
+96 screen pixels/inch for a virtual cursor route; 25 active minutes/record side.
+All 16 original summary metrics remain visible in the raw-statistics panel. Range filters affect summaries and export, while replay has an independent date picker.
+
+Validation: Python regression tests, lite DOM/API contract, Node conversion tests,
+all JS syntax checks, isolated runtime self-test and actual Edge desktop/mobile
+interaction (todo CRUD, date/range controls, replay, no mobile overflow).
+
+Launch: `.venv/Scripts/python.exe app.py`.

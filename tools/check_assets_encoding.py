@@ -29,7 +29,7 @@ def main():
         refs += re.findall(r'url\(["\']?([^"\')]+)', text)
         for ref in refs:
             url = urlsplit(ref)
-            if url.scheme or url.netloc or not url.path or "${" in ref:
+            if url.scheme or url.netloc or not url.path or url.path.startswith("/api/") or "${" in ref:
                 continue
             path = unquote(url.path)
             target = ROOT / "web" / path.lstrip("/") if path.startswith("/") else p.parent / path

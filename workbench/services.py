@@ -477,7 +477,6 @@ def api_payload(kind="today") -> dict:
         "SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC"
     ).fetchall()
     conn.close()
-    world = services.world_payload()
     return {
         "version": runtime.VERSION,
         "range": kind,
@@ -491,9 +490,7 @@ def api_payload(kind="today") -> dict:
         "sessions": [dict(x) for x in sessions],
         "active_session": services.active_session(),
         "todos": [dict(x) for x in todos],
-        "lifetime": services.lifetime_stats(),
         "streak": services.streak_days(),
-        "world": world,
         "privacy": {
             "stores_actual_input": False,
             "stores_window_titles": False,

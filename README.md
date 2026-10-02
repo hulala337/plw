@@ -1,3 +1,7 @@
+# Daily Office Lite
+
+Lightweight daily work visualization. See [branch details](docs/LITE_BRANCH.md).
+
 # Pelican Workbench V3.6.0
 
 **鹈鹕工作台 · TF7Z-XY**

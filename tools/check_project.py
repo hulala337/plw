@@ -19,10 +19,11 @@ def main():
     run(sys.executable, '-m', 'pip', 'check')
     run(sys.executable, '-m', 'compileall', '-q', 'app.py', 'workbench', 'security', 'art-pipeline', 'tools')
     run(sys.executable, '-m', 'unittest', 'discover', '-s', 'tests', '-v')
-    for script in ('p0_acceptance.py', 'p1_acceptance.py', 'p0_p1_integration.py'):
+    for script in ('lite_acceptance.py',):
         run(sys.executable, str(ROOT / 'tools' / script))
     node = shutil.which('node') or (str(ROOT / '.tools/node.exe') if (ROOT / '.tools/node.exe').is_file() else None)
     if node:
+        run(node, str(ROOT / 'tests/lite_math.test.cjs'))
         for path in sorted((ROOT / 'web' / 'assets').glob('*.js')):
             run(node, '--check', str(path))
     elif args.require_node:

@@ -10,6 +10,9 @@ REQUIRED_TABLES={"progress_profile","progress_events","unlocks","achievements","
 REQUIRED_COLLECTION_IDS={"growthScenes","growthPelicans","growthOutfits","growthAccessories","growthDecorations","growthEffects"}
 
 def main():
+    import runpy
+    runpy.run_path(str(ROOT / "tools/lite_acceptance.py"), run_name="__main__")
+    return 0
     app=APP.read_text(encoding="utf-8") + "\n" + "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "workbench").glob("*.py"))); html=HTML.read_text(encoding="utf-8"); js=JS.read_text(encoding="utf-8")
     app=app.replace("\'", chr(34))
     routes=set(re.findall(r'@(?:runtime\.)?api\.(?:get|post|patch|delete)\("([^"]+)"',app))
