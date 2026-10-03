@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "path": "VERSION.txt",
+      "sha256": "0440f5eb5f159ba0883d6b6aac944acfff13ea518badc27f79830cc8ef31cb05"
+    },
+    {
+      "path": "web/index.html",
+      "sha256": "a43bd1bfbf32431fde8330d6a7e8718e876de291c5c2c410ad0205ee345af392"
+    },
+    {
+      "path": "web/assets/app.js",
+      "sha256": "88d4fee2e90bf1e33fce8dbb8885ce9a1a6bdc05752b9395f78caf17fe589a9d"
+    },
+    {
+      "path": "web/assets/style.css",
+      "sha256": "79ee7497300010e21e50d688c4d3ce35d46aa3b8bdea7362dc366ffd1405f934"
+    },
+    {
+      "path": "web/assets/wechat_qr.png",
+      "sha256": "129c1552b926f027913b89fbda23ee2ada676761492985be4eca887a1043a215"
+    }
+  ],
+  "format": 1,
+  "product": "Pelican Workbench",
+  "publisher": "TF7Z-XY",
+  "version": "3.6.0"
+}

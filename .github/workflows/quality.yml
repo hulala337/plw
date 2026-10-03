@@ -1,0 +1,16 @@
+name: Quality gates
+on: [push, pull_request]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.lock
+      - run: python -m py_compile app.py tools/*.py workbench/*.py
+      - run: python tools/preflight.py
+      - run: python -m pytest -q tests
+      - run: node --check web/assets/app.js
+      - run: python tools/p0_acceptance.py
+      - run: python tools/p1_acceptance.py
