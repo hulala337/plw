@@ -2,7 +2,8 @@
 
 Runtime implementation lives in workbench.application.
 """
-from workbench.application import *
+from workbench.application import api as app
 
 if __name__ == "__main__":
+    from workbench.application import main
     main()
