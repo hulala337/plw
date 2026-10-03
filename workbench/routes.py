@@ -293,6 +293,12 @@ def forget_today():
     runtime.last_monitor_index = None
     runtime.tracker_reset_seq += 1
     conn = database.db()
+    from . import key_counts
+    with key_counts.lock:
+        for entry in list(key_counts.pending):
+            if entry[0] == target:
+                del key_counts.pending[entry]
+        conn.execute("DELETE FROM daily_key_counts WHERE day=?", (target,))
     conn.execute("DELETE FROM daily WHERE day=?", (target,))
     conn.execute("DELETE FROM activity_slices WHERE date(slice_start)=?", (target,))
     conn.execute("DELETE FROM app_usage WHERE day=?", (target,))

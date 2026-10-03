@@ -98,6 +98,9 @@ def persist_tracker_tick(
             for key, value in batch.items():
                 runtime.pending[key] = max(0, runtime.pending[key] - value)
 
+    from . import key_counts
+    key_counts.flush(database.db)
+
 
 def incr(**kwargs) -> None:
     from . import database, services
@@ -140,6 +143,8 @@ def on_press(key) -> None:
         elif tracking.key_is_text(key):
             payload["text_chars"] = 1
         tracking.queue_input(**payload)
+        from . import key_counts
+        key_counts.record(key)
     except Exception:
         return
 

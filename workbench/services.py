@@ -477,7 +477,10 @@ def api_payload(kind="today") -> dict:
         "SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC"
     ).fetchall()
     conn.close()
+    from . import key_counts
+    keys_today = key_counts.top(database.db, services.today_key())
     return {
+        "key_top_today": keys_today,
         "version": runtime.VERSION,
         "range": kind,
         "summary": total,

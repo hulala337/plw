@@ -16,7 +16,7 @@ class InfrastructureTests(unittest.TestCase):
             """)
             migrate(conn)
             migrate(conn)
-            self.assertEqual(conn.execute("PRAGMA user_version").fetchone()[0], 1)
+            self.assertEqual(conn.execute("PRAGMA user_version").fetchone()[0], 2)
             self.assertEqual(
                 conn.execute("SELECT seconds FROM activity_slices").fetchone()[0], 30
             )
@@ -40,7 +40,7 @@ class InfrastructureTests(unittest.TestCase):
 
     def test_future_database_rejected(self):
         with sqlite3.connect(":memory:") as conn:
-            conn.execute("PRAGMA user_version=2")
+            conn.execute("PRAGMA user_version=3")
             with self.assertRaises(RuntimeError):
                 migrate(conn)
 
