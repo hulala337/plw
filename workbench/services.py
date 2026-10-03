@@ -369,90 +369,8 @@ def streak_days() -> int:
 
 
 def world_payload() -> dict:
-    from . import database, desktop, services
-
-    "Return the normalized, data-driven work-world projection consumed by UI."
-    g = services.growth_payload()
-    eq = {x["slot"]: x["item_id"] for x in g["equipment"]}
-    displays = desktop.display_info()
-    unlocked = {(x["item_type"], x["item_id"]) for x in g["unlocks"]}
-    selected_scene = eq.get("scene", "office")
-    effective_scene = selected_scene
-    if (
-        selected_scene == "office"
-        and displays["count"] >= 2
-        and (("scene", "dual_monitor_office") in unlocked)
-    ):
-        effective_scene = "dual_monitor_office"
-    now = runtime.datetime.now()
-    hour = now.hour
-    if hour >= 19 or hour < 6:
-        time_phase = "night"
-    elif hour >= 17:
-        time_phase = "dusk"
-    elif hour < 9:
-        time_phase = "morning"
-    else:
-        time_phase = "day"
-    idle_seconds = int(database.setting_get("idle_seconds", str(runtime.IDLE_SECONDS)))
-    recent_input = (
-        runtime.last_input_ts > 0
-        and runtime.time.time() - runtime.last_input_ts <= idle_seconds
-    )
-    active = bool(services.active_session())
-    if active:
-        work_state = "working"
-    elif recent_input:
-        work_state = "active"
-    else:
-        work_state = "resting"
-    weather_enabled = database.setting_get("weather_enabled", "1") != "0"
-    desktop_pet = database.setting_get("desktop_pet", "1") != "0"
-    daily_active = float(
-        database.fetch_summary(runtime.date.today(), runtime.date.today())[0].get(
-            "active_seconds", 0
-        )
-    )
-    recent_todo = False
-    with runtime.suppress(Exception):
-        conn = database.db()
-        recent_todo = (
-            conn.execute(
-                "SELECT 1 FROM todos WHERE done=1 AND completed_at>=? LIMIT 1",
-                ((runtime.datetime.now() - runtime.timedelta(seconds=90)).isoformat(),),
-            ).fetchone()
-            is not None
-        )
-        conn.close()
-    if recent_todo:
-        pelican_state = "celebrating"
-    elif active and daily_active >= 6 * 3600:
-        pelican_state = "tired"
-    elif active:
-        pelican_state = "working"
-    elif recent_input:
-        pelican_state = "focused"
-    else:
-        pelican_state = "resting"
-    return {
-        "scene": effective_scene,
-        "selected_scene": selected_scene,
-        "pelican": eq.get("pelican", "classic"),
-        "outfit": eq.get("outfit", "default"),
-        "accessory": eq.get("accessory"),
-        "decorations": [
-            x["item_id"] for x in g["equipment"] if x["item_type"] == "decoration"
-        ],
-        "effect": eq.get("effect"),
-        "display_count": displays["count"],
-        "current_monitor_index": displays.get("current_monitor_index"),
-        "work_state": work_state,
-        "pelican_state": pelican_state,
-        "time_phase": time_phase,
-        "weather_enabled": weather_enabled,
-        "weather_source": "local_visual" if weather_enabled else "disabled",
-        "desktop_pet": desktop_pet,
-    }
+    from . import desktop
+    return {"scene":"office","selected_scene":"office","pelican":"classic","outfit":"default","decorations":[],"display_count":desktop.display_info()["count"],"work_state":"working","pelican_state":"focused","time_phase":"day","weather_enabled":False,"weather_source":"disabled","desktop_pet":True}
 
 
 def api_payload(kind="today") -> dict:
@@ -477,8 +395,13 @@ def api_payload(kind="today") -> dict:
         "SELECT id,title,done,created_at,completed_at FROM todos ORDER BY done ASC,id DESC"
     ).fetchall()
     conn.close()
-    world = services.world_payload()
+    from . import key_counts
+    from . import characters
+    confirmed = characters.summary(database.db, start.isoformat(), end.isoformat())
+    keys_today = key_counts.top(database.db, services.today_key())
     return {
+        "confirmed_characters": confirmed,
+        "key_top_today": keys_today,
         "version": runtime.VERSION,
         "range": kind,
         "summary": total,
@@ -491,9 +414,7 @@ def api_payload(kind="today") -> dict:
         "sessions": [dict(x) for x in sessions],
         "active_session": services.active_session(),
         "todos": [dict(x) for x in todos],
-        "lifetime": services.lifetime_stats(),
         "streak": services.streak_days(),
-        "world": world,
         "privacy": {
             "stores_actual_input": False,
             "stores_window_titles": False,

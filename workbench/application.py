@@ -38,6 +38,8 @@ def shutdown_runtime() -> None:
     for thread in runtime.threading.enumerate():
         if thread.name == "tracker":
             thread.join(timeout=10)
+    from . import key_counts, database
+    key_counts.flush(database.db)
     if hasattr(runtime, "http_server"):
         runtime.http_server.should_exit = True
         runtime.http_thread.join(timeout=10)

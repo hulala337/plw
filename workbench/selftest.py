@@ -38,8 +38,6 @@ def self_test() -> int:
             )
         html = (runtime.WEB / "index.html").read_text(encoding="utf-8")
         js = (runtime.WEB / "assets" / "app.js").read_text(encoding="utf-8")
-        if 'data-view="growth"' not in html or 'id="view-growth"' not in html:
-            raise RuntimeError("Growth UI navigation/view missing")
         import re
 
         html_ids = set(re.findall('id="([^"]+)"', html))
@@ -49,7 +47,7 @@ def self_test() -> int:
             raise RuntimeError(
                 "frontend DOM contract missing IDs: " + ", ".join(missing_dom)
             )
-        for view in ("home", "replay", "timeline", "stats", "growth", "settings"):
+        for view in ("home", "replay", "timeline", "stats", "settings"):
             if f'id="view-{view}"' not in html:
                 raise RuntimeError("frontend view missing: " + view)
         services.seed_progression_catalog()

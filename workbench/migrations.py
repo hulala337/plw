@@ -1,6 +1,6 @@
 """Transactional upgrades for existing SQLite databases (schema version 1)."""
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 4
 
 
 def migrate(conn):
@@ -45,4 +45,10 @@ def migrate(conn):
                 "INSERT OR IGNORE INTO activity_slices SELECT slice_start,category,seconds,events FROM activity_slices_mvp"
             )
             conn.execute("DROP TABLE activity_slices_mvp")
-        conn.execute("PRAGMA user_version=1")
+        conn.execute("CREATE TABLE IF NOT EXISTS daily_key_counts(day TEXT NOT NULL,key_name TEXT NOT NULL,count INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(day,key_name))")
+        conn.execute("CREATE TABLE IF NOT EXISTS character_receipts(receipt_id TEXT PRIMARY KEY,day TEXT NOT NULL,source TEXT NOT NULL,count INTEGER NOT NULL)")
+        columns = {r[1] for r in conn.execute("PRAGMA table_info(character_receipts)")}
+        for column in ("chinese", "english", "other"):
+            if column not in columns:
+                conn.execute(f"ALTER TABLE character_receipts ADD COLUMN {column} INTEGER NOT NULL DEFAULT 0")
+        conn.execute("PRAGMA user_version=4")
