@@ -70,3 +70,17 @@ before navigation; it is not crash-durable. Old-day receipts are rejected.
 Browser tests cover direct typing, synthetic composition commits and paste
 exclusion. Real IME compatibility across input methods is not certified.
 Global keyboard totals and daily key TOP5 remain separate and unchanged.
+
+## Character categories and pastel stationery theme
+
+Schema v4 preserves receipt totals and adds Chinese (Han script), English
+(A-Z letters, including combining marks), and other visible grapheme counts.
+This classifies characters, not the language of a sentence; English is not a
+word count. Numbers, punctuation, spaces, emoji and other scripts are Other.
+Pre-upgrade records remain explicitly unclassified, never guessed. Requests
+must have category counts summing to the total; retries remain idempotent.
+Coverage remains the opt-in journal textarea only, with paste excluded.
+
+The UI uses cream, peach, mint and lavender stationery colors, flower accents,
+rounded cards and keyboard-key badges with readable dark text and responsive
+layouts. Decoration is CSS-only and does not add image downloads or animations.

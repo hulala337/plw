@@ -7,7 +7,7 @@
  const day=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
  opt.onchange=()=>{pad.disabled=!opt.checked;if(!opt.checked){pad.value='';composing=false;}status.textContent=opt.checked?'只统计本输入区；文本不上传、不保存。':'已关闭，输入区内容已清空。';};
  async function send(){if(sending||!queue.length)return;sending=true;const item=queue[0];try{const r=await fetch('/api/characters',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(item),signal:AbortSignal.timeout(8000)});if(!r.ok)throw Error();queue.shift();status.textContent='字符数量已保存；文本未上传。';if(typeof refresh==='function')refresh();}catch{status.textContent='数量尚未保存，请保持页面打开，稍后自动重试。';}finally{sending=false;}}
- function count(text){if(!opt.checked||!text)return;const count=Array.from(segmenter.segment(text)).length;if(count>10000){status.textContent='单次输入超出计数范围，未计入。';return;}queue.push({receipt_id:crypto.randomUUID(),source:'journal_typing_area',day:day(),count});send();}
+ function count(text){if(!opt.checked||!text)return;const counts=LiteMath.characters(text);if(counts.count>10000){status.textContent='单次输入超出计数范围，未计入。';return;}queue.push({receipt_id:crypto.randomUUID(),source:'journal_typing_area',day:day(),...counts});send();}
  pad.addEventListener('compositionstart',()=>{composing=true;submittedComposition=false;});
  pad.addEventListener('compositionend',e=>{composing=false;if(!submittedComposition)count(e.data);submittedComposition=false;});
  pad.addEventListener('beforeinput',e=>{ignored=!['insertText','insertCompositionText','insertFromComposition','insertLineBreak'].includes(e.inputType);});

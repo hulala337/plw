@@ -44,7 +44,7 @@ def main():
                 assert page.locator(".pulse-column").count() == 24
                 page.check("#characterOptIn")
                 page.locator("#characterPad").press_sequentially("abc")
-                page.wait_for_function("document.getElementById('characterCount').textContent.includes('3 ')")
+                page.wait_for_function("document.querySelector('.character-tile.total strong').textContent==='3'")
                 page.evaluate("""() => {
                     const p=document.getElementById('characterPad');
                     p.dispatchEvent(new CompositionEvent('compositionstart'));
@@ -52,7 +52,7 @@ def main():
                     p.dispatchEvent(new InputEvent('input',{inputType:'insertCompositionText',data:'\u4f60\u597d',isComposing:true}));
                     p.dispatchEvent(new CompositionEvent('compositionend',{data:'\u4f60\u597d'}));
                 }""")
-                page.wait_for_function("document.getElementById('characterCount').textContent.includes('5 ')")
+                page.wait_for_function("document.querySelector('.character-tile.total strong').textContent==='5'")
                 page.evaluate("""() => {
                     const p=document.getElementById('characterPad');
                     p.dispatchEvent(new InputEvent('beforeinput',{inputType:'insertFromPaste',data:'ignored'}));
@@ -60,7 +60,9 @@ def main():
                     p.dispatchEvent(new InputEvent('input',{inputType:'insertFromPaste',data:'ignored'}));
                 }""")
                 page.wait_for_timeout(200)
-                assert '5 ' in page.locator('#characterCount').inner_text()
+                assert page.locator('.character-tile.total strong').inner_text() == '5'
+                assert page.locator('.character-tile.chinese strong').inner_text() == '2'
+                assert page.locator('.character-tile.english strong').inner_text() == '3'
                 page.fill("#todoTitle", "<b>literal task</b>")
                 page.click("#todoForm button")
                 page.wait_for_selector(".todo")
