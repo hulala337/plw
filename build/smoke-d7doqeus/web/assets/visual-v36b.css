@@ -1,0 +1,43 @@
+/* V3.6-A art asset pass: state variants + physical desk prop refinement. */
+.desk-props-v36{position:absolute;inset:0;z-index:8;pointer-events:none;overflow:hidden;filter:drop-shadow(0 4px 6px rgba(45,55,54,.07))}
+.desk-prop{position:absolute;display:block;user-select:none;pointer-events:none;object-fit:contain;opacity:.96;transform-origin:50% 90%;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .45s ease,filter .45s ease}
+.desk-notebook-v36{left:21%;bottom:5.8%;width:14.5%;height:23%}
+.desk-keyboard-v36{left:43%;bottom:3.6%;width:27.5%;height:21%}
+.desk-mouse-v36{left:68.7%;bottom:4.8%;width:7%;height:18%}
+.desk-coffee-v36{left:77.2%;bottom:7.8%;width:8.2%;height:23%}
+.office-scene.working .desk-keyboard-v36{transform:translateY(-1px) scale(1.01)}
+.office-scene.high-intensity .desk-keyboard-v36{animation:v36-key-tap .85s ease-in-out infinite}
+.office-scene.focus-mode .desk-keyboard-v36{transform:translateY(-1px) scale(1.015);filter:brightness(1.03)}
+.office-scene.is-idle .desk-prop{opacity:.76;filter:saturate(.82)}
+.office-scene.behavior-type .desk-notebook-v36{transform:translateY(-3px) rotate(-.6deg)}
+.office-scene.behavior-rest .desk-coffee-v36{transform:translateY(-3px) rotate(1deg) scale(1.02)}
+.office-scene.behavior-complete .desk-notebook-v36{transform:translateY(-4px) rotate(1deg)}
+@keyframes v36-key-tap{0%,100%{transform:translateY(0)}45%{transform:translateY(-2px)}55%{transform:translateY(0)}}
+
+/* True blink layer: two independent transparent eyelid assets cover the existing eye artwork. */
+.pelican-eyelid-v36{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:4;pointer-events:none;opacity:0;transform-origin:50% 25%;}
+.office-scene.working .pelican-eyelid-v36{animation:v36-blink-mask 7.2s ease-in-out infinite}
+.office-scene.focus-mode .pelican-eyelid-v36{animation-duration:9.1s}
+.office-scene.high-intensity .pelican-eyelid-v36{animation-duration:5.4s}
+.office-scene.tired .pelican-eyelid-v36,.office-scene.resting .pelican-eyelid-v36{animation-duration:3.9s;opacity:.82}
+.pelican-eyelid-right-v36{transform:translateX(0)}
+.pelican-eyelid-left-v36{transform:translateX(0)}
+@keyframes v36-blink-mask{0%,43%,48%,100%{opacity:0}45%,46.5%{opacity:.98}}
+
+/* The richer state assets carry their own pose; CSS only controls presentation. */
+.office-scene.tired .pelican{transform:translateY(13px) rotate(2deg) scale(.98)}
+.office-scene.resting .pelican{transform:translateY(18px) rotate(4deg) scale(.97)}
+.office-scene.behavior-think .pelican{transform:translateY(-1px) rotate(-.35deg)}
+.office-scene.behavior-rest .pelican{transform:translateY(2px) rotate(.4deg)}
+
+@media(max-width:900px){.desk-notebook-v36{left:18%;width:18%}.desk-keyboard-v36{left:41%;width:32%}.desk-mouse-v36{left:68%;width:8.5%}.desk-coffee-v36{left:77%;width:10%}}
+@media(prefers-reduced-motion:reduce){.desk-prop,.pelican-eyelid-v36{animation:none!important;transition:none!important}.pelican-eyelid-v36{opacity:0}}
+
+/* New behavioral poses: the director only changes a presentation class. */
+.office-scene.behavior-think .pelican-working,.office-scene.behavior-coffee .pelican-working{opacity:0}
+.office-scene.behavior-think .pelican-thinking-v36,.office-scene.behavior-coffee .pelican-coffee-v36{opacity:1}
+.office-scene.behavior-think .pelican{animation:v36-think-breathe 3.8s ease-in-out infinite}
+.office-scene.behavior-coffee .pelican{animation:v36-coffee-breathe 4.8s ease-in-out infinite}
+@keyframes v36-think-breathe{0%,100%{transform:translateY(0) rotate(-.15deg)}50%{transform:translateY(-2px) rotate(.25deg)}}
+@keyframes v36-coffee-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px) rotate(.18deg)}}
+@media(prefers-reduced-motion:reduce){.office-scene.behavior-think .pelican,.office-scene.behavior-coffee .pelican{animation:none!important}}

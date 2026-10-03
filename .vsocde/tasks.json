@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "auto-pull-on-open",
+      "type": "shell",
+      "command": "git",
+      "args": ["pull"],
+      "runOn": "folderOpen",
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

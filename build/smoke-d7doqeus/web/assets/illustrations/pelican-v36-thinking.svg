@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-label="正在思考的鹈鹕">
+<defs>
+<linearGradient id="f" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".55" stop-color="#eef5f7"/><stop offset="1" stop-color="#b7ccd6"/></linearGradient>
+<linearGradient id="w" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#aac2ce"/><stop offset="1" stop-color="#587b91"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd18a"/><stop offset=".58" stop-color="#efa35e"/><stop offset="1" stop-color="#ce704e"/></linearGradient>
+<linearGradient id="h" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#476b7d"/><stop offset="1" stop-color="#294b5d"/></linearGradient>
+<filter id="s"><feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="10"/><feComponentTransfer><feFuncA type="linear" slope=".2"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<ellipse cx="267" cy="487" rx="158" ry="18" fill="#203d4b" opacity=".16"/>
+<path d="M125 420c-8-83 7-139 60-169 54-30 154-27 202 14 39 34 48 88 35 155l-22 42H143z" fill="url(#h)"/>
+<path d="M178 404c12-48 37-77 74-91 38 8 70 31 87 78l-2 31H174z" fill="#f5f1e6"/>
+<path d="M150 373c-20-68-9-139 37-174 52-39 139-20 169 42 27 56 8 120-43 145-48 24-128 20-163-13z" fill="url(#f)" filter="url(#s)"/>
+<path d="M176 210c-31-12-54-39-54-73 0-39 30-70 70-74 44-4 81 24 89 61 7 34-11 65-43 80-20 9-42 11-62 6z" fill="#fbfdfe"/>
+<path d="M139 183c-49-6-90-27-106-57-11-20 0-37 24-35 42 4 89 28 119 59-7 17-18 27-37 33z" fill="url(#b)"/>
+<path d="M58 103c-16 11-18 26-7 42 20 28 64 49 100 39" fill="none" stroke="#f5bd77" stroke-width="7" stroke-linecap="round"/>
+<path d="M49 138c27 11 54 16 84 15" fill="none" stroke="#c96e4e" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+<circle cx="218" cy="119" r="31" fill="rgba(255,255,255,.15)" stroke="#345468" stroke-width="6"/><circle cx="280" cy="119" r="31" fill="rgba(255,255,255,.15)" stroke="#345468" stroke-width="6"/>
+<path d="M249 118h-1M311 119q20 3 25 17" fill="none" stroke="#345468" stroke-width="6" stroke-linecap="round"/>
+<ellipse cx="216" cy="122" rx="8" ry="11" fill="#213b48"/><circle cx="219" cy="118" r="3.2" fill="#fff"/>
+<ellipse cx="276" cy="123" rx="8" ry="11" fill="#213b48"/><circle cx="279" cy="119" r="3.2" fill="#fff"/>
+<path d="M207 112q10-8 20-1M267 114q10-8 20-1" fill="none" stroke="#2d4e61" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+<path d="M177 85c9-57 98-73 137-12" fill="none" stroke="#263f50" stroke-width="17" stroke-linecap="round"/>
+<rect x="158" y="80" width="34" height="59" rx="14" fill="#2d4e61"/><rect x="303" y="80" width="34" height="59" rx="14" fill="#2d4e61"/>
+<path d="M337 105c26 7 37 25 28 47" fill="none" stroke="#2d4e61" stroke-width="7" stroke-linecap="round"/>
+<path d="M166 93h18M311 93h18" stroke="#79a5b8" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+<!-- thinking wing raised toward chin -->
+<path d="M166 273c-5 42 4 74 31 91 25 16 54 13 76-5-18-12-31-29-35-49-4-20 1-40 15-59-30 13-57 20-87 22z" fill="url(#w)"/>
+<path d="M183 289c17 11 31 24 39 39M184 310c15 10 28 22 37 35M193 331c11 8 21 16 28 25" fill="none" stroke="#c9d9df" stroke-width="5" stroke-linecap="round" opacity=".62"/>
+<path d="M238 267q28 25 43 51" fill="none" stroke="#587b91" stroke-width="13" stroke-linecap="round"/>
+<path d="M325 276l2 82" stroke="#5f8797" stroke-width="4"/><rect x="309" y="351" width="44" height="56" rx="8" fill="#f3c77d" stroke="#426476" stroke-width="4"/><path d="M319 365h24M319 376h18M319 388h24" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+<path d="M177 408l-15 42M331 408l14 42" stroke="#d98a54" stroke-width="10" stroke-linecap="round"/><path d="M151 451h45M325 451h46" stroke="#c86f4c" stroke-width="9" stroke-linecap="round"/>
+<g fill="none" stroke="#79a4b5" stroke-width="5" stroke-linecap="round" opacity=".55"><path d="M118 319c-17-2-31 1-43 9"/><path d="M119 337c-15 1-27 6-36 15"/></g>
+</svg>

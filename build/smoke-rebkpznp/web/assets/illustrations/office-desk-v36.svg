@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室桌面与前景资产">
+<defs><linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bd8864"/><stop offset="1" stop-color="#754b3b"/></linearGradient><linearGradient id="front" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9b664d"/><stop offset="1" stop-color="#654436"/></linearGradient></defs>
+<ellipse cx="800" cy="694" rx="620" ry="34" fill="#4d372f" opacity=".15"/>
+<rect x="0" y="472" width="1600" height="42" rx="12" fill="url(#desk)"/><rect x="0" y="512" width="1600" height="208" fill="url(#front)"/>
+<path d="M0 524H1600" stroke="#e0ad82" stroke-width="4" opacity=".32"/><path d="M0 585Q370 570 720 588T1600 580" fill="none" stroke="#4c352e" stroke-width="5" opacity=".14"/>
+<!-- drawer units --> <g opacity=".95"><rect x="146" y="540" width="370" height="134" rx="10" fill="#8b5c48"/><rect x="175" y="566" width="310" height="4" rx="2" fill="#c18b67" opacity=".55"/><rect x="175" y="610" width="310" height="4" rx="2" fill="#c18b67" opacity=".42"/><circle cx="330" cy="563" r="5" fill="#5b4138"/><circle cx="330" cy="607" r="5" fill="#5b4138"/></g>
+<g opacity=".95"><rect x="1240" y="536" width="205" height="138" rx="10" fill="#875846"/><rect x="1270" y="568" width="145" height="5" rx="2" fill="#c18b67" opacity=".45"/><rect x="1270" y="614" width="145" height="5" rx="2" fill="#c18b67" opacity=".34"/><circle cx="1342" cy="566" r="5" fill="#5b4138"/><circle cx="1342" cy="612" r="5" fill="#5b4138"/></g>
+<!-- desk edge highlight --> <path d="M42 487Q350 477 680 488T1280 486T1558 480" fill="none" stroke="#e8b58a" stroke-width="5" opacity=".48"/>
+</svg>

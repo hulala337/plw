@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室待办白板实体背板资产">
+<defs><linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a97958"/><stop offset="1" stop-color="#6b493c"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="7"/></filter></defs>
+<g transform="translate(1120 170) rotate(-1)"><rect x="8" y="12" width="390" height="335" rx="15" fill="#49362e" opacity=".14" filter="url(#shadow)"/><rect width="390" height="335" rx="15" fill="url(#frame)"/><rect x="14" y="14" width="362" height="307" rx="9" fill="#f4efdf" stroke="#d0c3aa" stroke-width="3"/><path d="M28 45H362" stroke="#c7b69a" stroke-width="4"/><circle cx="28" cy="24" r="5" fill="#e5b66e"/><circle cx="362" cy="24" r="5" fill="#7da891"/><path d="M28 285H362" stroke="#d3c6af" stroke-width="3"/><path d="M34 326H356" stroke="#5b4036" stroke-width="8" stroke-linecap="round" opacity=".55"/></g>
+<!-- pins --> <g><circle cx="1174" cy="188" r="8" fill="#e5b66e"/><circle cx="1490" cy="188" r="8" fill="#79a98b"/><path d="M1158 206q16-10 32 0M1474 206q16-10 32 0" fill="none" stroke="#b08b6d" stroke-width="3" opacity=".5"/></g>
+</svg>

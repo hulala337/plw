@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" preserveAspectRatio="none" aria-hidden="true">
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdf5"/><stop offset="1" stop-color="#e9ddc2"/></linearGradient>
+ <linearGradient id="book1"><stop stop-color="#6e93a4"/><stop offset="1" stop-color="#476e80"/></linearGradient>
+ <linearGradient id="book2"><stop stop-color="#d9a56e"/><stop offset="1" stop-color="#b87855"/></linearGradient>
+ <linearGradient id="pot"><stop stop-color="#d99868"/><stop offset="1" stop-color="#a9604d"/></linearGradient>
+ <filter id="shadow"><feGaussianBlur in="SourceAlpha" stdDeviation="4"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<!-- left reading stack -->
+<g filter="url(#shadow)">
+ <rect x="105" y="574" width="248" height="31" rx="6" fill="#3f5d6c" transform="rotate(-3 105 574)"/>
+ <rect x="116" y="542" width="255" height="35" rx="6" fill="url(#book2)" transform="rotate(2 116 542)"/>
+ <rect x="126" y="511" width="240" height="34" rx="6" fill="url(#book1)" transform="rotate(-2 126 511)"/>
+ <text x="145" y="535" font-family="Georgia,serif" font-size="17" fill="#fff" opacity=".88">PLAN · FOCUS · ACHIEVE</text>
+ <path d="M139 578h151M130 607h166" stroke="#fff" stroke-width="4" opacity=".32" stroke-linecap="round"/>
+</g>
+<!-- loose notebook -->
+<g filter="url(#shadow)" transform="rotate(-4 465 600)">
+ <rect x="380" y="548" width="190" height="126" rx="10" fill="url(#paper)" stroke="#c5b693" stroke-width="4"/>
+ <path d="M405 572h124M405 600h101M405 628h132" stroke="#9b907a" stroke-width="5" stroke-linecap="round" opacity=".62"/>
+ <path d="M405 650h74" stroke="#78a486" stroke-width="5" stroke-linecap="round"/>
+ <circle cx="397" cy="563" r="4" fill="#8a7962"/><circle cx="397" cy="588" r="4" fill="#8a7962"/><circle cx="397" cy="613" r="4" fill="#8a7962"/>
+</g>
+<!-- pencil -->
+<g transform="translate(580 650) rotate(-18)"><rect width="118" height="9" rx="4" fill="#e1ad68"/><rect x="83" width="26" height="9" fill="#d47d5d"/><path d="M118 4.5l-12-6v12z" fill="#7d654f"/></g>
+<!-- foreground plant -->
+<g filter="url(#shadow)">
+ <path d="M1435 588c-7-66 10-113 48-145" fill="none" stroke="#6f8f63" stroke-width="10" stroke-linecap="round"/>
+ <path d="M1477 462c-42-35-68-30-83-8 31 25 57 30 83 8zM1475 497c40-37 67-34 84-12-31 27-58 31-84 12zM1460 528c-43-21-66-8-73 17 32 15 54 12 73-17z" fill="#76a87c"/>
+ <path d="M1417 588h107l-12 84h-83z" fill="url(#pot)"/>
+ <path d="M1423 605h95" stroke="#efb07d" stroke-width="6" opacity=".6"/>
+</g>
+<!-- sticky note cluster -->
+<g filter="url(#shadow)">
+ <path d="M1260 575l110-8 8 75-111 8z" fill="#f1ca73"/>
+ <path d="M1373 553l105 14-10 73-105-13z" fill="#a8cbd7"/>
+ <path d="M1280 595h68M1280 614h51" stroke="#8b704e" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+ <path d="M1392 578h61M1392 597h43" stroke="#4f7180" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+</g>
+<!-- little pelican desk toy -->
+<g transform="translate(1175 583)" filter="url(#shadow)">
+ <ellipse cx="52" cy="72" rx="53" ry="9" fill="#294451" opacity=".12"/>
+ <ellipse cx="50" cy="46" rx="33" ry="27" fill="#f7fafb" stroke="#89a6b4" stroke-width="3"/>
+ <path d="M31 44c-24-3-39-13-45-24-5-9 1-16 11-15 22 2 44 14 57 29-4 6-10 9-23 10z" fill="#efa35e"/>
+ <circle cx="60" cy="32" r="5" fill="#203640"/><circle cx="62" cy="30" r="2" fill="#fff"/>
+ <path d="M28 66l-5 14M70 66l5 14M18 81h18M67 81h18" stroke="#d98755" stroke-width="5" stroke-linecap="round"/>
+</g>
+</svg>

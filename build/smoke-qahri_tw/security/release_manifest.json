@@ -1,0 +1,348 @@
+{
+  "files": [
+    {
+      "path": "VERSION.txt",
+      "sha256": "0440f5eb5f159ba0883d6b6aac944acfff13ea518badc27f79830cc8ef31cb05"
+    },
+    {
+      "path": "web/assets/app.js",
+      "sha256": "88d4fee2e90bf1e33fce8dbb8885ce9a1a6bdc05752b9395f78caf17fe589a9d"
+    },
+    {
+      "path": "web/assets/art-system.css",
+      "sha256": "a02960e8d0608b58dc00c681becd076ffeef09a1713934b1b5b16fd844d3eb4a"
+    },
+    {
+      "path": "web/assets/environment.css",
+      "sha256": "3377717bcd0d3264d1f172b170dd07f50fd1c0e0fd08fffac5a1b6630aa51dfd"
+    },
+    {
+      "path": "web/assets/illustrations/desk-coffee-v36.svg",
+      "sha256": "dcd70e284bdb52cc3f7088acc85894480e37328663875bcc90f378fad02a60c5"
+    },
+    {
+      "path": "web/assets/illustrations/desk-keyboard-v36.svg",
+      "sha256": "38966308a808008acc49dcb0fc3d1e68706d4601594338b2e8e457cf386ba3ad"
+    },
+    {
+      "path": "web/assets/illustrations/desk-mouse-v36.svg",
+      "sha256": "0a97eeaab61be39440b4f8ca22f6f7d50bc1437f1348454302aca673fa199809"
+    },
+    {
+      "path": "web/assets/illustrations/desk-notebook-v36.svg",
+      "sha256": "9256aa175075defc6d492ccfe5fcdd9905f80165500c4d1ab1228cb951d3b44d"
+    },
+    {
+      "path": "web/assets/illustrations/office-board-paper-v36d.svg",
+      "sha256": "c4d487890d3a21a3bd3b75bc25d0aecf277eb8bdd68aa4c703ac83f58dbba8eb"
+    },
+    {
+      "path": "web/assets/illustrations/office-board-v36.svg",
+      "sha256": "ccc37d1c9a72f60901c4075bfcf7a3e1c20033adfdb9afe6ab9a4429d1ecf674"
+    },
+    {
+      "path": "web/assets/illustrations/office-contact-shadows-v36d.svg",
+      "sha256": "009b5880136c71ceed045d423cbcba4493b2581afcb23a0fb1a59d2b0f9be5cf"
+    },
+    {
+      "path": "web/assets/illustrations/office-day.svg",
+      "sha256": "5f708a7e35b0891127720137cd5596398da7f5250930b5338eb90053aaef0ef1"
+    },
+    {
+      "path": "web/assets/illustrations/office-decor-v36.svg",
+      "sha256": "27cc2806d4e50f601b1bfe4a460bc7bb97595a4d965f50dcae7855fd99ba68a5"
+    },
+    {
+      "path": "web/assets/illustrations/office-depth-v36.svg",
+      "sha256": "e6378ddc77157f47ae948697e7ea17b0df214fb73d62411a5954b15c4715a9c3"
+    },
+    {
+      "path": "web/assets/illustrations/office-desk-v36.svg",
+      "sha256": "463ce833e26a77f0eb0abc841be7314469b606aa87d1bc8d3968e6733ee6b6cd"
+    },
+    {
+      "path": "web/assets/illustrations/office-foreground-v36.svg",
+      "sha256": "69241500faeaf9ca57d229fcd2f27a3d43e9d2a6b9779e432a94106ee3952acd"
+    },
+    {
+      "path": "web/assets/illustrations/office-glass-v36d.svg",
+      "sha256": "d66c64ee2207566c1e0d23a43076fc2e68837d3e8d5fc4eae14e81f828d5cb3d"
+    },
+    {
+      "path": "web/assets/illustrations/office-lamp-v36.svg",
+      "sha256": "1468031098daaae4c0fa8b5a5aa403c7fccd0ccf78644053466c8bc307094d66"
+    },
+    {
+      "path": "web/assets/illustrations/office-monitor-single-v36.svg",
+      "sha256": "fc3d6e8370ef741a7180033021cf20bb5ca9dca774c8c799a8c81bdbe52da38d"
+    },
+    {
+      "path": "web/assets/illustrations/office-monitors-triple-v36.svg",
+      "sha256": "12abac0b63c5752fe305256edca3e434854524b38f10c35cdad7c230331610d1"
+    },
+    {
+      "path": "web/assets/illustrations/office-monitors-v36.svg",
+      "sha256": "97bd3615036eaba5bb17912e35ce241056380cd694887b2ca1251fa61af5344e"
+    },
+    {
+      "path": "web/assets/illustrations/office-night.svg",
+      "sha256": "b5c106f2fd038ce8bde1a2a5f3344b441bcb40b63a337e96a57c602bf2513a11"
+    },
+    {
+      "path": "web/assets/illustrations/office-room-base-v36.svg",
+      "sha256": "950a0c27a1d008d40fb096224b58ede6b285ef0404d5cbfdcd43b3f6e2ea9b62"
+    },
+    {
+      "path": "web/assets/illustrations/office-screen-reflection-v36d.svg",
+      "sha256": "860a8271b29f48c73de64be18fae89ce83094a46e8b0e420c823f9a84f31a22b"
+    },
+    {
+      "path": "web/assets/illustrations/office-window-cloud-v36.svg",
+      "sha256": "5a7eb3d796d89d513500fdbaf7168c898f1effe0e621c48053d377eeb7e742d1"
+    },
+    {
+      "path": "web/assets/illustrations/office-window-day-v36.svg",
+      "sha256": "e07f026c5ab527866de6156b9d37ee67a353df7e3355c624fb9592b36d94eb70"
+    },
+    {
+      "path": "web/assets/illustrations/office-window-night-v36.svg",
+      "sha256": "b8350729f7a71a6847246a71d131ac331ecd1ac8b863ed6bc2ad1af48b7ff5a1"
+    },
+    {
+      "path": "web/assets/illustrations/office-window-rain-v36.svg",
+      "sha256": "cbc2ede940682f0e18d9e132eecf7ea9d65a5bf9815320e6a749f23e1760c1e1"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-desk-life.svg",
+      "sha256": "ea9029605ed33c2aafe448a9428e7a1c888ed99ea77b831678d7337a18464945"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-eye-whites-v36.svg",
+      "sha256": "d49389aa72d2a8ca4d0a219987f7eb57d6e673c617975b890ba6f8f9c0dbd574"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-eyelid-left-v36.svg",
+      "sha256": "a4143fce3aa423a75609be2ff605befadf585242646d6e3fc41ccc807b7f1ca0"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-eyelid-right-v36.svg",
+      "sha256": "a2d443b8b9db5a24231691503b002f22917a64e2501908799b4a9319ed1cb022"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-eyes-v36.svg",
+      "sha256": "bb6885053aa3911dc2fca8df39b3fd1c4894b1899f7dda93b0bfe2d8f5c269d5"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-life-overlay.svg",
+      "sha256": "4c097ef8ad0fb598b06cbe9bf44cb0746db670901bfa766257622ac99132feeb"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-mini.svg",
+      "sha256": "4fe3d653908f1b8910e36a898aabaea6876ed806492a72520bc5e3f8ee568845"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-pupil-left-v36.svg",
+      "sha256": "c856d70961b7e4f8f2dba78553f5735c36e4e68587614091220ca10ae3433962"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-pupil-right-v36.svg",
+      "sha256": "6d4ffb8ee27cbb666d5e4ddfd86830c4c6f31cb1eaf70750dbe5cef8dca64c4d"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-pupil-think-left-v36.svg",
+      "sha256": "ac5b93ad427fabeb0bd0c11c4481fd61bd58c33c82be25ecede15b254b353eaa"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-pupil-think-right-v36.svg",
+      "sha256": "741acd7a889ed45a3b6cde42e2e71da1fc7dc14472f710079c2ac459b80efeb7"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-resting.svg",
+      "sha256": "7d30386b13c080a5b555cfb7add496be5b9dc0c2e635f0aebdafbcae7b0167e3"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-tired.svg",
+      "sha256": "39a5b376e62283d3b55ee1ed2de54c13a32f21b1822e413fb4d96ab52e933da7"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-typing-marks-v36.svg",
+      "sha256": "58fe6374b3c91cb74a33297bfcd3901cdcd4a93cc5c2cb50f20ee6ae440b494a"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-v36-coffee.svg",
+      "sha256": "32e29cec27f303555638cb5cf5c3d5fdb5f97f570efc0ec6bb77406ce8ea2108"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-v36-resting.svg",
+      "sha256": "6ea3f3f43200729c704c3fef63b68d00c7af0a8b48f621f6fea41bece18673cf"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-v36-thinking.svg",
+      "sha256": "cd1c15c4cb12e86c1a5488af1acf4c408c6f8c602e687234429682447f6245af"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-v36-tired.svg",
+      "sha256": "a54e71763fc06e3a77c7fda04b7b16c795483401331bb89972940f8063dfa31e"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-v36-working.svg",
+      "sha256": "88ee8141ee6f3d3aa2b4608a22d2a4c4ab85750db33a74bd75c67f13d20a543b"
+    },
+    {
+      "path": "web/assets/illustrations/pelican-working.svg",
+      "sha256": "d236d2d32c81313d22028adedfc98ca16e4a05860f187d0750d0d943d719d2e2"
+    },
+    {
+      "path": "web/assets/illustrations/rain.svg",
+      "sha256": "3f93adebeac0b9729e39eaebff708a74c0b651c2d3e3ec8a2add85f610b2dacd"
+    },
+    {
+      "path": "web/assets/lite-math.js",
+      "sha256": "8de8c5fd53c5e7f40f22bd95f14c724e3ec68bf406268abb5643a840f5e1096e"
+    },
+    {
+      "path": "web/assets/lite.css",
+      "sha256": "eb02cad3afbfe7da37e4728d2d55560919550816233bdd58da09be79d78241d3"
+    },
+    {
+      "path": "web/assets/lite.js",
+      "sha256": "3b7b421de768d5f83b78cb750bac74b5d0a2c87189bac050c2672d5314c922fc"
+    },
+    {
+      "path": "web/assets/style.css",
+      "sha256": "79ee7497300010e21e50d688c4d3ce35d46aa3b8bdea7362dc366ffd1405f934"
+    },
+    {
+      "path": "web/assets/visual-stage3.css",
+      "sha256": "255a69e4f4eababe5b8738be01b6ea7fc6801a954c2ea9438970e721ee1b7535"
+    },
+    {
+      "path": "web/assets/visual-stage3.js",
+      "sha256": "b00dc003c66ccbb2ce7856069cd9810948c599a185c80cf33c8b362e1ad1ae01"
+    },
+    {
+      "path": "web/assets/visual-v35-life-round3.css",
+      "sha256": "959ed43af9af4c8a74c41857e475be0990884f27fe97eab62825fe3f7806f697"
+    },
+    {
+      "path": "web/assets/visual-v35-life-round3.js",
+      "sha256": "1bc5dcd6287f29006c88161582bae2d0da89f33880ef2c6a02452caab50136c0"
+    },
+    {
+      "path": "web/assets/visual-v35-life.css",
+      "sha256": "35d4422f5292435dc0014cd7c2b396b2110785bc60393f7ded6de9e0cea90006"
+    },
+    {
+      "path": "web/assets/visual-v35-life.js",
+      "sha256": "8e0d9c45dd36c9113d1bfede5f8e44bc6707009bb5d203af2779a3a8dc496135"
+    },
+    {
+      "path": "web/assets/visual-v35.css",
+      "sha256": "2175234667ef5f4fa0765ea5a826c5f27cd8fc6e1e7698f77adbc624fa6f4dd2"
+    },
+    {
+      "path": "web/assets/visual-v35.js",
+      "sha256": "e15ef5ce8bb8ec9a08aa8a72c22e842195bf8c388189c0ae4fe1362a6810d5f6"
+    },
+    {
+      "path": "web/assets/visual-v36.css",
+      "sha256": "07ee4bcb65cf69d2ca0668fa3a9a8f998a13eddf1bcefeee3201559c338454e2"
+    },
+    {
+      "path": "web/assets/visual-v36.js",
+      "sha256": "0c64dfdb661ff17580cdde3c430a6bb4cdc5af468e42d74604e9d18fdc556d16"
+    },
+    {
+      "path": "web/assets/visual-v36b.css",
+      "sha256": "2b02b95bb778f507e45a4a3681b91b96f3153e73af23d3919fa314bebed21268"
+    },
+    {
+      "path": "web/assets/visual-v36b.js",
+      "sha256": "3dbdfd59df0ea6b8ac38af2e71c646e810e2a4fc97b11d2f607f327ccf8b031d"
+    },
+    {
+      "path": "web/assets/visual-v36c.css",
+      "sha256": "4c94c3834b38689a155fb60605f9185d2723f06df168a54cada9fb231909a7e8"
+    },
+    {
+      "path": "web/assets/visual-v36c.js",
+      "sha256": "2e6148cf62a7a24005554d57f241a297ef63fab8fbfb4f54ffc903f6756824f2"
+    },
+    {
+      "path": "web/assets/visual-v36d.css",
+      "sha256": "0fc9685ad9419c672fc6be41aad82cb693020abd9451e30f297bc46df4cd1978"
+    },
+    {
+      "path": "web/assets/visual-v36d.js",
+      "sha256": "e0fb05207048434bc1d04d9b0ad6e703ce5aa83d5259a7709630cf1bab0928d5"
+    },
+    {
+      "path": "web/assets/visual-v36e.css",
+      "sha256": "4616989824c400e69a9efd36eab7fe30df098502582695209c5b4e91d08c8dbb"
+    },
+    {
+      "path": "web/assets/visual-v36e.js",
+      "sha256": "63590d481265e20212db860bba927d2ef3280e2b52772d0e068b75a4f7b2eb0f"
+    },
+    {
+      "path": "web/assets/wechat_qr.png",
+      "sha256": "129c1552b926f027913b89fbda23ee2ada676761492985be4eca887a1043a215"
+    },
+    {
+      "path": "web/assets/wechat_qr_placeholder.svg",
+      "sha256": "d9cb4f77b26045942a0851888c616f5148874680259868170f41f83ccc9fd5ea"
+    },
+    {
+      "path": "web/assets/WECHAT_QR_README.txt",
+      "sha256": "a3ac0f6f87b9755fccad28f3c2c4b43ae5b048414e08cd3252273c20f63d9001"
+    },
+    {
+      "path": "web/index.html",
+      "sha256": "65d72cbc0e6c83006b19a5fb1157eb723b245ee1cbb930f766254b87979d1ca0"
+    },
+    {
+      "path": "web/README_UI_ART_V3.4_COMPLETE.md",
+      "sha256": "6a7e924e2304f32f14351f5d804b799bcbb1810c1f9bb1b72b33d63c0f59c1b1"
+    },
+    {
+      "path": "web/README_UI_ART_V3.4_STAGE1.md",
+      "sha256": "321765782142b5acfdf16bcaa59e3b32e8fb931a358325847d6cc86533bb0617"
+    },
+    {
+      "path": "web/README_UI_ART_V3.4_STAGE2.md",
+      "sha256": "9be5a3f96e85b20df29508314460e1315434b5d206ec5baefa52beb68564c1f6"
+    },
+    {
+      "path": "web/README_UI_ART_V3.5.md",
+      "sha256": "652dd1233edf2a6e3126d820733af330ed52bb23b1cd3435fac94812a90c3f86"
+    },
+    {
+      "path": "web/README_UI_ART_V3.5_LIFE_ROUND2.md",
+      "sha256": "31da92c997bbd2e949e00f474e472737557fdc50e0639df3b04d137b12bd1c35"
+    },
+    {
+      "path": "web/README_UI_ART_V3.6.md",
+      "sha256": "a26111eac5ed6a095bc3c172ece67af72d12a0218f39c38677a080a2e8a271d5"
+    },
+    {
+      "path": "web/README_UI_ART_V3.6_C.md",
+      "sha256": "9eb5530be15d279b1f4ec6df38c46b22373cd015bf6f621b42ab9c7ea36db922"
+    },
+    {
+      "path": "web/README_UI_ART_V3.6_D.md",
+      "sha256": "c77624de32083049da207accda1e4028d9de158685ffed7c389c8b9ca3216e65"
+    },
+    {
+      "path": "web/README_UI_ART_V3.6_E.md",
+      "sha256": "bac8c3b03dbdbd50a0a586ece74eda4c6c93aed0556bae94b5fc1795ae55c927"
+    },
+    {
+      "path": "web/README_UI_REFACTOR.md",
+      "sha256": "64fea478dc9799c480505ef5d6df2cdf9cb1531df8db7dab534de364a2af6df7"
+    }
+  ],
+  "format": 1,
+  "product": "Pelican Workbench",
+  "publisher": "TF7Z-XY",
+  "version": "3.6.0"
+}

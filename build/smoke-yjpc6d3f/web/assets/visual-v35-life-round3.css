@@ -1,0 +1,26 @@
+/* V3.5 Life Round 3 — behavioral director. Presentation only. */
+#scene .pelican{--life-lean:0deg;--life-y:0px;--life-scale:1;}
+#scene .pelican-life-director{position:absolute;inset:0;z-index:7;pointer-events:none;overflow:visible;}
+#scene .pelican-life-director .gaze{position:absolute;left:45.9%;top:20.9%;width:8px;height:5px;border-radius:50%;opacity:0;transform:translate(-50%,-50%);box-shadow:0 0 10px rgba(150,205,220,.28);transition:opacity .35s ease,transform 1.1s cubic-bezier(.2,.8,.2,1)}
+#scene .pelican-life-director .gaze::after{content:"";position:absolute;inset:1px 2px;background:rgba(70,130,148,.42);border-radius:50%}
+#scene .pelican-life-director .paper-cue{position:absolute;left:39%;top:78%;width:46px;height:18px;border-radius:3px;opacity:0;transform:rotate(-2deg) translateY(4px);background:linear-gradient(90deg,rgba(255,255,255,.3),rgba(255,255,255,.05));box-shadow:0 4px 10px rgba(50,70,75,.06)}
+#scene .pelican-life-director .coffee-cue{position:absolute;left:68%;top:76%;width:13px;height:19px;border-radius:3px 3px 5px 5px;border:1px solid rgba(92,105,107,.2);opacity:0;transform:translateY(5px)}
+#scene .pelican-life-director .coffee-cue::before{content:"";position:absolute;left:2px;right:2px;top:-5px;height:7px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.3),transparent 70%);animation:steam 2.8s ease-in-out infinite}
+#scene .pelican-life-director .completion-ring{position:absolute;left:50%;top:48%;width:70px;height:70px;border-radius:50%;border:1px solid rgba(157,214,173,.4);opacity:0;transform:translate(-50%,-50%) scale(.55)}
+#scene .pelican-life-director .status-whisper{position:absolute;left:50%;top:22%;transform:translate(-50%,-4px);font:500 10px/1.2 system-ui,sans-serif;letter-spacing:.3px;color:rgba(69,96,106,.68);opacity:0;white-space:nowrap}
+#scene .pelican-life-director .status-whisper::after{content:"";position:absolute;left:50%;top:15px;width:4px;height:4px;border-radius:50%;background:rgba(113,163,177,.32);transform:translateX(-50%)}
+#scene.behavior-read-board .pelican-life-director .gaze{opacity:1;transform:translate(calc(-50% + 3px),calc(-50% + 1px))}
+#scene.behavior-read-board .pelican-life-layer{transform:translateY(-.6px) rotate(-.25deg)}
+#scene.behavior-think .pelican-life-director .gaze{opacity:1;transform:translate(calc(-50% - 2px),calc(-50% - 2px))}
+#scene.behavior-think .pelican-life-director .status-whisper{opacity:1;transform:translate(-50%,0);transition:opacity .5s ease,transform .7s ease}
+#scene.behavior-type .pelican-life-director .paper-cue{opacity:.25;animation:paperCue 2.2s ease-in-out infinite}
+#scene.behavior-rest .pelican-life-director .coffee-cue{opacity:.28;animation:cupSettle 5s ease-in-out infinite}
+#scene.behavior-complete .pelican-life-director .completion-ring{animation:completionRing 1.4s cubic-bezier(.2,.8,.2,1) both}
+#scene.behavior-complete .pelican-life-director .status-whisper{opacity:1;content:""}
+#scene.behavior-complete .pelican-life-layer{filter:saturate(1.03) brightness(1.025) drop-shadow(0 7px 10px rgba(95,151,126,.14))}
+#scene.behavior-idle .pelican-life-director .gaze{opacity:.25;transform:translate(-50%,-50%)}
+@keyframes paperCue{0%,100%{transform:rotate(-2deg) translate(0,4px)}45%{transform:rotate(-1.2deg) translate(2px,1px)}65%{transform:rotate(-2.2deg) translate(-1px,3px)}}
+@keyframes cupSettle{0%,100%{transform:translateY(5px) rotate(0)}50%{transform:translateY(2px) rotate(.7deg)}}
+@keyframes steam{0%,100%{opacity:.1;transform:translateY(2px)}50%{opacity:.42;transform:translateY(-3px)}}
+@keyframes completionRing{0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}25%{opacity:.7}70%{opacity:.3;transform:translate(-50%,-50%) scale(1.18)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.42)}}
+@media(prefers-reduced-motion:reduce){#scene .pelican-life-director *{animation:none!important;transition:none!important}}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" aria-label="办公室物件接触阴影资产">
+<defs>
+ <filter id="blur" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="8"/></filter>
+ <filter id="soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="4"/></filter>
+ <radialGradient id="shadow"><stop stop-color="#3d302b" stop-opacity=".28"/><stop offset="1" stop-color="#3d302b" stop-opacity="0"/></radialGradient>
+</defs>
+<ellipse cx="735" cy="482" rx="218" ry="22" fill="url(#shadow)" filter="url(#blur)"/>
+<ellipse cx="1090" cy="470" rx="170" ry="20" fill="url(#shadow)" filter="url(#soft)"/>
+<ellipse cx="1320" cy="494" rx="125" ry="18" fill="url(#shadow)" filter="url(#soft)"/>
+<ellipse cx="382" cy="501" rx="145" ry="16" fill="#4b3932" opacity=".13" filter="url(#soft)"/>
+<path d="M1100 494h360" stroke="#4a3831" stroke-width="10" stroke-linecap="round" opacity=".08" filter="url(#soft)"/>
+</svg>
