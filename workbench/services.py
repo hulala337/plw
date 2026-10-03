@@ -478,8 +478,11 @@ def api_payload(kind="today") -> dict:
     ).fetchall()
     conn.close()
     from . import key_counts
+    from . import characters
+    confirmed = characters.summary(database.db, start.isoformat(), end.isoformat())
     keys_today = key_counts.top(database.db, services.today_key())
     return {
+        "confirmed_characters": confirmed,
         "key_top_today": keys_today,
         "version": runtime.VERSION,
         "range": kind,

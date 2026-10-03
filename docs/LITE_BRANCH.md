@@ -57,3 +57,16 @@ not reconstructed. Clearing today also clears today's key histogram. Schema v2
 adds a table and preserves existing data. Older executables that only support
 schema v1 will refuse this database; use an independent PELICAN_DATA_DIR if you
 need to run the earlier branch.
+
+## Confirmed characters (limited coverage)
+
+Schema v3 adds count-only, idempotent character receipts. The opt-in journal
+textarea counts direct insertion and composition commits with Intl.Segmenter.
+Paste/drop/replacement/undo/redo are excluded. Text never leaves the textarea;
+only a random receipt ID, day, source label and count reach the API. This adapter
+covers ONLY this textarea, not other applications or global Windows IME input.
+Receipt retries cannot increment twice. A pending queue is memory-only and warns
+before navigation; it is not crash-durable. Old-day receipts are rejected.
+Browser tests cover direct typing, synthetic composition commits and paste
+exclusion. Real IME compatibility across input methods is not certified.
+Global keyboard totals and daily key TOP5 remain separate and unchanged.

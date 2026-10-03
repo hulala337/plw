@@ -299,6 +299,7 @@ def forget_today():
             if entry[0] == target:
                 del key_counts.pending[entry]
         conn.execute("DELETE FROM daily_key_counts WHERE day=?", (target,))
+    conn.execute("DELETE FROM character_receipts WHERE day=?", (target,))
     conn.execute("DELETE FROM daily WHERE day=?", (target,))
     conn.execute("DELETE FROM activity_slices WHERE date(slice_start)=?", (target,))
     conn.execute("DELETE FROM app_usage WHERE day=?", (target,))
@@ -542,3 +543,14 @@ def export_xlsx(range: str = "today"):
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f'attachment; filename="pelican_{range}.xlsx"'},
     )
+
+
+from .characters import CharacterReceipt
+
+@runtime.api.post("/api/characters")
+def record_characters(item: CharacterReceipt):
+    from . import characters, database
+    try:
+        return characters.receive(database.db, item)
+    except ValueError as exc:
+        raise runtime.HTTPException(400, str(exc))

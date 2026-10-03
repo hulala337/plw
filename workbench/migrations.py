@@ -1,6 +1,6 @@
 """Transactional upgrades for existing SQLite databases (schema version 1)."""
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 def migrate(conn):
@@ -46,4 +46,5 @@ def migrate(conn):
             )
             conn.execute("DROP TABLE activity_slices_mvp")
         conn.execute("CREATE TABLE IF NOT EXISTS daily_key_counts(day TEXT NOT NULL,key_name TEXT NOT NULL,count INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(day,key_name))")
-        conn.execute("PRAGMA user_version=2")
+        conn.execute("CREATE TABLE IF NOT EXISTS character_receipts(receipt_id TEXT PRIMARY KEY,day TEXT NOT NULL,source TEXT NOT NULL,count INTEGER NOT NULL)")
+        conn.execute("PRAGMA user_version=3")
