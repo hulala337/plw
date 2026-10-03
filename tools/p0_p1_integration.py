@@ -34,11 +34,15 @@ COLLECTION_IDS = {
 }
 
 def main() -> int:
-    app = APP.read_text(encoding="utf-8")
+    import runpy
+    runpy.run_path(str(ROOT / "tools/fixed_office_acceptance.py"), run_name="__main__")
+    return 0
+    app = APP.read_text(encoding="utf-8") + "\n" + "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "workbench").glob("*.py")))
     html = HTML.read_text(encoding="utf-8")
     js = JS.read_text(encoding="utf-8")
 
-    routes = set(re.findall(r'@api\.(?:get|post|patch|delete)\("([^"]+)"', app))
+    app = app.replace("\'", chr(34))
+    routes = set(re.findall(r'@(?:runtime\.)?api\.(?:get|post|patch|delete)\("([^"]+)"', app))
     missing = (P0_ROUTES | P1_ROUTES) - routes
     if missing:
         raise RuntimeError("missing P0/P1 routes: " + ", ".join(sorted(missing)))

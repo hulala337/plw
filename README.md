@@ -98,3 +98,15 @@ Replay 也是行为分类回放，不是屏幕录像。
 私钥不会进入源码包或安装包。正式公开发布建议使用 Authenticode 代码签名。
 
 > 完整产品行为、数据链路、功能边界与完成定义，以 `docs/PRODUCT_REQUIREMENTS.md` 为准。
+
+
+## Development and validation
+
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for module boundaries, isolated
+Windows dependency environments, UTF-8 conventions and release validation.
+
+```powershell
+./tools/setup.ps1 -Environment all
+.venv/Scripts/python.exe tools/check_project.py --require-node
+.venv/Scripts/python.exe tools/build_smoke.py
+```

@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="stylesheet" href="/assets/art-system.css">
 <link rel="stylesheet" href="/assets/environment.css">
+<link rel="stylesheet" href="/assets/fixed-office.css">
 </head>
 <body>
 <div class="app-shell">
@@ -27,7 +28,6 @@
       <button class="nav" data-view="replay"><span class="nav-icon">▶</span><b>一天回放</b><small>Replay</small></button>
       <button class="nav" data-view="timeline"><span class="nav-icon">◷</span><b>24 小时</b><small>Timeline</small></button>
       <button class="nav" data-view="stats"><span class="nav-icon">▥</span><b>统计趋势</b><small>Insights</small></button>
-      <button class="nav" data-view="growth"><span class="nav-icon">🐦</span><b>成长中心</b><small>Growth</small></button>
       <button class="nav" data-view="settings"><span class="nav-icon">⚙</span><b>设置中心</b><small>Settings</small></button>
     </nav>
 
@@ -65,7 +65,7 @@
     <section id="view-home" class="view">
       <!-- 主视觉：沉浸式办公室 -->
       <section class="hero-scene">
-        <div class="office-scene" id="scene" data-art-scene="day">
+        <div class="office-scene working focused" id="scene" data-time="day" data-weather="clear" data-monitors="1" data-art-scene="day">
           <!-- V3.6-C environment is asset-layered; business DOM below remains unchanged. -->
           <div class="scene-room-base-v36"><img src="/assets/illustrations/office-room-base-v36.svg" alt="" draggable="false"></div>
           <div class="scene-art-layer scene-art-day"><img src="/assets/illustrations/office-window-day-v36.svg" alt="" draggable="false"></div>
@@ -224,34 +224,6 @@
     </section>
 
     <!-- 成长中心 -->
-    <section id="view-growth" class="view hidden">
-      <div class="stats-head"><div><span class="eyebrow">PELICAN GROWTH</span><h2>成长中心</h2><p>真实工作带来 XP、等级和内容解锁；不通过挂机刷经验。</p></div></div>
-      <div class="report" id="growthReport"></div>
-      <div class="stats-grid">
-        <div class="panel">
-          <div class="panel-head"><div><span class="eyebrow">UNLOCKS</span><h2>已解锁内容</h2></div></div>
-          <div class="unlocks large" id="growthUnlocks"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><div><span class="eyebrow">ACHIEVEMENTS</span><h2>成就</h2></div></div>
-          <div class="unlocks large" id="growthAchievements"></div>
-        </div>
-      </div>
-      <div class="stats-grid">
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">SCENES</span><h2>场景</h2></div></div><div class="unlocks large" id="growthScenes"></div></div>
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">PELICANS</span><h2>鹈鹕</h2></div></div><div class="unlocks large" id="growthPelicans"></div></div>
-      </div>
-      <div class="stats-grid">
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">OUTFITS</span><h2>服装</h2></div></div><div class="unlocks large" id="growthOutfits"></div></div>
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">ACCESSORIES</span><h2>配饰</h2></div></div><div class="unlocks large" id="growthAccessories"></div></div>
-      </div>
-      <div class="stats-grid">
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">DECORATIONS</span><h2>装饰</h2></div></div><div class="unlocks large" id="growthDecorations"></div></div>
-        <div class="panel"><div class="panel-head"><div><span class="eyebrow">EFFECTS</span><h2>效果</h2></div></div><div class="unlocks large" id="growthEffects"></div></div>
-      </div>
-    </section>
-
-    <!-- 设置 -->
     <section id="view-settings" class="view hidden">
       <div class="stats-head"><div><span class="eyebrow">SETTINGS CENTER</span><h2>设置中心</h2><p>让鹈鹕更像你喜欢的工作伙伴。</p></div></div>
       <div class="settings-grid">
@@ -276,9 +248,12 @@
   </main>
 </div>
 
-<div class="donate-modal hidden" id="donateModal"><div class="donate-backdrop" id="donateBackdrop"></div><div class="donate-dialog"><button class="modal-close" id="donateClose">×</button><div class="brand-ribbon">THANK YOU</div><h3>请鹈鹕喝杯咖啡</h3><p>自愿打赏，完全不影响功能。</p><div class="qr-wrap"><img id="wechatQr" src="/assets/wechat_qr.png" alt="微信收款码"><div id="qrFallback" class="qr-fallback">请将你的微信收款码命名为 <code>wechat_qr.png</code> 放入 <code>web/assets/</code></div></div></div></div></div>
+<div class="donate-modal hidden" id="donateModal"><div class="donate-backdrop" id="donateBackdrop"></div><div class="donate-dialog"><button class="modal-close" id="donateClose">×</button><div class="brand-ribbon">THANK YOU</div><h3>请鹈鹕喝杯咖啡</h3><p>自愿打赏，完全不影响功能。</p><div class="qr-wrap"><img id="wechatQr" src="/assets/wechat_qr_placeholder.svg" alt="微信收款码"><div id="qrFallback" class="qr-fallback">请将你的微信收款码命名为 <code>wechat_qr.png</code> 放入 <code>web/assets/</code></div></div></div></div></div>
 
+<script src="/assets/lite-math.js"></script>
+<script src="/assets/fixed-office.js"></script>
 <script src="/assets/app.js"></script>
+<script src="/assets/characters.js"></script>
 <script>
 (function(){
   // 纯视觉桥接：读取现有天气/场景状态，不改变任何业务数据或 API。
@@ -307,10 +282,10 @@
 <link rel="stylesheet" href="/assets/visual-v36c.css">
 <link rel="stylesheet" href="/assets/visual-v36d.css">
 <link rel="stylesheet" href="/assets/visual-v36e.css">
-<script src="/assets/visual-v36.js"></script>
-<script src="/assets/visual-v36b.js"></script>
-<script src="/assets/visual-v36c.js"></script>
-<script src="/assets/visual-v36d.js"></script>
-<script src="/assets/visual-v36e.js"></script>
+
+
+
+
+
 </body>
 </html>

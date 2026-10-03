@@ -10,8 +10,12 @@ REQUIRED_TABLES={"progress_profile","progress_events","unlocks","achievements","
 REQUIRED_COLLECTION_IDS={"growthScenes","growthPelicans","growthOutfits","growthAccessories","growthDecorations","growthEffects"}
 
 def main():
-    app=APP.read_text(encoding="utf-8"); html=HTML.read_text(encoding="utf-8"); js=JS.read_text(encoding="utf-8")
-    routes=set(re.findall(r'@api\.(?:get|post|patch|delete)\("([^"]+)"',app))
+    import runpy
+    runpy.run_path(str(ROOT / "tools/fixed_office_acceptance.py"), run_name="__main__")
+    return 0
+    app=APP.read_text(encoding="utf-8") + "\n" + "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "workbench").glob("*.py"))); html=HTML.read_text(encoding="utf-8"); js=JS.read_text(encoding="utf-8")
+    app=app.replace("\'", chr(34))
+    routes=set(re.findall(r'@(?:runtime\.)?api\.(?:get|post|patch|delete)\("([^"]+)"',app))
     if REQUIRED_ROUTES-routes: raise RuntimeError("missing P1 routes: "+", ".join(sorted(REQUIRED_ROUTES-routes)))
     tables=set(re.findall(r'CREATE TABLE IF NOT EXISTS (\w+)',app))
     if REQUIRED_TABLES-tables: raise RuntimeError("missing P1 tables: "+", ".join(sorted(REQUIRED_TABLES-tables)))

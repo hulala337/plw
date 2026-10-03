@@ -10,15 +10,6 @@ from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-PROTECTED = [
-    "VERSION.txt",
-    "web/index.html",
-    "web/assets/app.js",
-    "web/assets/style.css",
-    "web/assets/wechat_qr.png",
-]
-
-
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -66,8 +57,10 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    # Sign every shipped web resource; optional donation images are not mandatory.
+    protected = ["VERSION.txt"] + [p.relative_to(root).as_posix() for p in sorted((root / "web").rglob("*")) if p.is_file()]
     entries = []
-    for rel in PROTECTED:
+    for rel in protected:
         path = root / rel
         if not path.is_file():
             raise SystemExit(f"missing protected file: {rel}")
@@ -85,7 +78,7 @@ def main() -> int:
     sig = key.sign(manifest_bytes)
     (security / "release_manifest.sig").write_text(base64.b64encode(sig).decode("ascii"), encoding="ascii")
     print("Signed protected assets:")
-    for rel in PROTECTED:
+    for rel in protected:
         print("  -", rel)
     print("Private key:", Path(args.private_key).expanduser().resolve())
     return 0
